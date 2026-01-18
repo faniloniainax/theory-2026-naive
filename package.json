@@ -25,6 +25,8 @@
     "naive-ui": "^2.43.2",
     "npm-run-all2": "^8.0.4",
     "typescript": "~5.9.3",
+    "unplugin-auto-import": "^21.0.0",
+    "unplugin-vue-components": "^31.0.0",
     "vicons": "^0.0.1",
     "vite": "^7.3.0",
     "vite-plugin-vue-devtools": "^8.0.5",
