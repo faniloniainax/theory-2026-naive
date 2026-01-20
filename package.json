@@ -22,6 +22,7 @@
     "@types/node": "^24.10.4",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.8.1",
+    "axios": "^1.13.2",
     "naive-ui": "^2.43.2",
     "npm-run-all2": "^8.0.4",
     "typescript": "~5.9.3",
