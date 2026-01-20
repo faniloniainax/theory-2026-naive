@@ -23,7 +23,6 @@ export const Auth = {
         return [data, true];
     },
     async attemptLogin(data: Login) {
-
         const res = await Http.post("/auth/login", data);
 
         if (res.status !== 200)
@@ -32,6 +31,10 @@ export const Auth = {
         const json = JSON.stringify(res.data);
 
         localStorage.setItem(this.itemName, json);
+        await Routes.replaceRoutesProperly(true);
+    },
+    async attemptLogOut() {
+        localStorage.setItem(this.itemName, "{}");
         await Routes.replaceRoutesProperly(true);
     }
 };
