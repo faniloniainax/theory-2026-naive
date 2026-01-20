@@ -19,6 +19,11 @@
                 </template>
             </NFormItemGi>
         </NGrid>
+
+        <NSpace justify="end" align="end">
+            <NButton>Réinitialiser</NButton>
+            <NButton>Envoyer</NButton>
+        </NSpace>
     </NForm>
 </template>
 
