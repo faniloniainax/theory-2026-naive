@@ -16,7 +16,7 @@
                 </template>
                 <template v-else-if="input['kind'] === 'foreign'">
                     <NSelect clearable filterable :options="foreignSources.get(input['name'])"
-                        :placeholder="input['placeholder']" />
+                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" />
                 </template>
             </NFormItemGi>
         </NGrid>
@@ -55,9 +55,25 @@ const foreignSources = ref(new Map<string, any>());
 const formRules = ref<FormRules>({});
 
 onMounted(async () => {
-    for (const p in props.data)
+    for (const p in props.data) {
         formValue.value[p] = props.data[p];
+    }
 
+    const foreignLoadPromises = props.inputs
+        .filter(i => i['kind'] === 'foreign')
+        .map(async (i) => {
+            const res = await Http.get(i['url'], { params: i['params'] });
+
+            if (res.status !== 200) {
+                let plural = i['plural'] ?? 'entités';
+                message.error(`Erreur durant le chargement des ${plural} pour le formulaire.`);
+                return;
+            }
+
+            foreignSources.value.set(i['name'], res.data.map(i['mapFn']));
+        });
+
+    await Promise.all(foreignLoadPromises);
     props.inputs.forEach(async i => {
         // We'll load default data as well
         if (props.data[i['path']]) {
@@ -145,15 +161,6 @@ onMounted(async () => {
                     break;
                 }
             case 'foreign': {
-                const res = await Http.get(i['url'], { params: i['params'] });
-
-                if (res.status !== 200) {
-                    let plural = i['plural'] ?? 'entités';
-                    message.error(`Erreur durant le chargement des ${plural} pour le formulaire.`);
-                    return;
-                }
-
-                foreignSources.value.set(i['name'], res.data.map(i['mapFn']));
                 formRules.value[i['path']] = {
                     type: 'string',
                     required: true,
