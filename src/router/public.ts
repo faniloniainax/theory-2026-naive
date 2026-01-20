@@ -1,10 +1,12 @@
 import type { RouteRecordRaw } from "vue-router";
 import { notFoundRoute } from "./misc";
+import TPublicLayout from "@/layouts/TPublicLayout.vue";
 
 export const publicRoutes: RouteRecordRaw[] = [
     {
         path: '/',
         redirect: '/login',
+        meta: { layout: TPublicLayout },
         children: [
             {
                 path: '/login',
