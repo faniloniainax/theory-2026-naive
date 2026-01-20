@@ -1,7 +1,9 @@
 <template>
-    <NLayout class="main-layout">
+    <NLayout class="main-container">
         <NLayoutContent>
-            <RouterView />
+            <NSpace class="main-space" align="center" justify="center">
+                <RouterView />
+            </NSpace>
         </NLayoutContent>
     </NLayout>
 
@@ -9,7 +11,12 @@
 </template>
 
 <style scoped>
-.main-layout {
+.main-container {
+    width: 100vw;
+    height: 100vh;
+}
+
+.main-space {
     width: 100vw;
     height: 100vh;
 }
