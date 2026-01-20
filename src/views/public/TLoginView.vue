@@ -22,6 +22,7 @@ const onFormSubmit = async (data: Login) => {
         loadingBar.start();
         await Auth.attemptLogin(data);
         loadingBar.finish();
+        message.success("Connexion réussie.");
     } catch (e) {
         loadingBar.error();
         message.error(Errors.getErrorMessage((e as any).type));
