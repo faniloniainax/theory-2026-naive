@@ -22,11 +22,13 @@
 
 <script setup lang="ts">
 import type { Login } from '@/types/auth';
-import { type FormInst, type FormRules } from 'naive-ui';
+import { useDialog, type FormInst, type FormRules } from 'naive-ui';
 
 type Emits = {
     (event: 'submit', data: Login): void;
 };
+
+const dialog = useDialog();
 
 const emits = defineEmits<Emits>();
 
@@ -52,14 +54,21 @@ const formRules: FormRules = {
         type: 'string',
         max: 30,
         min: 8,
-        message: "Le mot de passe doit être entre 8 et 30 caractères.",
+        message: "Le mot de passe doit contenir entre 8 et 30 caractères.",
         trigger: ['blur', 'input'],
     }]
 };
 
 const onResetClick = () => {
-    formValue.value['identifier'] = "";
-    formValue.value['password'] = "";
+    dialog.error({
+        content: "Voulez-vous vraiment réinitialiser le formulaire ?",
+        positiveText: "Confirmer",
+        negativeText: "Annuler",
+        onPositiveClick: () => {
+            formValue.value['identifier'] = "";
+            formValue.value['password'] = "";
+        },
+    })
 };
 
 const onSubmitClick = async () => {
