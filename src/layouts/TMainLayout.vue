@@ -43,6 +43,7 @@ import type { User } from '@/types/auth';
 import { delegateNavigation } from '@/navigation/delegate';
 import { type MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
 import { useDialog, useMessage } from 'naive-ui';
+import { mentionNavigation } from '@/navigation/mention';
 
 const route = useRoute();
 const router = useRouter();
@@ -87,7 +88,7 @@ onMounted(async () => {
     if (user['type'] === 'admin')
         options.value = [];
     else if (user['type'] === 'mention')
-        options.value = [];
+        options.value = mentionNavigation;
     else
         options.value = delegateNavigation;
 });

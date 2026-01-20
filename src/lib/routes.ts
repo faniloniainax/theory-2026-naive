@@ -3,6 +3,7 @@ import { Auth } from "./auth";
 import { publicRoutes } from "@/router/public";
 import type { User } from "@/types/auth";
 import { delegateRoutes } from "@/router/delegate";
+import { mentionRoutes } from "@/router/mention";
 
 export const router = createRouter({
     history: createWebHistory(import.meta.env['BASE_URL']),
@@ -25,8 +26,10 @@ export const Routes = {
         const userData = data as User;
 
         // TODO: Change this later...
-        if (userData['type'] == 'admin' || userData['type'] == 'mention')
+        if (userData['type'] == 'admin')
             return publicRoutes;
+        if (userData['type'] == 'mention')
+            return mentionRoutes;
 
         return delegateRoutes;
     },
