@@ -1,8 +1,14 @@
-<script setup lang="ts"></script>
-
 <template>
-  <NH1>You did it!</NH1>
-  <NButton type="error">Hello, World!</NButton>
+  <NConfigProvider :theme="theme">
+    <TPublicLayout />
+  </NConfigProvider>
 </template>
+
+<script setup lang="ts">
+import { darkTheme } from 'naive-ui';
+import TPublicLayout from './layouts/TPublicLayout.vue';
+
+const theme = ref(darkTheme);
+</script>
 
 <style scoped></style>
