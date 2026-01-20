@@ -1,7 +1,7 @@
 <template>
     <NSpace vertical justify="space-between">
         <NSpace align="center" justify="center">
-            <NImage alt="ENI Logo" src="/logo.png" width="256" height="256" />
+            <NImage alt="ENI Logo" src="/logo.png" class="logo" />
         </NSpace>
         <NDivider />
         <NH2>Connexion</NH2>
@@ -22,3 +22,10 @@ const onFormSubmit = (data: Login) => {
     emits('form:submit', data);
 };
 </script>
+
+<style scoped>
+.logo {
+    width: min(30vh, 256px);
+    height: min(30vh, 256px);
+}
+</style>
