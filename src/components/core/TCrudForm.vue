@@ -1,7 +1,8 @@
 <template>
     <NForm ref="formRef" :model="formValue" :rules="formRules">
         <NGrid :cols="columns">
-            <NFormItemGi v-for="input in inputs" :path="input['path']" :label="input['name'] + ':'">
+            <NFormItemGi v-for="input in inputs" :path="input['path']" :label="input['name'] + ':'"
+                :span="input['span']">
                 <template v-if="input['kind'] === 'date'">
                     <NDatePicker />
                 </template>
