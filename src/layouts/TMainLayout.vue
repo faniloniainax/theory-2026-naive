@@ -4,18 +4,17 @@
             <NFlex justify="space-between" class="header-space">
                 <NFlex justify="center" align="center">
                     <NImage src="/logo.png" class="logo" />
-                    <NButton type="primary" ghost @click="onBurgerClick">
-                        <NIcon>
-                            <MenuOutline />
-                        </NIcon>
-                    </NButton>
-                </NFlex>
-
-                <NDrawer v-model:show="showMenuDrawer" class="menu-drawer" placement="left" close-on-esc>
-                    <NDrawerContent title="Menu principal" closable>
+                    <NPopover trigger="click" placement="left">
+                        <template #trigger>
+                            <NButton @click="onBurgerClick">
+                                <NIcon>
+                                    <MenuOutline />
+                                </NIcon>
+                            </NButton>
+                        </template>
                         <NMenu :options="options" :value="selectedKey" @update:value="onMenuOptionClick" />
-                    </NDrawerContent>
-                </NDrawer>
+                    </NPopover>
+                </NFlex>
             </NFlex>
         </NLayoutHeader>
         <NLayoutContent>
