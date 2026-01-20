@@ -10,6 +10,12 @@
                         </NIcon>
                     </NButton>
                 </NFlex>
+
+                <NDrawer v-model:show="showMenuDrawer" class="menu-drawer" placement="left" close-on-esc>
+                    <NDrawerContent title="Menu principal" closable>
+                        <NMenu :options="options" />
+                    </NDrawerContent>
+                </NDrawer>
             </NSpace>
         </NLayoutHeader>
         <NLayoutContent>
@@ -26,29 +32,25 @@
 import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
 import type { MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
 
+const showMenuDrawer = ref(false);
+
 const options: MenuMixedOption[] = [
     {
-        key: 'burger_menu',
-        icon: () => h(MenuOutline),
-        children: [
-            {
-                key: 'home_menu',
-                label: 'Accueil',
-            },
-            {
-                key: 'logbook_menu',
-                label: 'Cahier de texte',
-            },
-            {
-                key: 'calendar_menu',
-                label: 'Calendrier',
-            },
-        ]
-    }
+        key: 'home_menu',
+        label: 'Accueil',
+    },
+    {
+        key: 'logbook_menu',
+        label: 'Cahier de texte',
+    },
+    {
+        key: 'calendar_menu',
+        label: 'Calendrier',
+    },
 ];
 
 const onBurgerClick = () => {
-
+    showMenuDrawer.value = true;
 };
 </script>
 
