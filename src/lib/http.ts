@@ -25,7 +25,12 @@ Http.interceptors.request.use(
 );
 
 Http.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        if (typeof response.data === 'string')
+            response.data = JSON.parse(response.data);
+
+        return response;
+    },
     (error) => {
         if (!error.response)
             return Promise.reject({
