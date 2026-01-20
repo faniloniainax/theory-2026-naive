@@ -1,3 +1,103 @@
 <template>
-    <NH1>Delegate Logbook!</NH1>
+    <NFlex vertical justify="space-between" align="stretch" class="logbook-root">
+        <NSpace justify="space-between">
+            <NInput
+                placeholder="Rechercher par date, enseignant, tranche horaire, élément constitutif, ou par contexte..."
+                style="width: 500px;">
+                <template #prefix>
+                    <NIcon>
+                        <SearchOutline />
+                    </NIcon>
+                </template>
+            </NInput>
+            <NButton>
+                <template #icon>
+                    <AddOutline />
+                </template>
+                Enregistrer un cours
+            </NButton>
+        </NSpace>
+
+        <NDataTable :data="data" :columns="columns" style="flex: 1; min-height: 0; overflow: auto;">
+            <template #empty>
+                <NEmpty description="Aucune donnée sur le cahier de texte." />
+            </template>
+        </NDataTable>
+    </NFlex>
 </template>
+
+
+<script setup lang="ts">
+import type { Progress } from '@/types/progress';
+import { formatDate } from 'date-fns';
+import { NButton, NSpace, type DataTableColumns } from 'naive-ui';
+
+import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
+import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
+import { Tags } from '@/lib/tags';
+
+const columns: DataTableColumns<Progress> = [
+    {
+        key: 'date',
+        title: 'Date',
+        render: p => formatDate(p['date'], 'dd MMMM yyyy')
+    },
+    {
+        key: 'teacher_id',
+        title: 'Enseignant',
+        align: 'center',
+        render: p => p['teacher'] ? p['teacher']['trilogy'] : Tags.getNoneTag(),
+    },
+    {
+        key: 'hour_part_id',
+        title: 'Tranche horaire',
+        align: 'center',
+        render: p => p['hour_part'] ? p['hour_part']['id'] : Tags.getNoneTag(true),
+    },
+    {
+        key: 'const_element_id',
+        title: 'Élément constitutif',
+        align: 'center',
+        render: p => p['const_element'] ? p['const_element']['name'] : Tags.getNoneTag(),
+    },
+    {
+        key: 'program_element_id',
+        title: 'Contexte du cours',
+        render: p => p['fallback_context'] ? p['fallback_context'] : (p['program_element'] ? p['program_element']['label'] : Tags.getNoneTag()),
+    },
+    {
+        key: 'actions',
+        title: 'Actions',
+        width: 200,
+        align: 'center',
+        render: () => h(NSpace, null, {
+            default: () => [
+                h(NButton, { type: 'info', size: 'small', ghost: true }, { default: () => 'Modifier' }),
+                h(NButton, { type: 'error', size: 'small', ghost: true }, { default: () => 'Supprimer' })
+            ]
+        })
+    }
+];
+
+const data: Progress[] = [
+    {
+        id: "FOOBAR",
+        date: new Date().toISOString(),
+        class_id: "CLASSID",
+        teacher_id: "TEACHERID",
+        hour_part_id: "HOURPARTID",
+        const_element_id: "CONSTELEMENTID",
+        program_element_id: "PROGRAMELEMENTID",
+        fallback_context: "Cours de mathématiques avancées",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    }
+]
+</script>
+
+<style scoped>
+.logbook-root {
+    flex: 1;
+    min-height: 0;
+}
+</style>
