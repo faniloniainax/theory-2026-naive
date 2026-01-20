@@ -4,5 +4,9 @@ export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/allocated-hours',
         label: 'Volumes horaires',
+    },
+    {
+        key: '/rooms',
+        label: 'Salles',
     }
 ];

@@ -12,6 +12,11 @@ export const mentionRoutes: RouteRecordRaw[] = [
                 path: '/allocated-hours',
                 meta: { layout: TMainLayout },
                 component: () => import('@/views/mention/TAllocatedHoursView.vue'),
+            },
+            {
+                path: '/rooms',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TRoomsView.vue'),
             }
         ]
     },
