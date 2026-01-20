@@ -30,30 +30,19 @@
 
 <script setup lang="ts">
 import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
-import type { MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
 import { useRoute, useRouter } from 'vue-router';
+import { Auth } from '@/lib/auth';
+import type { User } from '@/types/auth';
+import { delegateNavigation } from '@/navigation/delegate';
+import { type MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
 
 const route = useRoute();
 const router = useRouter();
 
+const options = ref<MenuMixedOption[]>([]);
 const selectedKey = computed(() => route.path)
 
 const showMenuDrawer = ref(false);
-
-const options: MenuMixedOption[] = [
-    {
-        key: '/home',
-        label: 'Accueil',
-    },
-    {
-        key: '/logbook',
-        label: 'Cahier de texte',
-    },
-    {
-        key: '/calendar',
-        label: 'Calendrier',
-    },
-];
 
 const onBurgerClick = () => {
     showMenuDrawer.value = true;
@@ -63,6 +52,23 @@ const onMenuOptionClick = (key: string) => {
     showMenuDrawer.value = false;
     router.push(key);
 };
+
+onMounted(async () => {
+    const [data, isValid] = await Auth.isValid();
+
+    if (!isValid)
+        options.value = [];
+
+    const user = data as User;
+
+    // TODO: Fix these
+    if (user['type'] === 'admin')
+        options.value = [];
+    else if (user['type'] === 'mention')
+        options.value = [];
+    else
+        options.value = delegateNavigation;
+});
 </script>
 
 <style scoped>
