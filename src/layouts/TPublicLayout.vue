@@ -1,14 +1,16 @@
 <template>
-    <NLayout style="main-layout">
+    <NLayout class="main-layout">
         <NLayoutContent>
             <RouterView />
         </NLayoutContent>
     </NLayout>
+
+    <TFloatingCopyright />
 </template>
 
 <style scoped>
 .main-layout {
-    width: 100vh;
-    height: 100vw;
+    width: 100vw;
+    height: 100vh;
 }
 </style>
