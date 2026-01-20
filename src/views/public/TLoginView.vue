@@ -1,5 +1,5 @@
 <template>
-    <NFlex justify="center" align="center" class="main-container">
+    <NFlex justify="center" align="center">
         <NCard bordered embedded segmented class="login-card">
             <TLoginCardBody @form:submit="onFormSubmit" />
         </NCard>
@@ -8,6 +8,7 @@
 
 
 <script setup lang="ts">
+import { Auth } from '@/lib/auth';
 import { ErrorKind, Errors } from '@/lib/errors';
 import { Http } from '@/lib/http';
 import type { Login } from '@/types/auth';
@@ -17,10 +18,7 @@ const message = useMessage();
 
 const onFormSubmit = async (data: Login) => {
     try {
-        const res = await Http.post("/auth/login", data);
-
-        if (res.status !== 200)
-            throw { type: ErrorKind.SERVER_ERROR };
+        await Auth.attemptLogin(data);
     } catch (e) {
         message.error(Errors.getErrorMessage((e as any).type));
     }
@@ -28,10 +26,6 @@ const onFormSubmit = async (data: Login) => {
 </script>
 
 <style scoped>
-.main-container {
-    padding-top: 20px;
-}
-
 .login-card {
     width: min(1024px, 82vw);
     max-width: min(92vw, 85vw);
