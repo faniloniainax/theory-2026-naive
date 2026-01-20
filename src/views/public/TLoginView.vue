@@ -12,14 +12,18 @@ import { Auth } from '@/lib/auth';
 import { ErrorKind, Errors } from '@/lib/errors';
 import { Http } from '@/lib/http';
 import type { Login } from '@/types/auth';
-import { useMessage } from 'naive-ui';
+import { useLoadingBar, useMessage } from 'naive-ui';
 
 const message = useMessage();
+const loadingBar = useLoadingBar();
 
 const onFormSubmit = async (data: Login) => {
     try {
+        loadingBar.start();
         await Auth.attemptLogin(data);
+        loadingBar.finish();
     } catch (e) {
+        loadingBar.error();
         message.error(Errors.getErrorMessage((e as any).type));
     }
 };
