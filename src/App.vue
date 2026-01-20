@@ -2,7 +2,9 @@
   <NConfigProvider :theme="theme">
     <NDialogProvider>
       <NMessageProvider>
-        <TPublicLayout />
+        <NLoadingBarProvider>
+          <TPublicLayout />
+        </NLoadingBarProvider>
       </NMessageProvider>
     </NDialogProvider>
   </NConfigProvider>
