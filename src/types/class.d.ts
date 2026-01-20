@@ -6,8 +6,8 @@ export type Class = {
     branch_id: string;
     stage_id: string;
     group: number;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     branch?: Branch;
     stage?: Stage;
 };

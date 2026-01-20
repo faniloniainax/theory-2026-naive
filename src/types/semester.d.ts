@@ -10,7 +10,7 @@ export type Semester = {
     retrials_beg: string;
     retrials_end: string;
     stage_id: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     stage?: Stage;
 };

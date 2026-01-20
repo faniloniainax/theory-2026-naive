@@ -11,8 +11,8 @@ export type ConstElement = {
     teacher_id: string;
     teaching_unit_id: string;
     semester_id: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     teacher?: Teacher;
     teaching_unit?: TeachingUnit;
     semester?: Semester;

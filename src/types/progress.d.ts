@@ -12,8 +12,8 @@ export type Progress = {
     const_element_id: string;
     program_element_id: string;
     fallback_context: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     teacher?: Teacher;
     hour_part?: HourPart;
     const_element?: ConstElement;

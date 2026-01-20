@@ -7,8 +7,8 @@ export type TeachingUnit = {
     name: string;
     stage_id: string;
     branch_id: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     stage?: Stage;
     branch?: Branch;
 };

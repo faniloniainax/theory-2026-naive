@@ -10,8 +10,8 @@ export type Teacher = {
     is_permanent: boolean;
     rank_id: string;
     title_id: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     rank?: Rank;
     title?: Title;
 };
