@@ -1,5 +1,5 @@
 <template>
-    <NLayout>
+    <NLayout class="main-container">
         <NLayoutHeader bordered>
             <NFlex justify="space-between" class="header-space">
                 <NFlex justify="center" align="center">
@@ -75,6 +75,8 @@ onMounted(async () => {
 .main-container {
     width: 100vw;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header-space {
@@ -82,7 +84,7 @@ onMounted(async () => {
 }
 
 .main-space {
-    height: 100vh;
+    flex: 1;
     padding: 20px;
 }
 
