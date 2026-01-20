@@ -12,7 +12,7 @@
                 </template>
                 <template v-else-if="input['kind'] === 'string'">
                     <NInput clearable :type="input['textArea'] ? 'textarea' : 'text'" :maxlength="input['max']"
-                        v-model:value="formValue[input['path']]" />
+                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" />
                 </template>
                 <template v-else-if="input['kind'] === 'foreign'">
                     <NSelect clearable filterable :options="foreignSources.get(input['name'])"
@@ -22,8 +22,8 @@
         </NGrid>
 
         <NSpace justify="end" align="end">
-            <NButton>Réinitialiser</NButton>
-            <NButton>Envoyer</NButton>
+            <NButton type="error" ghost @click="onCancelClick">Annuler</NButton>
+            <NButton type="success" ghost @click="onSubmitClick">Envoyer</NButton>
         </NSpace>
     </NForm>
 </template>
@@ -39,7 +39,13 @@ type Props = {
     data: any;
 };
 
+type Emits = {
+    (event: 'cancel'): void;
+    (event: 'submit', data: any): void;
+};
+
 const props = defineProps<Props>();
+const emits = defineEmits<Emits>();
 const message = useMessage();
 
 const formRef = ref<FormInst | null>(null);
@@ -49,6 +55,9 @@ const foreignSources = ref(new Map<string, any>());
 const formRules = ref<FormRules>({});
 
 onMounted(async () => {
+    for (const p in props.data)
+        formValue.value[p] = props.data[p];
+
     props.inputs.forEach(async i => {
         // We'll load default data as well
         if (props.data[i['path']]) {
@@ -156,4 +165,17 @@ onMounted(async () => {
         }
     })
 });
+
+const onCancelClick = () => {
+    emits('cancel');
+};
+
+const onSubmitClick = async () => {
+    try {
+        await formRef.value?.validate();
+        emits('submit', formValue.value);
+    } catch (e) {
+        message.error("Le formulaire n'est pas valide.");
+    }
+};
 </script>

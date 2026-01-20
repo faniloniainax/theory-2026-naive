@@ -1,16 +1,36 @@
 <template>
     <!-- TODO: Add search features, if at all. -->
+    <NSpace justify="space-between" style="width: 100%;">
+        <NInput :placeholder="searchPlaceholder">
+            <template #prefix>
+                <NIcon>
+                    <SearchOutline />
+                </NIcon>
+            </template>
+        </NInput>
+        <NButton type="success" ghost @click="onAddClick">
+            <template #icon>
+                <AddOutline />
+            </template>
 
-    <TCrudTable :columns="columns" :plural="plural" :singular="singular" :is-masculine="isMasculine" :data="data" />
-    <NModal preset="card" closable :title="title" embedded close-on-esc>
-        <TCrudForm :columns="formGridColumns" :inputs="formInputs" :data="e" />
+            Ajouter {{ isMasculine ? 'un' : 'une' }} {{ singular }}
+        </NButton>
+    </NSpace>
+
+    <TCrudTable :columns="columns" :plural="plural" :singular="singular" :is-masculine="isMasculine" :data="data"
+        @edit="onEditClick" @delete="onDeleteClick" />
+    <NModal preset="card" closable :title="title" embedded close-on-esc v-model:show="showFormModal">
+        <TCrudForm :columns="formGridColumns" :inputs="formInputs" :data="e" @cancel="onFormCancel"
+            @submit="onFormSubmit" />
     </NModal>
 </template>
 
 <script setup lang="ts">
 import { Http } from '@/lib/http';
 import type { CrudAction, CrudInput } from '@/types/crud';
-import { useMessage, type DataTableColumns } from 'naive-ui';
+import { useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
+import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
+import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 
 type Props = {
     url: string;
@@ -37,22 +57,102 @@ const props = withDefaults(defineProps<Props>(), {
     formGridColumns: 1,
 });
 
+const dialog = useDialog();
 const message = useMessage();
+const loadingBar = useLoadingBar();
 
 const e = ref<any>({});
 const data = ref<any[]>([]);
 const showFormModal = ref(false);
+const isEditMode = ref(false);
 const title = ref("");
 
-onMounted(async () => {
+const fetchData = async () => {
+    loadingBar.start();
     const res = await Http.get(props.url, { params: props.params });
 
     if (res.status !== 200) {
         message.error(`Erreur durant le chargement des ${props.plural}.`);
         data.value = [];
+        loadingBar.error();
         return;
     }
 
     data.value = res.data;
+    loadingBar.finish();
+};
+
+const onAddClick = () => {
+    e.value = {};
+    title.value = "Ajouter " + (props.isMasculine ? 'un ' : 'une ') + props.singular;
+    isEditMode.value = false;
+    showFormModal.value = true;
+};
+
+const onEditClick = (otherE: any) => {
+    e.value = otherE;
+    title.value = "Modifier " + (props.isMasculine ? 'un ' : 'une ') + props.singular;
+    isEditMode.value = true;
+    showFormModal.value = true;
+};
+
+const onDeleteClick = async (e: any) => {
+    dialog.error({
+        content: `Voulez-vous vraiment supprimer ${(props.isMasculine ? 'ce' : 'cette')} ${props.singular} ?`,
+        positiveText: 'Confirmer',
+        negativeText: 'Annuler',
+        onPositiveClick: async () => {
+            const res = await Http.delete(`${props.url}/${e['id']}`);
+
+            if (res.status !== 200) {
+                message.error(`Erreur durant la suppression d'${(props.isMasculine) ? 'un' : 'une'} ${props.singular}.`);
+                return;
+            }
+
+            message.success(`Suppression effectuée avec succès.`);
+            await fetchData();
+        }
+    });
+};
+
+const onFormCancel = () => {
+    e.value = {};
+    showFormModal.value = false;
+};
+
+const onFormSubmit = async (e: any) => {
+    loadingBar.start();
+
+    if (!isEditMode.value) {
+        const res = await Http.post(props.url, e);
+
+        if (res.status !== 201) {
+            message.error(`Erreur durant l'ajout d'${(props.isMasculine) ? 'un' : 'une'} ${props.singular}.`);
+            showFormModal.value = false;
+            loadingBar.error();
+            return;
+        }
+
+        message.success("Ajout effectué avec succès.");
+    } else {
+        const res = await Http.put(`${props.url}/${e['id']}`, e);
+
+        if (res.status !== 200) {
+            message.error(`Erreur durant la modification d'${(props.isMasculine) ? 'un' : 'une'} ${props.singular}.`);
+            showFormModal.value = false;
+            loadingBar.error();
+            return;
+        }
+
+        message.success("Modification effectuée avec succès.");
+    }
+
+    showFormModal.value = false;
+    loadingBar.finish();
+    await fetchData();
+};
+
+onMounted(async () => {
+    await fetchData();
 });
 </script>

@@ -18,18 +18,26 @@ type Props = {
     data: any[];
 };
 
+type Emits = {
+    (event: 'edit', e: any): void;
+    (event: 'delete', e: any): void;
+};
+
 const props = defineProps<Props>();
+const emits = defineEmits<Emits>();
 
 const actualColumns: DataTableColumns<any> = [
     ...props.columns,
     {
         key: '__actions',
         title: 'Actions',
-        render: () => {
+        width: 400,
+        align: 'center',
+        render: (e: any) => {
             return h(NSpace, null, {
                 default: () => [
-                    h(NButton, { type: 'info', ghost: true }, { default: () => 'Modifier' }),
-                    h(NButton, { type: 'error', ghost: true }, { default: () => 'Supprimer' }),
+                    h(NButton, { type: 'info', ghost: true, onClick: () => emits('edit', e) }, { default: () => 'Modifier' }),
+                    h(NButton, { type: 'error', ghost: true, onClick: () => emits('delete', e) }, { default: () => 'Supprimer' }),
                 ]
             });
         },
