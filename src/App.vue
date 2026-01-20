@@ -3,7 +3,7 @@
     <NDialogProvider>
       <NMessageProvider>
         <NLoadingBarProvider>
-          <TPublicLayout />
+          <component :is="appropriateLayout" />
         </NLoadingBarProvider>
       </NMessageProvider>
     </NDialogProvider>
@@ -13,8 +13,19 @@
 <script setup lang="ts">
 import { darkTheme } from 'naive-ui';
 import TPublicLayout from './layouts/TPublicLayout.vue';
+import { useRoute } from 'vue-router';
 
 const theme = ref(darkTheme);
+const route = useRoute();
+
+const appropriateLayout = computed(() => {
+  if (route.meta?.layout) {
+    console.log("ROUTE META IS DEFINED");
+    return route.meta?.layout;
+  }
+
+  return TPublicLayout;
+});
 </script>
 
 <style scoped></style>
