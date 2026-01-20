@@ -17,6 +17,11 @@ export const mentionRoutes: RouteRecordRaw[] = [
                 path: '/rooms',
                 meta: { layout: TMainLayout },
                 component: () => import('@/views/mention/TRoomsView.vue'),
+            },
+            {
+                path: '/classes',
+                meta: { layout: TMainLayout },
+                component: () => import("@/views/mention/TClassesView.vue"),
             }
         ]
     },

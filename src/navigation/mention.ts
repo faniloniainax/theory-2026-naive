@@ -8,5 +8,9 @@ export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/rooms',
         label: 'Salles',
+    },
+    {
+        key: '/classes',
+        label: 'Classes',
     }
 ];
