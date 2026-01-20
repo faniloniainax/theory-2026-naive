@@ -13,7 +13,7 @@
 
                 <NDrawer v-model:show="showMenuDrawer" class="menu-drawer" placement="left" close-on-esc>
                     <NDrawerContent title="Menu principal" closable>
-                        <NMenu :options="options" />
+                        <NMenu :options="options" :value="selectedKey" @update:value="onMenuOptionClick" />
                     </NDrawerContent>
                 </NDrawer>
             </NSpace>
@@ -31,26 +31,37 @@
 <script setup lang="ts">
 import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
 import type { MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedKey = computed(() => route.path)
 
 const showMenuDrawer = ref(false);
 
 const options: MenuMixedOption[] = [
     {
-        key: 'home_menu',
+        key: '/home',
         label: 'Accueil',
     },
     {
-        key: 'logbook_menu',
+        key: '/logbook',
         label: 'Cahier de texte',
     },
     {
-        key: 'calendar_menu',
+        key: '/calendar',
         label: 'Calendrier',
     },
 ];
 
 const onBurgerClick = () => {
     showMenuDrawer.value = true;
+};
+
+const onMenuOptionClick = (key: string) => {
+    showMenuDrawer.value = false;
+    router.push(key);
 };
 </script>
 
