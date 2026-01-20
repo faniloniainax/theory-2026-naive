@@ -1,7 +1,7 @@
 <template>
     <NLayout>
         <NLayoutHeader bordered>
-            <NSpace justify="space-between" class="header-space">
+            <NFlex justify="space-between" class="header-space">
                 <NFlex justify="center" align="center">
                     <NImage src="/logo.png" class="logo" />
                     <NButton type="primary" ghost @click="onBurgerClick">
@@ -16,12 +16,12 @@
                         <NMenu :options="options" :value="selectedKey" @update:value="onMenuOptionClick" />
                     </NDrawerContent>
                 </NDrawer>
-            </NSpace>
+            </NFlex>
         </NLayoutHeader>
         <NLayoutContent>
-            <NSpace class="main-space" align="center" justify="center">
+            <NFlex class="main-space" justify="center" align="stretch">
                 <RouterView />
-            </NSpace>
+            </NFlex>
         </NLayoutContent>
     </NLayout>
 
@@ -82,8 +82,8 @@ onMounted(async () => {
 }
 
 .main-space {
-    width: 100vw;
     height: 100vh;
+    padding: 20px;
 }
 
 .logo {
