@@ -1,6 +1,10 @@
 <template>
   <NConfigProvider :theme="theme">
-    <TPublicLayout />
+    <NDialogProvider>
+      <NMessageProvider>
+        <TPublicLayout />
+      </NMessageProvider>
+    </NDialogProvider>
   </NConfigProvider>
 </template>
 
