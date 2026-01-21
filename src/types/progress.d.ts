@@ -1,3 +1,4 @@
+import type { Class } from "./class";
 import type { ConstElement } from "./const_element";
 import type { HourPart } from "./hour_part";
 import type { ProgramElement } from "./program_element";
@@ -14,6 +15,7 @@ export type Progress = {
     fallback_context: string;
     created_at?: string;
     updated_at?: string;
+    class?: Class;
     teacher?: Teacher;
     hour_part?: HourPart;
     const_element?: ConstElement;
