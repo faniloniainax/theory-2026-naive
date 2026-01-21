@@ -16,7 +16,12 @@
                 </template>
                 <template v-else-if="input['kind'] === 'foreign'">
                     <NSelect clearable filterable :options="foreignSources.get(input['name'])"
-                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" />
+                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]">
+                        <!-- TODO: Write a better error message here -->
+                        <template #empty>
+                            <NEmpty :description="`Aucune donnée.`" />
+                        </template>
+                    </NSelect>
                 </template>
             </NFormItemGi>
         </NGrid>
