@@ -4,7 +4,8 @@
             <NFormItemGi v-for="input in inputs" :path="input['path']" :label="input['name'] + ':'"
                 :span="input['span']">
                 <template v-if="input['kind'] === 'date'">
-                    <NDatePicker />
+                    <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue[input['path']]"
+                        :placeholder="input['placeholder']" />
                 </template>
                 <template v-else-if="input['kind'] === 'number'">
                     <NInputNumber clearable :placeholder="input['placeholder']" :max="input['max']" :min="input['min']"
@@ -34,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { Dates } from '@/lib/dates';
 import { Http } from '@/lib/http';
 import type { CrudInput } from '@/types/crud';
 import { useMessage, type FormInst, type FormItemRule, type FormRules } from 'naive-ui';
@@ -59,6 +61,50 @@ const foreignSources = ref(new Map<string, any>());
 
 const formRules = ref<FormRules>({});
 
+const loadDefaultDataForInput = (input: CrudInput) => {
+    if (props.data[input['path']]) {
+        if (input['kind'] === 'date') {
+            formValue.value[input['path']] = Dates.getTimeStamp(props.data[input['path']]);
+        } else {
+            formValue.value[input['path']] = props.data[input['path']];
+        }
+    } else {
+        if (input['kind'] === 'date')
+            formValue.value[input['path']] = Dates.getTimeStamp(new Date().toISOString());
+        else if (input['kind'] === 'string')
+            formValue.value[input['path']] = "";
+        else if (input['kind'] === 'number')
+            formValue.value[input['path']] = 0;
+        else if (input['kind'] === 'foreign')
+            formValue.value[input['path']] = null;
+    }
+};
+
+const onCancelClick = () => {
+    emits('cancel');
+};
+
+const onSubmitClick = async () => {
+    try {
+        await formRef.value?.validate();
+        const payload = { ...formValue.value };
+
+        props.inputs.forEach(i => {
+            if (i['kind'] === 'date' && payload[i['path']]) {
+                payload[i['path']] = Dates.toUTCMidnight(payload[i['path']]);
+            }
+        })
+
+        emits('submit', payload);
+    } catch (e) {
+        message.error("Le formulaire n'est pas valide.");
+    }
+};
+
+watch(() => props.data, (newData) => {
+    props.inputs.forEach(loadDefaultDataForInput);
+});
+
 onMounted(async () => {
     for (const p in props.data) {
         formValue.value[p] = props.data[p];
@@ -80,20 +126,7 @@ onMounted(async () => {
 
     await Promise.all(foreignLoadPromises);
     props.inputs.forEach(async i => {
-        // We'll load default data as well
-        if (props.data[i['path']]) {
-            formValue.value[i['path']] = props.data[i['path']]
-        }
-        else {
-            if (i['kind'] === 'date')
-                formValue.value[i['path']] = new Date().toISOString()
-            else if (i['kind'] === 'string')
-                formValue.value[i['path']] = "";
-            else if (i['kind'] === 'number')
-                formValue.value[i['path']] = 0;
-            else if (i['kind'] === 'foreign')
-                formValue.value[i['path']] = null;
-        }
+        loadDefaultDataForInput(i);
 
         // Dates don't have to be validated
         // using the formRules API of NaiveUI
@@ -177,17 +210,4 @@ onMounted(async () => {
         }
     })
 });
-
-const onCancelClick = () => {
-    emits('cancel');
-};
-
-const onSubmitClick = async () => {
-    try {
-        await formRef.value?.validate();
-        emits('submit', formValue.value);
-    } catch (e) {
-        message.error("Le formulaire n'est pas valide.");
-    }
-};
 </script>
