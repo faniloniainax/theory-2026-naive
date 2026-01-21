@@ -2,15 +2,34 @@ import type { MenuMixedOption } from "naive-ui/es/menu/src/interface";
 
 export const mentionNavigation: MenuMixedOption[] = [
     {
-        key: '/allocated-hours',
-        label: 'Volumes horaires',
+        key: '/complete-logbook',
+        label: 'Cahier de texte',
     },
     {
-        key: '/rooms',
-        label: 'Salles',
+        label: 'Programme',
+        children: [
+            {
+                key: '/allocated-hours',
+                label: 'Volumes horaires',
+            },
+
+            {
+                key: '/const-elements',
+                label: 'Element constitutifs'
+            },
+        ]
     },
     {
-        key: '/classes',
-        label: 'Classes',
+        label: 'Répartition',
+        children: [
+            {
+                key: '/rooms',
+                label: 'Salles',
+            },
+            {
+                key: '/classes',
+                label: 'Classes',
+            },
+        ]
     }
 ];

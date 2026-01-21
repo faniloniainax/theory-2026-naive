@@ -5,7 +5,7 @@ import TMainLayout from "@/layouts/TMainLayout.vue";
 export const mentionRoutes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/allocated-hours',
+        redirect: '/complete-logbook',
         meta: { layout: TMainLayout },
         children: [
             {
@@ -22,6 +22,16 @@ export const mentionRoutes: RouteRecordRaw[] = [
                 path: '/classes',
                 meta: { layout: TMainLayout },
                 component: () => import("@/views/mention/TClassesView.vue"),
+            },
+            {
+                path: '/const-elements',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TConstElementsView.vue'),
+            },
+            {
+                path: '/complete-logbook',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TCompleteLogbookView.vue'),
             }
         ]
     },
