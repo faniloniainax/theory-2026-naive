@@ -15,6 +15,7 @@ export type CrudCoreInput = {
 
 export type CrudDateInput = CrudCoreInput & {
     kind: 'date';
+    placeholder?: string;
 };
 
 export type CrudNumberInput = CrudCoreInput & {
@@ -45,3 +46,10 @@ export type CrudForeignInput = CrudCoreInput & {
 };
 
 export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | CrudForeignInput;
+
+export type CrudFilter = {
+    url: string;
+    key: string;
+    placeholder?: string;
+    dependentOn?: string;
+};
