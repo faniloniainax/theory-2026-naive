@@ -1,5 +1,5 @@
 <template>
-    <TCrud :url="url" :singular="singular" :plural="plural" :is-masculine="isMasculine"
+    <TCrud :url="url" :params="params" :singular="singular" :plural="plural" :is-masculine="isMasculine"
         :search-placeholder="searchPlaceholder" :form-grid-columns="formGridColumns" :columns="columns"
         :other-actions="otherActions" :form-inputs="formInputs" />
 </template>
@@ -14,6 +14,7 @@ import type { DataTableColumns } from 'naive-ui';
 
 
 const url = "/classes";
+const params = { include: "Branch, Stage" }
 const singular = "classe";
 const plural = "classes";
 const isMasculine = false;
