@@ -27,6 +27,19 @@
                 <template v-else-if="input['kind'] === 'boolean'">
                     <NSwitch v-model:value="formValue[input['path']]" />
                 </template>
+                <template v-else-if="input['kind'] === 'hour'">
+                    <div style="display: flex; align-items: center;">
+                        <NInputNumber :min="0" :max="23" :default-value="0" :show-button="false"
+                            :value="getHour(formValue[input['path']])"
+                            @update:value="(v) => updateTimePart(input, 'hour', v || 0)" style="width: 70px"
+                            placeholder="HH" />
+                        <span style="margin: 0 5px; font-weight: bold;">:</span>
+                        <NInputNumber :min="0" :max="59" :default-value="0" :show-button="false"
+                            :value="getMinute(formValue[input['path']])"
+                            @update:value="(v) => updateTimePart(input, 'minute', v || 0)" style="width: 70px"
+                            placeholder="MM" />
+                    </div>
+                </template>
             </NFormItemGi>
         </NGrid>
 
@@ -64,6 +77,41 @@ const foreignSources = ref(new Map<string, any>());
 
 const formRules = ref<FormRules>({});
 
+const getHour = (time: string | null): number | null => {
+    if (!time) return 0;
+    const parts = time.split(':').map(Number);
+    const h = parts[0];
+    return (h !== undefined && !isNaN(h)) ? h : 0;
+};
+
+const getMinute = (time: string | null): number | null => {
+    if (!time) return 0;
+    const parts = time.split(':').map(Number);
+    const m = parts[1];
+    return (m !== undefined && !isNaN(m)) ? m : 0;
+};
+
+const updateTimePart = (input: CrudInput, part: 'hour' | 'minute', value: number | null) => {
+    const currentValue = formValue.value[input['path']] || "00:00";
+    let [h, m] = currentValue.split(':').map(Number);
+
+    // Handle potential NaN if parsing fails
+    if (isNaN(h)) h = 0;
+    if (isNaN(m)) m = 0;
+
+    const val = value === null ? 0 : value;
+
+    if (part === 'hour') {
+        h = val;
+    } else {
+        m = val;
+    }
+
+    const formattedH = h.toString().padStart(2, '0');
+    const formattedM = m.toString().padStart(2, '0');
+    formValue.value[input['path']] = `${formattedH}:${formattedM}`;
+};
+
 const loadDefaultDataForInput = (input: CrudInput) => {
     if (props.data[input['path']]) {
         if (input['kind'] === 'date') {
@@ -82,6 +130,8 @@ const loadDefaultDataForInput = (input: CrudInput) => {
             formValue.value[input['path']] = null;
         else if (input['kind'] === 'boolean')
             formValue.value[input['path']] = false;
+        else if (input['kind'] === 'hour')
+            formValue.value[input['path']] = "00:00";
     }
 };
 

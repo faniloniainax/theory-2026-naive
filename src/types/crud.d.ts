@@ -50,7 +50,13 @@ export type CrudBooleanInput = CrudCoreInput & {
     required: boolean;
 };
 
-export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | CrudForeignInput | CrudBooleanInput;
+export type CrudHourInput = CrudCoreInput & {
+    kind: 'hour';
+    required: boolean;
+    placeholder?: string;
+};
+
+export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | CrudForeignInput | CrudBooleanInput | CrudHourInput;
 
 export type CrudFilter = {
     url: string;
