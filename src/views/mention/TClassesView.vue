@@ -1,14 +1,15 @@
 <template>
     <TCrud :url="url" :params="params" :singular="singular" :plural="plural" :is-masculine="isMasculine"
         :search-placeholder="searchPlaceholder" :form-grid-columns="formGridColumns" :columns="columns"
-        :other-actions="otherActions" :form-inputs="formInputs" />
+        :other-actions="otherActions" :form-inputs="formInputs" :filters="filters" />
 </template>
 
 <script setup lang="ts">
 import { Tags } from '@/lib/tags';
 import type { Branch } from '@/types/branch';
 import type { Class } from '@/types/class';
-import type { CrudAction, CrudInput } from '@/types/crud';
+import type { CrudAction, CrudFilter, CrudInput } from '@/types/crud';
+import type { Field } from '@/types/field';
 import type { Stage } from '@/types/stage';
 import type { DataTableColumns } from 'naive-ui';
 
@@ -18,8 +19,39 @@ const params = { include: "Branch, Stage" }
 const singular = "classe";
 const plural = "classes";
 const isMasculine = false;
-const searchPlaceholder = "Rechercher par groupe...";
+const searchPlaceholder = "Rechercher...";
 const formGridColumns = 1;
+
+const filters: CrudFilter[] = [
+    {
+        path: 'field_id',
+        placeholder: 'Mention',
+        url: '/fields',
+        mapFn: (f: Field) => ({
+            label: f['name'],
+            value: f['id'],
+        }),
+    },
+    {
+        path: 'branch_id',
+        placeholder: 'Parcours',
+        url: '/branches',
+        dependentOn: 'field_id',
+        mapFn: (b: Branch) => ({
+            label: b['abbreviation'],
+            value: b['id'],
+        }),
+    },
+    {
+        path: 'stage_id',
+        placeholder: 'Niveau',
+        url: '/stages',
+        mapFn: (s: Stage) => ({
+            label: s['name'],
+            value: s['id'],
+        }),
+    }
+];
 
 const columns: DataTableColumns<Class> = [
     {
