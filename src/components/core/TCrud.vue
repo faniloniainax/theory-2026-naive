@@ -1,7 +1,7 @@
 <template>
     <!-- TODO: Add search features, if at all. -->
     <NSpace justify="space-between" style="width: 100%;">
-        <NInput :placeholder="searchPlaceholder" v-model:value="searchQuery">
+        <NInput :placeholder="searchPlaceholder" v-model:value="searchQuery" clearable>
             <template #prefix>
                 <NIcon>
                     <SearchOutline />
