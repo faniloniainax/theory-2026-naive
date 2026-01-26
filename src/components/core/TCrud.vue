@@ -22,7 +22,11 @@
             <NGrid cols="4" x-gap="12">
                 <NGridItem v-for="filter in filters" :key="filter.path">
                     <NSelect v-model:value="filterValues[filter.path]" filterable clearable
-                        :options="filterOptions[filter.path]" :placeholder="filter.placeholder" />
+                        :options="filterOptions[filter.path]" :placeholder="filter.placeholder">
+                        <template #empty>
+                            <NEmpty description="Aucune donnée." />
+                        </template>
+                    </NSelect>
                 </NGridItem>
             </NGrid>
         </NCollapseItem>
