@@ -45,7 +45,12 @@ export type CrudForeignInput = CrudCoreInput & {
     required: boolean;
 };
 
-export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | CrudForeignInput;
+export type CrudBooleanInput = CrudCoreInput & {
+    kind: 'boolean';
+    required: boolean;
+};
+
+export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | CrudForeignInput | CrudBooleanInput;
 
 export type CrudFilter = {
     url: string;

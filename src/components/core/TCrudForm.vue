@@ -24,6 +24,9 @@
                         </template>
                     </NSelect>
                 </template>
+                <template v-else-if="input['kind'] === 'boolean'">
+                    <NSwitch v-model:value="formValue[input['path']]" />
+                </template>
             </NFormItemGi>
         </NGrid>
 
@@ -77,6 +80,8 @@ const loadDefaultDataForInput = (input: CrudInput) => {
             formValue.value[input['path']] = 0;
         else if (input['kind'] === 'foreign')
             formValue.value[input['path']] = null;
+        else if (input['kind'] === 'boolean')
+            formValue.value[input['path']] = false;
     }
 };
 
