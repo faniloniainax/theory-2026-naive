@@ -16,7 +16,7 @@
                         :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" />
                 </template>
                 <template v-else-if="input['kind'] === 'foreign'">
-                    <NSelect clearable filterable :options="foreignSources.get(input['name'])"
+                    <NSelect placement="top" clearable filterable :options="foreignSources.get(input['name'])"
                         :placeholder="input['placeholder']" v-model:value="formValue[input['path']]">
                         <!-- TODO: Write a better error message here -->
                         <template #empty>
