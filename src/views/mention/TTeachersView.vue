@@ -1,7 +1,7 @@
 <template>
     <TCrud :url="url" :params="params" :singular="singular" :plural="plural" :is-masculine="isMasculine"
         :search-placeholder="searchPlaceholder" :form-grid-columns="formGridColumns" :columns="columns"
-        :other-actions="otherActions" :form-inputs="formInputs" />
+        :other-actions="otherActions" :form-inputs="formInputs" :filters="filters" />
 </template>
 
 <script setup lang="ts">
@@ -21,6 +21,27 @@ const plural = "enseignants";
 const isMasculine = true;
 const searchPlaceholder = "Rechercher par nom...";
 const formGridColumns = 1;
+
+const filters = [
+    {
+        path: 'title_id',
+        placeholder: 'Titre',
+        url: '/titles',
+        mapFn: (title: Title) => ({
+            label: title['name'],
+            value: title['id'],
+        }),
+    },
+    {
+        path: 'rank_id',
+        placeholder: 'Grade',
+        url: '/ranks',
+        mapFn: (rank: Rank) => ({
+            label: rank['name'],
+            value: rank['id'],
+        }),
+    },
+];
 
 const columns: DataTableColumns<Teacher> = [
     {
