@@ -23,6 +23,10 @@ export const mentionNavigation: MenuMixedOption[] = [
         label: 'Répartition',
         children: [
             {
+                key: '/teachers',
+                label: 'Enseignants',
+            },
+            {
                 key: '/rooms',
                 label: 'Salles',
             },
