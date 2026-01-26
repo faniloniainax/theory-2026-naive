@@ -61,6 +61,7 @@ export type CrudInput = CrudDateInput | CrudNumberInput | CrudStringInput | Crud
 export type CrudFilter = {
     url: string;
     path: string;
+    params?: any;
     placeholder?: string;
     dependentOn?: string | string[];
     mapFn: (x: any) => SelectMixedOption;

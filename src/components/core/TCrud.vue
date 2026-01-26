@@ -180,7 +180,8 @@ onMounted(async () => {
         // Skip dependent filters initially
         if (f.dependentOn && f.dependentOn.length > 0) return;
 
-        const res = await Http.get(f.url);
+        const p = { ...f.params };
+        const res = await Http.get(f.url, { params: p });
         if (res.status === 200) {
             filterOptions.value[f.path] = res.data.map(f.mapFn);
         }
@@ -225,7 +226,7 @@ watch(() => ({ ...filterValues.value }), (newValues, oldValues) => {
             }
 
             // Fetch new options with current filters as params
-            const p = { ...filterValues.value };
+            const p = { ...filterValues.value, ...f.params };
             const res = await Http.get(f.url, { params: p });
             if (res.status === 200) {
                 filterOptions.value[f.path] = res.data.map(f.mapFn);
