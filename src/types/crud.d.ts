@@ -62,5 +62,6 @@ export type CrudFilter = {
     url: string;
     path: string;
     placeholder?: string;
+    dependentOn?: string | string[];
     mapFn: (x: any) => SelectMixedOption;
 };

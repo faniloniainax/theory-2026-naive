@@ -173,6 +173,9 @@ onMounted(async () => {
     await fetchData();
 
     props.filters.forEach(async (f) => {
+        // Skip dependent filters initially
+        if (f.dependentOn && f.dependentOn.length > 0) return;
+
         const res = await Http.get(f.url);
         if (res.status === 200) {
             filterOptions.value[f.path] = res.data.map(f.mapFn);
@@ -194,7 +197,38 @@ watch(searchQuery, () => {
     debouncedFetch();
 });
 
-watch(filterValues, () => {
+watch(() => ({ ...filterValues.value }), (newValues, oldValues) => {
+    // Check if any dependencies trigger updates
+    props.filters.forEach(async (f) => {
+        if (!f.dependentOn || f.dependentOn.length === 0) return;
+
+        const deps = Array.isArray(f.dependentOn) ? f.dependentOn : [f.dependentOn];
+
+        const hasChanged = deps.some(d => newValues[d] !== oldValues[d]);
+
+        // Check if the dependency has changed
+        if (hasChanged) {
+            // Clear current value
+            filterValues.value[f.path] = null;
+
+            // Check if all dependencies have values
+            const allDepsHaveValues = deps.every(d => newValues[d]);
+
+            // If the dependency is cleared, clear options too
+            if (!allDepsHaveValues) {
+                filterOptions.value[f.path] = [];
+                return;
+            }
+
+            // Fetch new options with current filters as params
+            const p = { ...filterValues.value };
+            const res = await Http.get(f.url, { params: p });
+            if (res.status === 200) {
+                filterOptions.value[f.path] = res.data.map(f.mapFn);
+            }
+        }
+    });
+
     fetchData();
 }, { deep: true });
 </script>
