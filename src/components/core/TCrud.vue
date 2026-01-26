@@ -1,7 +1,7 @@
 <template>
     <!-- TODO: Add search features, if at all. -->
     <NSpace justify="space-between" style="width: 100%;">
-        <NInput :placeholder="searchPlaceholder">
+        <NInput :placeholder="searchPlaceholder" v-model:value="searchQuery">
             <template #prefix>
                 <NIcon>
                     <SearchOutline />
@@ -17,6 +17,17 @@
         </NButton>
     </NSpace>
 
+    <NCollapse>
+        <NCollapseItem title="Filtres" name="filters">
+            <NGrid cols="4" x-gap="12">
+                <NGridItem v-for="filter in filters" :key="filter.path">
+                    <NSelect v-model:value="filterValues[filter.path]" filterable clearable
+                        :options="filterOptions[filter.path]" :placeholder="filter.placeholder" />
+                </NGridItem>
+            </NGrid>
+        </NCollapseItem>
+    </NCollapse>
+
     <TCrudTable :columns="columns" :plural="plural" :singular="singular" :is-masculine="isMasculine" :data="data"
         @edit="onEditClick" @delete="onDeleteClick" />
     <NModal preset="card" closable :title="title" embedded close-on-esc v-model:show="showFormModal">
@@ -27,7 +38,7 @@
 
 <script setup lang="ts">
 import { Http } from '@/lib/http';
-import type { CrudAction, CrudInput } from '@/types/crud';
+import type { CrudAction, CrudFilter, CrudInput } from '@/types/crud';
 import { useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
 import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
@@ -43,6 +54,7 @@ type Props = {
     otherActions?: CrudAction[];
     formInputs?: CrudInput[];
     formGridColumns?: number;
+    filters?: CrudFilter[];
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,6 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
     otherActions: [] as any,
     formInputs: [] as any,
     formGridColumns: 1,
+    filters: [] as any,
 });
 
 const dialog = useDialog();
@@ -66,10 +79,14 @@ const data = ref<any[]>([]);
 const showFormModal = ref(false);
 const isEditMode = ref(false);
 const title = ref("");
+const searchQuery = ref("");
+const filterValues = ref<Record<string, any>>({});
+const filterOptions = ref<Record<string, any[]>>({});
 
 const fetchData = async () => {
     loadingBar.start();
-    const res = await Http.get(props.url, { params: props.params });
+    const p = { ...props.params, q: searchQuery.value, ...filterValues.value };
+    const res = await Http.get(props.url, { params: p });
 
     if (res.status !== 200) {
         message.error(`Erreur durant le chargement des ${props.plural}.`);
@@ -154,5 +171,30 @@ const onFormSubmit = async (e: any) => {
 
 onMounted(async () => {
     await fetchData();
+
+    props.filters.forEach(async (f) => {
+        const res = await Http.get(f.url);
+        if (res.status === 200) {
+            filterOptions.value[f.path] = res.data.map(f.mapFn);
+        }
+    });
 });
+
+let debounceTimer: any = null;
+const debounce = (fn: Function, delay: number) => {
+    return (...args: any[]) => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => fn(...args), delay);
+    }
+}
+
+const debouncedFetch = debounce(fetchData, 500);
+
+watch(searchQuery, () => {
+    debouncedFetch();
+});
+
+watch(filterValues, () => {
+    fetchData();
+}, { deep: true });
 </script>
