@@ -1,42 +1,34 @@
-# theory-2026-naive
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+# ENI Theory 2026 Frontend
+This is the frontend for the ENI Theory 2026 project. It is implemented using the following technologies:
+- Vue 3 (as the base framework)
+- Vite (as the build tool)
+- Naive UI (as the UI library)
+- PNPM (as the package manager)
 
 ## Project Setup
+### Installing dependencies
+As previously stated, since the project uses PNPM as the package manager, installing the dependencies is as simple as running the following command:
 
 ```sh
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+### Configuring environment variables
+To configure the environment variables, copy the `.env.example` file to `.env` and fill in the values. As of now, only the `VITE_API_URL` is used.
+
+## Running the project
+### Serve and hot-reload for development
+To serve the project and enable hot-reloading during development, run the following command (port 4723 is used here as a placeholder):
 
 ```sh
-pnpm dev
+pnpm dev --port=4723
 ```
 
-### Type-Check, Compile and Minify for Production
+### Build for production
+To build the project for production, run the following command:
 
 ```sh
 pnpm build
 ```
+
+Built artifacts are placed in the `dist` directory, and can be served using any static file server.
