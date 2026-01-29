@@ -31,6 +31,10 @@ export const mentionNavigation: MenuMixedOption[] = [
                 label: 'Elements constitutifs',
                 icon: () => h(DocumentOutline),
             },
+            {
+                key: '/syllabus',
+                label: 'Syllabus',
+            },
         ]
     },
     {

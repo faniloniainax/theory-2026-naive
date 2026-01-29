@@ -42,7 +42,17 @@ export const mentionRoutes: RouteRecordRaw[] = [
                 path: '/hour-parts',
                 meta: { layout: TMainLayout },
                 component: () => import('@/views/mention/THourPartsView.vue'),
-            }
+            },
+            {
+                path: '/teaching-units',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TTeachingUnitsView.vue'),
+            },
+            {
+                path: '/syllabus',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TSyllabusView.vue'),
+            },
         ]
     },
     notFoundRoute,
