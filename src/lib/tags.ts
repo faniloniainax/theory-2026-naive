@@ -12,5 +12,12 @@ export const Tags = {
             { type: 'error' },
             { default: () => text }
         )
+    },
+    getYesOrNoTag(yes: boolean) {
+        return h(
+            NTag,
+            { type: yes ? 'success' : 'error' },
+            { default: () => yes ? 'Oui' : 'Non' }
+        );
     }
 };
