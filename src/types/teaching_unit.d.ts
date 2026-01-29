@@ -1,5 +1,6 @@
 import type { Branch } from "./branch";
 import type { Stage } from "./stage";
+import type { Teacher } from "./teacher";
 
 export type TeachingUnit = {
     id: string;
@@ -11,4 +12,5 @@ export type TeachingUnit = {
     updated_at?: string;
     stage?: Stage;
     branch?: Branch;
+    teacher?: Teacher;
 };

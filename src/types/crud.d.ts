@@ -16,6 +16,7 @@ export type CrudCoreInput = {
 export type CrudDateInput = CrudCoreInput & {
     kind: 'date';
     placeholder?: string;
+    required: boolean;
 };
 
 export type CrudNumberInput = CrudCoreInput & {

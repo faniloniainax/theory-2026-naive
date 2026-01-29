@@ -53,6 +53,21 @@ export const mentionRoutes: RouteRecordRaw[] = [
                 meta: { layout: TMainLayout },
                 component: () => import('@/views/mention/TSyllabusView.vue'),
             },
+            {
+                path: '/contacts',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TContactsView.vue'),
+            },
+            {
+                path: '/unavailabilities',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TUnavailabilitiesView.vue'),
+            },
+            {
+                path: '/semesters',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TSemestersView.vue'),
+            },
         ]
     },
     notFoundRoute,

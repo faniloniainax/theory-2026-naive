@@ -61,5 +61,22 @@ export const mentionNavigation: MenuMixedOption[] = [
                 icon: () => h(PeopleOutline),
             },
         ]
+    },
+    {
+        label: 'Autres',
+        children: [
+            {
+                key: '/contacts',
+                label: 'Contacts',
+            },
+            {
+                key: '/unavailabilities',
+                label: 'Indisponibilités',
+            },
+            {
+                key: '/semesters',
+                label: 'Semestres',
+            },
+        ]
     }
 ];

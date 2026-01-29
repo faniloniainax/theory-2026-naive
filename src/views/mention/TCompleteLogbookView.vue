@@ -65,6 +65,7 @@ const formInputs: CrudInput[] = [
         kind: 'date',
         name: 'Date',
         path: 'date',
+        required: true,
         placeholder: 'Date du cours...'
     },
     {
