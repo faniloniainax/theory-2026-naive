@@ -1,4 +1,7 @@
+import { format } from "date-fns";
 import { NTag } from "naive-ui";
+import { h } from "vue";
+import { fr } from 'date-fns/locale/fr';
 
 export const Tags = {
     getNoneTag(feminine: boolean = false) {
@@ -18,6 +21,15 @@ export const Tags = {
             NTag,
             { type: yes ? 'success' : 'error' },
             { default: () => yes ? 'Oui' : 'Non' }
+        );
+    },
+    getDateTag(date: string | Date | undefined) {
+        if (!date) return this.getNoneTag();
+
+        return h(
+            NTag,
+            { type: 'info' },
+            { default: () => format(new Date(date), "dd MMMM yyyy", { locale: fr }) }
         );
     }
 };
