@@ -30,9 +30,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: [
-      'theory.eni.local',
-      'theory.eni.mg'
-    ]
+    allowedHosts: ['.local', '.mg']
   }
 })
