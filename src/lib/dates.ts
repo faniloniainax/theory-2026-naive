@@ -16,7 +16,7 @@ export const Dates = {
     getTimeStamp(value: string) {
         return new Date(value).getTime();
     },
-    format(date: string | Date, format: string) {
+    format(date: string | Date | number, format: string) {
         return formatDate(date, format, { locale: fr });
     }
 };
