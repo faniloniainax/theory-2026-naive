@@ -36,14 +36,15 @@
                         </NIcon>
                     </template>
 
-                    Enregister un cours
+                    Enregister une séance
                 </NButton>
             </NSpace>
         </NCard>
     </NSpace>
 
     <TLogbookTable :progresses="progresses" @click:edit="onEditClick" @click:delete="onDeleteClick" />
-    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="progress" />
+    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="progress"
+        :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
 </template>
 
 <script setup lang="ts">
@@ -52,7 +53,7 @@ import { Options } from '@/lib/options';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
-import { deleteProgress, fetchProgressBlocks, fetchProgresses } from '@/services/progresses';
+import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchProgresses } from '@/services/progresses';
 import { fetchStages } from '@/services/stages';
 import { type Branch } from '@/types/branch';
 import { type Class } from '@/types/class';
@@ -95,17 +96,30 @@ const onAddClick = () => {
 
     progress.value['date'] = new Date().toISOString();
     progress.value['class_id'] = filters.value.classId!;
-
-    console.log(progress.value);
 };
 
 const onEditClick = (p: ProgressBlock) => {
     isEditMode.value = true;
     showFormModal.value = true;
+
+    progress.value = p;
 };
 
 const onDeleteClick = async (p: ProgressBlock) => {
     await deleteProgress(p['id'], loadingBar, message);
+};
+
+const onSubmit = async (p: ProgressBlock) => {
+    // If it's a timestamp, we'll transform it to UTC Midnight
+    if (typeof p['date'] === 'number')
+        p['date'] = Dates.toUTCMidnight(p['date']);
+
+    if (!isEditMode.value)
+        await addProgress(p, loadingBar, message);
+    else
+        await editProgress(p['id'], p, loadingBar, message);
+
+    progresses.value = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }) as unknown as ProgressBlock[];
 };
 
 // When the class changes, the save course button isn't disabled.
@@ -133,6 +147,7 @@ watch(() => saveCourseDisabled.value, async (newS, _) => {
 watch(() => filters.value.fieldId, async (newFieldId, _) => {
     if (newFieldId === null) {
         branches.value = [];
+        filters.value.branchId = null;
         return;
     }
 
@@ -144,6 +159,7 @@ watch(() => filters.value.fieldId, async (newFieldId, _) => {
 watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId, newStageId], [_, __]) => {
     if (newBranchId === null || newStageId === null) {
         classes.value = [];
+        filters.value.classId = null;
         return;
     }
 
