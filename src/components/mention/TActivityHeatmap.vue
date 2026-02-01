@@ -9,8 +9,8 @@
                         <NEmpty description="Aucune donnée." />
                     </template>
                 </NSelect>
-                <NInputNumber v-model:value="selectedYear" :min="2000" :max="2100" placeholder="Année"
-                    style="min-width: 120px;" />
+                <NDatePicker v-model:value="selectedDate" type="year" placeholder="Sélectionner une année"
+                    style="min-width: 150px;" />
                 <NHeatmap :loading="isLoading" :data="data" :tooltip="true" size="large">
                     <template #tooltip="{ timestamp: ts, value }">
                         {{ Dates.format(ts, 'dd MMMM yyyy') }} <br>
@@ -58,7 +58,11 @@ const data = ref<HeatmapData>([]);
 const isLoading = ref(true);
 const constElements = ref<ConstElement[]>([]);
 const constElementId = ref<string | null>(null);
-const selectedYear = ref<number>(new Date().getFullYear());
+const selectedDate = ref<number | null>(new Date().getTime());
+
+const selectedYear = computed(() => {
+    return selectedDate.value ? new Date(selectedDate.value).getFullYear() : new Date().getFullYear();
+});
 
 watch(() => [props.stageId, props.branchId, props.teacherId, props.classId], async ([newStageId, newBranchId, newTeacherId, newClassId]) => {
     if (!newStageId || !newBranchId || !newTeacherId || !newClassId) {
@@ -71,7 +75,7 @@ watch(() => [props.stageId, props.branchId, props.teacherId, props.classId], asy
     constElements.value = await fetchConstElements(loadingBar, message, { branchId: newBranchId, stageId: newStageId, teacherId: newTeacherId });
 });
 
-watch(() => [constElementId.value, selectedYear.value], async ([newConstElementId, newYear]) => {
+watch(() => [constElementId.value, selectedYear.value], async ([newConstElementId]) => {
     if (newConstElementId === null) {
         data.value = [];
         return;
@@ -79,9 +83,10 @@ watch(() => [constElementId.value, selectedYear.value], async ([newConstElementI
 
     const teacherId = props.teacherId!;
     const classId = props.classId!;
+    const year = selectedYear.value;
 
     isLoading.value = true;
-    data.value = await fetchActivityForTeacher(teacherId, classId, newConstElementId as string, newYear as number, loadingBar, message);
+    data.value = await fetchActivityForTeacher(teacherId, classId, newConstElementId as string, year, loadingBar, message);
     isLoading.value = false;
 });
 
