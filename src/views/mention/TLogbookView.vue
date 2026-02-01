@@ -149,9 +149,10 @@ watch(() => saveCourseDisabled.value, async (newS, _) => {
 
 // When the field filter changes, branches are fetched.
 watch(() => filters.value.fieldId, async (newFieldId, _) => {
+    filters.value.branchId = null;
+
     if (newFieldId === null) {
         branches.value = [];
-        filters.value.branchId = null;
         return;
     }
 
@@ -161,9 +162,10 @@ watch(() => filters.value.fieldId, async (newFieldId, _) => {
 // When a branch and a stage are selected, we fetch the
 // relevant classes.
 watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId, newStageId], [_, __]) => {
+    filters.value.classId = null;
+
     if (newBranchId === null || newStageId === null) {
         classes.value = [];
-        filters.value.classId = null;
         return;
     }
 
