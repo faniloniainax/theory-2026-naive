@@ -3,11 +3,17 @@ import type { Class } from "@/types/class";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
-export const fetchClasses = async (l?: LoadingBarInst, m?: MessageApiInjection): Promise<Class[]> => {
+export const fetchClasses = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
+    branchId?: string,
+    stageId?: string,
+}): Promise<Class[]> => {
     l?.start();
 
     try {
-        const p = { include: 'Branch.Field, Stage' };
+        const branchId = filters?.branchId ?? undefined;
+        const stageId = filters?.stageId ?? undefined;
+
+        const p = { include: 'Branch.Field, Stage', branch_id: branchId, stage_id: stageId };
         const r = await Http.get("/classes", { params: p });
 
         if (r.status !== 200)
