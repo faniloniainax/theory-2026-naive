@@ -7,6 +7,7 @@ export const fetchConstElements = async (l?: LoadingBarInst, m?: MessageApiInjec
     teachingUnitId?: string,
     branchId?: string,
     stageId?: string,
+    teacherId?: string,
 }): Promise<ConstElement[]> => {
     l?.start();
 
@@ -14,8 +15,9 @@ export const fetchConstElements = async (l?: LoadingBarInst, m?: MessageApiInjec
         const tuId = filters?.teachingUnitId ?? undefined;
         const bId = filters?.branchId ?? undefined;
         const sId = filters?.stageId ?? undefined;
+        const tId = filters?.teacherId ?? undefined;
 
-        const p = { include: 'Teacher.Title, TeachingUnit, Semester', teaching_unit_id: tuId, branch_id: bId, stage_id: sId };
+        const p = { include: 'Teacher.Title, TeachingUnit, Semester', teaching_unit_id: tuId, branch_id: bId, stage_id: sId, teacher_id: tId };
         const r = await Http.get("/const_elements", { params: p });
 
         if (r.status !== 200)
