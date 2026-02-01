@@ -1,35 +1,58 @@
 <template>
     <NModal preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate" closable close-on-esc>
-        <NForm :model="formValue" ref="formRef">
-            <NFormItem path="date">
-                <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
-                    :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
-            </NFormItem>
-            <NFormItem path="class_id">
-                <NSelect placeholder="Aucune classe..." :options="Options.formatClasses(classes)"
-                    v-model:value="formValue['class_id']">
-                    <NEmpty description="Aucune donnée." />
-                </NSelect>
-            </NFormItem>
-            <NFormItem path="teacher_id">
-                <NSelect placeholder="Aucun enseignant..." :options="Options.formatTeachers(teachers)"
-                    v-model:value="formValue['teacher_id']">
-                    <NEmpty description="Aucune donnée." />
-                </NSelect>
-            </NFormItem>
-            <NFormItem path="hour_part_id">
-                <NSelect placeholder="Aucun horaire..." :options="Options.formatHourParts(hourParts)"
-                    v-model:value="formValue['hour_part_id']">
-                    <NEmpty description="Aucune donnée." />
-                </NSelect>
-            </NFormItem>
-            <NFormItem path="const_element_id">
-                <NSelect placeholder="Aucun élément constitutif..."
-                    :options="Options.formatConstElements(constElements)" v-model:value="formValue['const_element_id']">
-                    <NEmpty description="Aucune donnée." />
-                </NSelect>
-            </NFormItem>
-        </NForm>
+        <NSpace vertical>
+            <NTabs type="line" animated>
+                <NTabPane name="coreForm" tab="Informations basiques">
+                    <NForm ref="coreFormRef" :model="formValue">
+                        <NFormItem path="date" label="Date du cours:">
+                            <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
+                                :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
+                        </NFormItem>
+                        <NFormItem path="class_id" label="Classe concernée:">
+                            <NSelect placeholder="Aucune classe..." :options="Options.formatClasses(classes)"
+                                v-model:value="formValue['class_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
+                        <NFormItem path="teacher_id" label="Enseignant responsable:">
+                            <NSelect placeholder="Aucun enseignant..." :options="Options.formatTeachers(teachers)"
+                                v-model:value="formValue['teacher_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
+                        <NFormItem path="hour_part_id" label="Horaire du cours:">
+                            <NSelect placeholder="Aucun horaire..." :options="Options.formatHourParts(hourParts)"
+                                v-model:value="formValue['hour_part_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
+                        <NFormItem path="const_element_id" label="Elément constitutif concerné:">
+                            <NSelect placeholder="Aucun élément constitutif..."
+                                :options="Options.formatConstElements(constElements)"
+                                v-model:value="formValue['const_element_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
+                    </NForm>
+                </NTabPane>
+                <NTabPane name="contextForm" tab="Contexte du cours">
+                    <NForm ref="contextFormRef" :model="formValue">
+                        <NInput type="textarea" maxlength="255" show-count
+                            placeholder="Racontez ce qui a été éffectué durant cette séance..."
+                            v-model:value="formValue['fallback_context']" />
+                    </NForm>
+                </NTabPane>
+            </NTabs>
+
+            <NSpace justify="end">
+                <NButton @click="onCancelClick">
+                    Annuler
+                </NButton>
+                <NButton @click="onSubmitClick">
+                    Valider
+                </NButton>
+            </NSpace>
+        </NSpace>
     </NModal>
 </template>
 
@@ -52,6 +75,8 @@ type Props = {
     show: boolean;
     isEditMode: boolean;
     progress: ProgressBlock | null;
+    stageId: string | null;
+    branchId: string | null;
 };
 
 type Emits = {
@@ -65,7 +90,9 @@ const props = defineProps<Props>();
 const message = useMessage();
 const loadingBar = useLoadingBar();
 
-const formRef = ref<FormInst | null>(null);
+const coreFormRef = useTemplateRef('coreFormRef');
+const contextFormRef = useTemplateRef('contextFormRef');
+
 const formValue = ref<any>({});
 const classes = ref<Class[]>([]);
 const teachers = ref<Teacher[]>([]);
@@ -80,6 +107,14 @@ const showModal = computed({
 
 const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
 
+const onSubmitClick = () => {
+    emits('submit', formValue.value);
+};
+
+const onCancelClick = () => {
+    emits('update:show', false);
+};
+
 const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBlock | null) => {
     formValue.value = {};
 
@@ -92,6 +127,7 @@ const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBloc
         return;
     }
 
+    formValue.value['id'] = progress['id'];
     formValue.value['date'] = Dates.getTimeStamp(progress['date']);
     formValue.value['class_id'] = progress['class_id'];
     formValue.value['teacher_id'] = progress['teacher_id'];
@@ -105,12 +141,34 @@ watch(() => props.progress, (newProgress, _) => {
     synchronizePropsToLocalData(props.isEditMode, newProgress);
 });
 
+watch(() => [props.branchId, props.stageId], async ([newBranchId, newStageId], [_, __]) => {
+    if (newBranchId === null || newStageId === null) {
+        constElements.value = [];
+        return;
+    }
+
+    constElements.value = await fetchConstElements(loadingBar, message, { branchId: newBranchId, stageId: newStageId });
+});
+
+watch(() => formValue.value['const_element_id'], (newCEId, _) => {
+    if (newCEId === null)
+        return;
+
+    const first = constElements.value.find(c => c['id'] == newCEId);
+
+    if (!first) {
+        formValue.value['teacher_id'] = null;
+        return;
+    }
+
+    formValue.value['teacher_id'] = first['teacher_id'];
+});
+
 onMounted(async () => {
     synchronizePropsToLocalData(props.isEditMode, props.progress);
 
     classes.value = await fetchClasses(loadingBar, message);
     teachers.value = await fetchTeachers(loadingBar, message);
     hourParts.value = await fetchHourParts(loadingBar, message);
-    constElements.value = await fetchConstElements(loadingBar, message);
 })
 </script>
