@@ -1,5 +1,5 @@
 <template>
-    <NDataTable :columns="columns" :data="data">
+    <NDataTable :columns="columns" :data="progresses">
         <template #empty>
             <NEmpty description="Aucune donnée." />
         </template>
@@ -15,11 +15,16 @@ import { formatDate } from 'date-fns';
 import { NButton, NIcon, NSpace, useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
 import EyeIcon from 'vicons/ionicons-v5/EyeOutline.vue';
 
+type Props = {
+    progresses: ProgressBlock[];
+};
+
 type Emits = {
     (event: 'click:edit', row: ProgressBlock): void;
     (event: 'click:delete', row: ProgressBlock): void;
 };
 
+const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
 const dialog = useDialog();
@@ -73,8 +78,6 @@ const columns: DataTableColumns<ProgressBlock> = [
     }
 ];
 
-const data = ref<ProgressBlock[]>([]);
-
 const onEditClick = (p: ProgressBlock) => emits('click:edit', p)
 const onDeleteClick = (p: ProgressBlock) => {
     dialog.error({
@@ -84,22 +87,4 @@ const onDeleteClick = (p: ProgressBlock) => {
         onPositiveClick: () => emits('click:delete', p)
     })
 };
-
-onMounted(async () => {
-    loadingBar.start();
-
-    try {
-        const p = { include: 'Class.Stage, Class.Branch, Teacher.Title, HourPart, ConstElement' };
-        const res = await Http.get("/progresses", { params: p });
-
-        if (res.status !== 200)
-            throw Error("Unexpected error.");
-
-        data.value = res.data;
-        loadingBar.finish();
-    } catch (e) {
-        loadingBar.error();
-        message.error("Une erreur s'est produite durant le chargement des enregistrements de cours.");
-    }
-})
 </script>
