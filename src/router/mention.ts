@@ -5,9 +5,19 @@ import TMainLayout from "@/layouts/TMainLayout.vue";
 export const mentionRoutes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/complete-logbook',
+        redirect: '/activity',
         meta: { layout: TMainLayout },
         children: [
+            {
+                path: '/activity',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TActivityView.vue'),
+            },
+            {
+                path: '/progress',
+                meta: { layout: TMainLayout },
+                component: () => import('@/views/mention/TProgressView.vue'),
+            },
             {
                 path: '/allocated-hours',
                 meta: { layout: TMainLayout },

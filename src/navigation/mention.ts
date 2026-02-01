@@ -9,6 +9,14 @@ import PeopleOutline from "vicons/ionicons-v5/PeopleOutline.vue";
 
 export const mentionNavigation: MenuMixedOption[] = [
     {
+        key: '/activity',
+        label: 'Enseignements',
+    },
+    {
+        key: '/progress',
+        label: 'Progrès des cours',
+    },
+    {
         key: '/complete-logbook',
         label: 'Cahier de texte',
         icon: () => h(BookOutline),
