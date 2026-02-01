@@ -13,7 +13,7 @@ import type { DataTableColumns } from 'naive-ui';
 
 
 const url = "/const_elements";
-const params = { include: "Teacher, Teacher.Title, TeachingUnit, Semester" }
+const params = { include: "Teacher, Teacher.Title, TeachingUnit, Semester", per_page: 10 }
 const singular = "élement constitutif";
 const plural = "élements constitutifs";
 const isMasculine = true;
@@ -29,15 +29,6 @@ const columns: DataTableColumns<ConstElement> = [
         key: 'name',
         title: 'Nom',
     },
-    // TODO: Fix this
-    // {
-    //     key: 'credits',
-    //     title: 'Crédits',
-    // },
-    // {
-    //     key: 'ponderation',
-    //     title: 'Pondération',
-    // },
     {
         key: 'teacher_id',
         title: 'Enseignant',
@@ -47,6 +38,14 @@ const columns: DataTableColumns<ConstElement> = [
         key: 'teaching_unit_id',
         title: "Unité d'enseignement",
         render: c => c['teaching_unit'] ? `${c['teaching_unit']['code']} - ${c['teaching_unit']['name']}` : Tags.getNoneTag(true),
+    },
+    {
+        key: 'credits',
+        title: 'Crédits',
+    },
+    {
+        key: 'ponderation',
+        title: 'Pondération',
     },
     {
         key: 'semester_id',
