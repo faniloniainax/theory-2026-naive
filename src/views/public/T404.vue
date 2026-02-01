@@ -1,17 +1,20 @@
 <template>
-    <NCard title="Erreur 404" bordered embedded :style="{ width: 'min(400px, 90vw)' }">
-        <template #default>
-            Rien d'intéressant ici...
-        </template>
+    <NResult status="404" title="404 - Ressource introuvable">
         <template #footer>
-            <NP :depth="3">
-                Pour revenir à la page de départ,
-                <RouterLink to="/">
-                    <NA>
-                        cliquez ici
-                    </NA>
-                </RouterLink>...
-            </NP>
+            <NP :depth="3">Il semblerait que ce lien ne mène nulle part...</NP>
+            <NButton @click="onReturnToHomeClick">
+                Retourner à la page d'accueil
+            </NButton>
         </template>
-    </NCard>
+    </NResult>
 </template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const onReturnToHomeClick = () => {
+    router.push("/");
+};
+</script>
