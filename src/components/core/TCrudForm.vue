@@ -13,7 +13,7 @@
                 </template>
                 <template v-else-if="input['kind'] === 'string'">
                     <NInput clearable :type="input['textArea'] ? 'textarea' : 'text'" :maxlength="input['max']"
-                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" />
+                        :placeholder="input['placeholder']" v-model:value="formValue[input['path']]" show-count />
                 </template>
                 <template v-else-if="input['kind'] === 'foreign'">
                     <NSelect placement="top" clearable filterable :options="foreignSources.get(input['name'])"
