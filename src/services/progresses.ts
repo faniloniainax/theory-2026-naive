@@ -21,7 +21,7 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
         return r.data as Progress[];
     } catch (e) {
         l?.error();
-        m?.error("Erreur durant le chargement des enregistrements des cours.");
+        m?.error("Erreur durant le chargement des séances.");
         console.error(e);
     }
 
@@ -46,9 +46,60 @@ export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInje
         return r.data as ProgressBlock[];
     } catch (e) {
         l?.error();
-        m?.error("Erreur durant le chargement des enregistrements des cours.");
+        m?.error("Erreur durant le chargement des séances.");
         console.error(e);
     }
 
     return [];
+};
+
+export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+    l?.start();
+
+    try {
+        const r = await Http.post("/progresses", p);
+
+        if (r.status !== 201)
+            throw Error("Erreur inconnue.");
+
+        l?.finish();
+    } catch (e) {
+        l?.error();
+        m?.error("Erreur durant l'ajout de la séance.");
+        console.error(e);
+    }
+};
+
+export const editProgress = async (id: string, p: ProgressBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+    l?.start();
+
+    try {
+        const r = await Http.put(`/progresses/${id}`, p);
+
+        if (r.status !== 200)
+            throw Error("Erreur inconnue.");
+
+        l?.finish();
+    } catch (e) {
+        l?.error();
+        m?.error("Erreur durant la modification de la séance.");
+        console.error(e);
+    }
+};
+
+export const deleteProgress = async (id: string, l?: LoadingBarInst, m?: MessageApiInjection) => {
+    l?.start();
+
+    try {
+        const r = await Http.delete(`/progresses/${id}`);
+
+        if (r.status !== 200)
+            throw Error("Erreur inconnue.");
+
+        l?.finish();
+    } catch (e) {
+        l?.error();
+        m?.error("Erreur durant la suppression de la séance.");
+        console.error(e);
+    }
 };
