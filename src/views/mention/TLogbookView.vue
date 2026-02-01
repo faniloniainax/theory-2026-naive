@@ -55,11 +55,11 @@ import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
 import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchProgresses } from '@/services/progresses';
 import { fetchStages } from '@/services/stages';
-import { type Branch } from '@/types/branch';
-import { type Class } from '@/types/class';
-import { type Field } from '@/types/field';
-import { type ProgressBlock } from '@/types/progress';
-import { type Stage } from '@/types/stage';
+import type { Branch } from '@/types/branch';
+import type { Class } from '@/types/class';
+import type { Field } from '@/types/field';
+import type { ProgressBlock } from '@/types/progress';
+import type { Stage } from '@/types/stage';
 import { useLoadingBar, useMessage } from 'naive-ui';
 import AddIcon from 'vicons/ionicons-v5/AddOutline.vue';
 
@@ -114,10 +114,14 @@ const onSubmit = async (p: ProgressBlock) => {
     if (typeof p['date'] === 'number')
         p['date'] = Dates.toUTCMidnight(p['date']);
 
+    let ok = true;
     if (!isEditMode.value)
-        await addProgress(p, loadingBar, message);
+        ok = await addProgress(p, loadingBar, message);
     else
-        await editProgress(p['id'], p, loadingBar, message);
+        ok = await editProgress(p['id'], p, loadingBar, message);
+
+    if (ok)
+        showFormModal.value = false;
 
     progresses.value = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }) as unknown as ProgressBlock[];
 };
