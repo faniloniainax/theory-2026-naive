@@ -20,7 +20,6 @@ const route = useRoute();
 
 const appropriateLayout = computed(() => {
   if (route.meta?.layout) {
-    console.log("ROUTE META IS DEFINED");
     return route.meta?.layout;
   }
 
