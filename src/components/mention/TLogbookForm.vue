@@ -4,7 +4,7 @@
             <NTabs type="line" animated>
                 <NTabPane name="coreForm" tab="Informations basiques">
                     <NForm ref="coreFormRef" :model="formValue">
-                        <NFormItem path="date" label="Date du cours:">
+                        <NFormItem path="date" label="Date de la séance:">
                             <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
                                 :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
                         </NFormItem>
@@ -14,13 +14,7 @@
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
-                        <NFormItem path="teacher_id" label="Enseignant responsable:">
-                            <NSelect placeholder="Aucun enseignant..." :options="Options.formatTeachers(teachers)"
-                                v-model:value="formValue['teacher_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="hour_part_id" label="Horaire du cours:">
+                        <NFormItem path="hour_part_id" label="Horaire de la séance:">
                             <NSelect placeholder="Aucun horaire..." :options="Options.formatHourParts(hourParts)"
                                 v-model:value="formValue['hour_part_id']">
                                 <NEmpty description="Aucune donnée." />
@@ -33,9 +27,15 @@
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
+                        <NFormItem path="teacher_id" label="Enseignant responsable:">
+                            <NSelect placeholder="Aucun enseignant..." :options="Options.formatTeachers(teachers)"
+                                v-model:value="formValue['teacher_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
                     </NForm>
                 </NTabPane>
-                <NTabPane name="contextForm" tab="Contexte du cours">
+                <NTabPane name="contextForm" tab="Contexte de la séance">
                     <NForm ref="contextFormRef" :model="formValue">
                         <NInput type="textarea" maxlength="255" show-count
                             placeholder="Racontez ce qui a été éffectué durant cette séance..."
@@ -99,7 +99,7 @@ const teachers = ref<Teacher[]>([]);
 const hourParts = ref<HourPart[]>([]);
 const constElements = ref<ConstElement[]>([]);
 
-const title = computed(() => !props.isEditMode ? "Enregistrer un cours" : "Modifier un enregistrement de cours");
+const title = computed(() => !props.isEditMode ? "Enregistrer une séance" : "Modifier un enregistrement de séance");
 const showModal = computed({
     get: () => props.show,
     set: (newShow: boolean) => emits('update:show', newShow)
