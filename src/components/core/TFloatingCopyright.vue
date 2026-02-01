@@ -1,26 +1,19 @@
 <template>
-    <teleport to="body">
-        <NCard bordered class="copyright-card">
-            <NP :depth="3">
-                &copy; ENI – {{ Dates.getCurrentYear() }}
-            </NP>
-        </NCard>
-    </teleport>
+    <NFloatButton position="absolute" :bottom="10" :left="10" shape="square" :width="100">
+        <NPopover>
+            <template #trigger>
+                <NP :depth="3">
+                    &copy; ENI - {{ Dates.getCurrentYear() }}
+                </NP>
+            </template>
+            <template #default>
+                Copyright Ecole Nationale d'Informatique {{ Dates.getCurrentYear() }} - Tous droits réservés.
+            </template>
+        </NPopover>
+    </NFloatButton>
 </template>
 
 <script setup lang="ts">
 import { Dates } from '@/lib/dates';
 
 </script>
-
-<style scoped>
-.copyright-card {
-    position: fixed;
-    left: 10px;
-    bottom: 10px;
-    z-index: 3000;
-    width: fit-content;
-    height: fit-content;
-    /* higher than NDrawer */
-}
-</style>
