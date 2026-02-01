@@ -88,7 +88,7 @@ const formInputs: CrudInput[] = [
         mapFn: (t: Teacher) => {
             return {
                 value: t['id'],
-                label: `${t['title']!['name']} {t['last_name']} ${t['first_name']}`.trim()
+                label: `${t['title']!['name']} ${t['last_name']} ${t['first_name']}`.trim()
             }
         }
     },
