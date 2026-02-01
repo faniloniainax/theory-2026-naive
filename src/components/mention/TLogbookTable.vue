@@ -61,17 +61,13 @@ const columns: DataTableColumns<ProgressBlock> = [
         key: 'context',
         title: 'Contexte',
         align: 'center',
-        render: (p: ProgressBlock) => h(NButton, [
-            h(NIcon, [
-                h(EyeIcon)
-            ])
-        ])
+        render: (p: ProgressBlock) => h(NButton, () => h(NIcon, () => h(EyeIcon)))
     },
     {
         key: 'actions',
         title: 'Actions',
         align: 'center',
-        render: (p: ProgressBlock) => h(NSpace, { justify: 'center' }, [
+        render: (p: ProgressBlock) => h(NSpace, { justify: 'center' }, () => [
             h(NButton, { ghost: true, type: 'info', onClick: () => onEditClick(p) }, { default: () => 'Modifier' }),
             h(NButton, { ghost: true, type: 'error', onClick: () => onDeleteClick(p) }, { default: () => 'Supprimer' }),
         ]),
