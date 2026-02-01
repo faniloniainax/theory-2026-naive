@@ -3,11 +3,19 @@ import type { ConstElement } from "@/types/const_element";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
-export const fetchConstElements = async (l?: LoadingBarInst, m?: MessageApiInjection): Promise<ConstElement[]> => {
+export const fetchConstElements = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
+    teachingUnitId?: string,
+    branchId?: string,
+    stageId?: string,
+}): Promise<ConstElement[]> => {
     l?.start();
 
     try {
-        const p = { include: 'Teacher.Title, TeachingUnit, Semester' };
+        const tuId = filters?.teachingUnitId ?? undefined;
+        const bId = filters?.branchId ?? undefined;
+        const sId = filters?.stageId ?? undefined;
+
+        const p = { include: 'Teacher.Title, TeachingUnit, Semester', teaching_unit_id: tuId, branch_id: bId, stage_id: sId };
         const r = await Http.get("/const_elements", { params: p });
 
         if (r.status !== 200)
