@@ -228,7 +228,10 @@ const debounce = (fn: Function, delay: number) => {
     }
 }
 
-const debouncedFetch = debounce(fetchData, 500);
+const debouncedFetch = debounce(async () => {
+    currentPage.value = 1;
+    await fetchData();
+}, 500);
 
 watch(searchQuery, () => {
     debouncedFetch();
@@ -266,6 +269,7 @@ watch(() => ({ ...filterValues.value }), (newValues, oldValues) => {
         }
     });
 
+    currentPage.value = 1;
     fetchData();
 }, { deep: true });
 </script>
