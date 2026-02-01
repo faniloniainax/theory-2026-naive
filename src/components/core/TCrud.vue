@@ -34,6 +34,10 @@
 
     <TCrudTable :columns="columns" :plural="plural" :singular="singular" :is-masculine="isMasculine" :data="data"
         @edit="onEditClick" @delete="onDeleteClick" />
+    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <NPagination v-model:page="currentPage" :page-count="totalPages" show-size-picker :page-sizes="[5, 10, 20, 50]"
+            v-model:page-size="perPage" />
+    </div>
     <NModal preset="card" closable :title="title" embedded close-on-esc v-model:show="showFormModal">
         <TCrudForm :columns="formGridColumns" :inputs="formInputs" :data="e" @cancel="onFormCancel"
             @submit="onFormSubmit" />
@@ -87,9 +91,18 @@ const searchQuery = ref("");
 const filterValues = ref<Record<string, any>>({});
 const filterOptions = ref<Record<string, any[]>>({});
 
+const currentPage = ref<number>(1);
+const perPage = ref<number>((props.params && props.params.per_page) ? props.params.per_page : 20);
+const totalPages = ref<number>(1);
+const totalEntries = ref<number>(0);
+
 const fetchData = async () => {
     loadingBar.start();
-    const p = { ...props.params, q: searchQuery.value, ...filterValues.value };
+    const p: any = { ...props.params, q: searchQuery.value, ...filterValues.value };
+
+    p.page = currentPage.value;
+    p.per_page = perPage.value;
+
     const res = await Http.get(props.url, { params: p });
 
     if (res.status !== 200) {
@@ -99,9 +112,28 @@ const fetchData = async () => {
         return;
     }
 
-    data.value = res.data;
+
+    if (res.data && res.data.data !== undefined && res.data.pagination !== undefined) {
+        data.value = res.data.data;
+        const pg: any = res.data.pagination || {};
+
+        totalPages.value = pg.TotalPages || pg.total_pages || 1;
+        perPage.value = pg.PerPage || pg.per_page || perPage.value;
+        currentPage.value = pg.Page || pg.page || currentPage.value;
+        totalEntries.value = pg.TotalEntries || pg.total_entries || 0;
+    } else {
+        data.value = res.data;
+
+        // Fallback to a single page
+        totalPages.value = 1;
+        totalEntries.value = Array.isArray(res.data) ? res.data.length : 0;
+    }
     loadingBar.finish();
 };
+
+watch([currentPage, perPage], () => {
+    fetchData();
+});
 
 const onAddClick = () => {
     e.value = {};
