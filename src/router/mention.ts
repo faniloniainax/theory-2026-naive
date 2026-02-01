@@ -31,7 +31,7 @@ export const mentionRoutes: RouteRecordRaw[] = [
             {
                 path: '/complete-logbook',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TCompleteLogbookView.vue'),
+                component: () => import('@/views/mention/TLogbookView.vue'),
             },
             {
                 path: '/teachers',
