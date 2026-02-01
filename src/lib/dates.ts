@@ -1,3 +1,6 @@
+import { formatDate } from "date-fns";
+import { fr } from "date-fns/locale";
+
 export const Dates = {
     getCurrentYear(): number {
         return new Date().getFullYear();
@@ -13,4 +16,7 @@ export const Dates = {
     getTimeStamp(value: string) {
         return new Date(value).getTime();
     },
+    format(date: string | Date, format: string) {
+        return formatDate(date, format, { locale: fr });
+    }
 };
