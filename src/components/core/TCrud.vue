@@ -92,7 +92,7 @@ const filterValues = ref<Record<string, any>>({});
 const filterOptions = ref<Record<string, any[]>>({});
 
 const currentPage = ref<number>(1);
-const perPage = ref<number>((props.params && props.params.per_page) ? props.params.per_page : 20);
+const perPage = ref<number>((props.params && props.params.per_page) ? props.params.per_page : 10);
 const totalPages = ref<number>(1);
 const totalEntries = ref<number>(0);
 
