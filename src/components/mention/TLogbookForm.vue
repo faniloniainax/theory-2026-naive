@@ -64,11 +64,11 @@ import { fetchClasses } from '@/services/classes';
 import { fetchConstElements } from '@/services/const_elements';
 import { fetchHourParts } from '@/services/hour_parts';
 import { fetchTeachers } from '@/services/teachers';
-import { type Class } from '@/types/class';
-import { type ConstElement } from '@/types/const_element';
-import { type HourPart } from '@/types/hour_part';
+import type { Class } from '@/types/class';
+import type { ConstElement } from '@/types/const_element';
+import type { HourPart } from '@/types/hour_part';
 import type { ProgressBlock } from '@/types/progress';
-import { type Teacher } from '@/types/teacher';
+import type { Teacher } from '@/types/teacher';
 import { type FormInst, useLoadingBar, useMessage } from 'naive-ui';
 
 type Props = {
@@ -108,7 +108,12 @@ const showModal = computed({
 const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
 
 const onSubmitClick = () => {
-    emits('submit', formValue.value);
+    // Ensure date is always a number
+    const submittedValue = { ...formValue.value };
+    if (typeof submittedValue['date'] === 'string') {
+        submittedValue['date'] = new Date(submittedValue['date']).getTime();
+    }
+    emits('submit', submittedValue);
 };
 
 const onCancelClick = () => {
@@ -121,14 +126,23 @@ const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBloc
     if (!progress)
         return;
 
+    // Convert date to numeric timestamp (milliseconds)
+    const getDateTimestamp = (date: any): number => {
+        if (typeof date === 'number') return date;
+        if (typeof date === 'string') return new Date(date).getTime();
+        return Dates.getTimeStamp(date);
+    };
+
+    const dateTimestamp = getDateTimestamp(progress['date']);
+
     if (!isEditMode) {
-        formValue.value['date'] = Dates.getTimeStamp(progress['date']);
+        formValue.value['date'] = dateTimestamp;
         formValue.value['class_id'] = progress['class_id'];
         return;
     }
 
     formValue.value['id'] = progress['id'];
-    formValue.value['date'] = Dates.getTimeStamp(progress['date']);
+    formValue.value['date'] = dateTimestamp;
     formValue.value['class_id'] = progress['class_id'];
     formValue.value['teacher_id'] = progress['teacher_id'];
     formValue.value['hour_part_id'] = progress['hour_part_id'];
