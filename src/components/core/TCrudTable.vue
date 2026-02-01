@@ -31,7 +31,7 @@ const actualColumns: DataTableColumns<any> = [
     {
         key: '__actions',
         title: 'Actions',
-        width: 400,
+        width: 220,
         align: 'center',
         render: (e: any) => {
             return h(NSpace, null, {
