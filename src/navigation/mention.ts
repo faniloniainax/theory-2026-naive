@@ -14,6 +14,7 @@ export const mentionNavigation: MenuMixedOption[] = [
         icon: () => h(BookOutline),
     },
     {
+        key: '/program',
         label: 'Programme',
         children: [
             {
@@ -38,6 +39,7 @@ export const mentionNavigation: MenuMixedOption[] = [
         ]
     },
     {
+        key: '/repartition',
         label: 'Répartition',
         children: [
             {
@@ -63,6 +65,7 @@ export const mentionNavigation: MenuMixedOption[] = [
         ]
     },
     {
+        key: '/others',
         label: 'Autres',
         children: [
             {
