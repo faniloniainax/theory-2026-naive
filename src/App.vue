@@ -1,5 +1,5 @@
 <template>
-  <NConfigProvider :theme="theme">
+  <NConfigProvider :theme="theme" :locale="frFR" :date-locale="dateFrFR">
     <NDialogProvider>
       <NMessageProvider>
         <NLoadingBarProvider>
@@ -14,6 +14,7 @@
 import { darkTheme } from 'naive-ui';
 import TPublicLayout from './layouts/TPublicLayout.vue';
 import { useRoute } from 'vue-router';
+import { frFR, dateFrFR } from 'naive-ui';
 
 const theme = ref(darkTheme);
 const route = useRoute();
