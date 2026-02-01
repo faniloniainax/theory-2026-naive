@@ -25,7 +25,7 @@ export type Progress = ProgressCore & {
     program_element?: ProgramElement;
 };
 
-export type ProgramElementBlock = ProgressCore & {
+export type ProgressBlock = ProgressCore & {
     program_element_ids: string[];
     program_elements?: ProgramElement[];
 };
