@@ -65,9 +65,10 @@ const selectedYear = computed(() => {
 });
 
 watch(() => [props.stageId, props.branchId, props.teacherId, props.classId], async ([newStageId, newBranchId, newTeacherId, newClassId]) => {
+    constElementId.value = null;
+
     if (!newStageId || !newBranchId || !newTeacherId || !newClassId) {
         isLoading.value = true;
-        constElementId.value = null;
         constElements.value = [];
         return;
     }
