@@ -61,22 +61,26 @@ export const mentionRoutes: RouteRecordRaw[] = [
             {
                 path: '/syllabus',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TSyllabusView.vue'),
+                // component: () => import('@/views/mention/TSyllabusView.vue'),
+                component: () => import('@/views/public/TInConstruction.vue'),
             },
             {
                 path: '/contacts',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TContactsView.vue'),
+                // component: () => import('@/views/mention/TContactsView.vue'),
+                component: () => import('@/views/public/TInConstruction.vue'),
             },
             {
                 path: '/unavailabilities',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TUnavailabilitiesView.vue'),
+                // component: () => import('@/views/mention/TUnavailabilitiesView.vue'),
+                component: () => import('@/views/public/TInConstruction.vue'),
             },
             {
                 path: '/semesters',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TSemestersView.vue'),
+                // component: () => import('@/views/mention/TSemestersView.vue'),
+                component: () => import('@/views/public/TInConstruction.vue'),
             },
         ]
     },
