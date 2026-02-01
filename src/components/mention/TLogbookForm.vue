@@ -1,5 +1,5 @@
 <template>
-    <NModal preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate">
+    <NModal preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate" closable close-on-esc>
         <NForm :model="formValue" ref="formRef">
             <NFormItem path="date">
                 <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
@@ -73,22 +73,40 @@ const hourParts = ref<HourPart[]>([]);
 const constElements = ref<ConstElement[]>([]);
 
 const title = computed(() => !props.isEditMode ? "Enregistrer un cours" : "Modifier un enregistrement de cours");
-const showModal = ref<boolean>(props.show);
+const showModal = computed({
+    get: () => props.show,
+    set: (newShow: boolean) => emits('update:show', newShow)
+});
 
 const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
 
-onMounted(async () => {
-    if (!props.isEditMode || !props.progress) {
-        formValue.value = {};
+const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBlock | null) => {
+    formValue.value = {};
+
+    if (!progress)
+        return;
+
+    if (!isEditMode) {
+        formValue.value['date'] = Dates.getTimeStamp(progress['date']);
+        formValue.value['class_id'] = progress['class_id'];
         return;
     }
 
-    formValue.value['date'] = Dates.getTimeStamp(props.progress['date']);
-    formValue.value['class_id'] = props.progress['class_id'];
-    formValue.value['teacher_id'] = props.progress['teacher_id'];
-    formValue.value['hour_part_id'] = props.progress['hour_part_id'];
-    formValue.value['const_element_id'] = props.progress['const_element_id'];
-    formValue.value['fallback_context'] = props.progress['fallback_context'];
+    formValue.value['date'] = Dates.getTimeStamp(progress['date']);
+    formValue.value['class_id'] = progress['class_id'];
+    formValue.value['teacher_id'] = progress['teacher_id'];
+    formValue.value['hour_part_id'] = progress['hour_part_id'];
+    formValue.value['const_element_id'] = progress['const_element_id'];
+    formValue.value['fallback_context'] = progress['fallback_context'];
+};
+
+
+watch(() => props.progress, (newProgress, _) => {
+    synchronizePropsToLocalData(props.isEditMode, newProgress);
+});
+
+onMounted(async () => {
+    synchronizePropsToLocalData(props.isEditMode, props.progress);
 
     classes.value = await fetchClasses(loadingBar, message);
     teachers.value = await fetchTeachers(loadingBar, message);
