@@ -6,15 +6,23 @@ import DocumentOutline from "vicons/ionicons-v5/DocumentOutline.vue";
 import DocumentsOutline from "vicons/ionicons-v5/DocumentsOutline.vue";
 import HourglassOutline from "vicons/ionicons-v5/HourglassOutline.vue";
 import PeopleOutline from "vicons/ionicons-v5/PeopleOutline.vue";
+import WarningOutline from "vicons/ionicons-v5/WarningOutline.vue";
+import StatsChartOutline from 'vicons/ionicons-v5/StatsChartOutline.vue';
+import BookDatabaseOutline from 'vicons/fluent/BookDatabase24Regular.vue';
+import CalendarAddOutline from 'vicons/fluent/CalendarAdd24Regular.vue';
+import AppsListOutline from 'vicons/fluent/AppsList24Regular.vue';
+import MoreOutline from 'vicons/fluent/More24Regular.vue';
 
 export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/activity',
         label: 'Enseignements',
+        icon: () => h(BookDatabaseOutline),
     },
     {
         key: '/progress',
         label: 'Progrès des cours',
+        icon: () => h(StatsChartOutline),
     },
     {
         key: '/complete-logbook',
@@ -24,6 +32,7 @@ export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/program',
         label: 'Programme',
+        icon: () => h(CalendarAddOutline),
         children: [
             {
                 key: '/allocated-hours',
@@ -43,12 +52,14 @@ export const mentionNavigation: MenuMixedOption[] = [
             {
                 key: '/syllabus',
                 label: 'Syllabus',
+                icon: () => h(WarningOutline),
             },
         ]
     },
     {
         key: '/repartition',
         label: 'Répartition',
+        icon: () => h(AppsListOutline),
         children: [
             {
                 key: '/teachers',
@@ -75,18 +86,22 @@ export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/others',
         label: 'Autres',
+        icon: () => h(MoreOutline),
         children: [
             {
                 key: '/contacts',
                 label: 'Contacts',
+                icon: () => h(WarningOutline),
             },
             {
                 key: '/unavailabilities',
                 label: 'Indisponibilités',
+                icon: () => h(WarningOutline),
             },
             {
                 key: '/semesters',
                 label: 'Semestres',
+                icon: () => h(WarningOutline),
             },
         ]
     }
