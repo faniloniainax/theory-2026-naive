@@ -1,24 +1,29 @@
 <template>
     <TCrud :url="url" :params="params" :singular="singular" :plural="plural" :is-masculine="isMasculine"
         :search-placeholder="searchPlaceholder" :form-grid-columns="formGridColumns" :columns="columns"
-        :other-actions="otherActions" :form-inputs="formInputs" />
+        :other-actions="otherActions" :form-inputs="formInputs" :filters="filters" />
 </template>
 
 <script setup lang="ts">
 import { Tags } from '@/lib/tags';
-import type { CrudAction, CrudInput } from '@/types/crud';
+import type { CrudAction, CrudFilter, CrudInput } from '@/types/crud';
+import type { Rank } from '@/types/rank';
 import type { Teacher } from '@/types/teacher';
 import type { TeachingUnit } from '@/types/teaching_unit';
+import type { Title } from '@/types/title';
 import type { DataTableColumns } from 'naive-ui';
 
 
 const url = "/teaching_units";
-const params = { include: "Teacher, Teacher.Title, Branch, Stage" }
+const params = { include: "Stage, Branch" }
 const singular = "unité d'enseignement";
-const plural = "unités d'enseignement";
+const plural = "unités d'enseignements";
 const isMasculine = true;
-const searchPlaceholder = "Rechercher par code, par nom...";
+const searchPlaceholder = "Rechercher par code, nom...";
 const formGridColumns = 1;
+
+const filters: CrudFilter[] = [
+];
 
 const columns: DataTableColumns<TeachingUnit> = [
     {
@@ -27,22 +32,17 @@ const columns: DataTableColumns<TeachingUnit> = [
     },
     {
         key: 'name',
-        title: 'Nom',
-    },
-    {
-        key: 'teacher_id',
-        title: 'Enseignant',
-        render: c => c['teacher'] && c['teacher']['title'] ? `${c['teacher']['title']!['name']} ${c['teacher']['last_name']} ${c['teacher']['first_name']}` : Tags.getNoneTag()
+        title: 'Nom'
     },
     {
         key: 'stage_id',
-        title: 'Promotion',
-        render: c => c['stage'] ? c['stage']['name'] : Tags.getNoneTag()
+        title: 'Niveau',
+        render: t => t['stage']!['name']
     },
     {
         key: 'branch_id',
         title: 'Parcours',
-        render: c => c['branch'] ? c['branch']['abbreviation'] : Tags.getNoneTag()
+        render: t => t['branch']!['abbreviation'],
     },
 ];
 
@@ -51,57 +51,69 @@ const otherActions: CrudAction[] = [];
 const formInputs: CrudInput[] = [
     {
         kind: 'string',
+        name: 'Trilogie',
+        path: 'trilogy',
+        required: true,
+        max: 3,
+        min: 3,
+        placeholder: 'FOO, BAR...',
+    },
+    {
+        kind: 'string',
+        name: 'Nom',
+        path: 'last_name',
+        required: true,
         max: 50,
-        min: 4,
-        placeholder: 'LXYYYYYY-ZZZZZZZZ...',
-        name: 'Code',
-        path: 'code',
+        placeholder: 'RAKOTO, RANDRIA...',
+    },
+    {
+        kind: 'string',
+        name: 'Prénom(s)',
+        path: 'first_name',
+        required: false,
+        max: 50,
+        placeholder: 'Rabe, Koto...',
+    },
+    {
+        kind: 'boolean',
+        name: 'Permanent',
+        path: 'is_permanent',
         required: true,
     },
     {
         kind: 'string',
-        max: 100,
-        min: 4,
-        placeholder: 'Français, Anglais...',
-        name: 'Nom',
-        path: 'name',
+        name: 'Adresse e-mail',
+        path: 'email',
         required: true,
+        max: 200,
+        min: 5,
+        placeholder: 'foobar@host.com...'
     },
     {
-        url: '/teachers',
         kind: 'foreign',
-        name: 'Enseignant',
-        path: 'teacher_id',
+        url: '/titles',
+        name: 'Titre',
+        path: 'title_id',
         required: true,
-        params: { include: 'Title' },
-        placeholder: 'Aucun enseignant...',
-        plural: 'enseignants',
-        mapFn: (t: Teacher) => {
-            return {
-                value: t['id'],
-                label: `${t['title']!['name']} ${t['last_name']} ${t['first_name']}`.trim()
-            }
-        }
+        plural: 'titres',
+        placeholder: 'Aucun titre...',
+        mapFn: (title: Title) => ({
+            label: title['name'],
+            value: title['id'],
+        }),
     },
     {
-        url: '/stages',
         kind: 'foreign',
-        name: 'Promotion',
-        path: 'stage_id',
+        url: '/ranks',
+        name: 'Rang',
+        path: 'rank_id',
         required: true,
-        placeholder: 'Sélectionner une promotion...',
-        plural: 'promotions',
-        mapFn: (s: any) => ({ value: s.id, label: s.name })
-    },
-    {
-        url: '/branches',
-        kind: 'foreign',
-        name: 'Parcours',
-        path: 'branch_id',
-        required: true,
-        placeholder: 'Sélectionner un parcours...',
-        plural: 'parcours',
-        mapFn: (b: any) => ({ value: b.id, label: b.abbreviation })
+        plural: 'rangs',
+        placeholder: 'Aucun rang...',
+        mapFn: (rank: Rank) => ({
+            label: rank['name'],
+            value: rank['id'],
+        }),
     },
 ];
 </script>
