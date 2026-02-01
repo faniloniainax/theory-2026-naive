@@ -63,10 +63,13 @@ export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: Mess
             throw Error("Erreur inconnue.");
 
         l?.finish();
+        m?.success("Séance ajoutée avec succès.");
+        return true;
     } catch (e) {
         l?.error();
         m?.error("Erreur durant l'ajout de la séance.");
         console.error(e);
+        return false;
     }
 };
 
@@ -80,10 +83,13 @@ export const editProgress = async (id: string, p: ProgressBlock, l?: LoadingBarI
             throw Error("Erreur inconnue.");
 
         l?.finish();
+        m?.success("Séance modifiée avec succès.");
+        return true;
     } catch (e) {
         l?.error();
         m?.error("Erreur durant la modification de la séance.");
         console.error(e);
+        return false;
     }
 };
 
@@ -97,9 +103,12 @@ export const deleteProgress = async (id: string, l?: LoadingBarInst, m?: Message
             throw Error("Erreur inconnue.");
 
         l?.finish();
+        m?.success("Séance supprimée avec succès.");
+        return true;
     } catch (e) {
         l?.error();
         m?.error("Erreur durant la suppression de la séance.");
         console.error(e);
+        return false;
     }
 };
