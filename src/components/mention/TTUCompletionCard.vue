@@ -1,13 +1,11 @@
 <template>
     <NCard size="small" hoverable class="tu-card">
-        <!-- Click arrow -->
         <NButton text circle class="arrow-btn" @click.stop="onClick">
             <template #icon>
                 <ChevronRight />
             </template>
         </NButton>
 
-        <!-- Header -->
         <template #header>
             <NSpace align="center" justify="space-between">
 
@@ -25,7 +23,6 @@
             </NSpace>
         </template>
 
-        <!-- Body -->
         <NSpace vertical size="small">
             <n-progress type="line" :percentage="data.completion_percentage" :status="statusType" :height="8"
                 :show-indicator="false" />
@@ -57,11 +54,12 @@ type Props = {
     data: TUCompletion;
 };
 
-const props = defineProps<Props>();
+type Emits = {
+    (event: 'open', data: TUCompletion): void;
+};
 
-const emit = defineEmits<{
-    (e: 'open', data: TUCompletion): void;
-}>();
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const onClick = () => {
     emit('open', props.data);
