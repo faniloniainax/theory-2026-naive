@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { Http } from '@/lib/http';
+import { Store } from '@/lib/store';
 import type { CrudAction, CrudFilter, CrudInput } from '@/types/crud';
 import { useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
@@ -225,7 +226,7 @@ watch(
         perPage: perPage.value,
     }),
     (state) => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+        Store.store(STORAGE_KEY, state);
     },
     { deep: true }
 );
@@ -275,8 +276,7 @@ watch(() => ({ ...filterValues.value }), (newValues, oldValues) => {
 }, { deep: true });
 
 onMounted(async () => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    const parsed = stored ? JSON.parse(stored) : null
+    const parsed = Store.load<any>(STORAGE_KEY);
 
     if (parsed) {
         searchQuery.value = parsed.q ?? ''

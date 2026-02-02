@@ -60,6 +60,7 @@
 
 <script setup lang="ts">
 import { Options } from '@/lib/options';
+import { Store } from '@/lib/store';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
@@ -111,7 +112,7 @@ const onUpdateShow = (newShow: boolean) => {
 };
 
 watch(filters, (newFilters) => {
-    localStorage.setItem('progress-filters', JSON.stringify(newFilters))
+    Store.store('progress-filters', newFilters);
 }, { deep: true });
 
 watch(() => filters.value.fieldId, async (newFieldId) => {
@@ -149,8 +150,7 @@ watch(() => filters.value.classId, async (newClassId) => {
 });
 
 onMounted(async () => {
-    const storedFilters = localStorage.getItem('progress-filters');
-    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null;
+    const parsed = Store.load<typeof filters.value>('progress-filters');
 
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);

@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
 import { Options } from '@/lib/options';
+import { Store } from '@/lib/store';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
@@ -78,7 +79,7 @@ const teachers = ref<Teacher[]>([]);
 const classes = ref<Class[]>([]);
 
 watch(filters, (newFilters) => {
-    localStorage.setItem('activity-filters', JSON.stringify(newFilters))
+    Store.store('activity-filters', newFilters);
 }, { deep: true });
 
 watch(() => filters.value.fieldId, async (newFieldId) => {
@@ -104,8 +105,7 @@ watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId
 });
 
 onMounted(async () => {
-    const storedFilters = localStorage.getItem('activity-filters')
-    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null
+    const parsed = Store.load<typeof filters.value>('activity-filters');
 
     fields.value = await fetchFields(loadingBar, message)
     stages.value = await fetchStages(loadingBar, message)

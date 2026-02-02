@@ -68,6 +68,7 @@
 <script setup lang="ts">
 import { Dates } from '@/lib/dates';
 import { Options } from '@/lib/options';
+import { Store } from '@/lib/store';
 import { Texts } from '@/lib/texts';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
@@ -190,7 +191,7 @@ watch(() => filters.value.classId, async (newClass, oldClass) => {
 });
 
 watch(filters, (newFilters) => {
-    localStorage.setItem('logbook-filters', JSON.stringify(newFilters));
+    Store.store('logbook-filters', newFilters);
 }, { deep: true });
 
 // When the field filter changes, branches are fetched.
@@ -219,8 +220,7 @@ watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId
 });
 
 onMounted(async () => {
-    const storedFilters = localStorage.getItem('logbook-filters')
-    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null
+    const parsed = Store.load<typeof filters.value>('logbook-filters');
 
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);
