@@ -1,5 +1,7 @@
 import { Axios } from "axios";
 import { ErrorKind } from "./errors";
+import { Store } from "./store";
+import type { User } from "@/types/auth";
 
 const Http = new Axios({
     baseURL: import.meta.env['VITE_API_URL'],
@@ -11,10 +13,14 @@ const Http = new Axios({
 
 Http.interceptors.request.use(
     (config) => {
+        const user = Store.decryptLoad<User>("_");
+
         config.headers = config.headers ?? {}
 
         config.headers['Accept'] = 'application/json';
         config.headers['Content-Type'] = 'application/json';
+        config.headers['X-Type'] ??= user?.type;
+        config.headers['X-Token'] ??= user?.token;
 
         if (config.data && typeof config.data === 'object' && !(config.data instanceof FormData))
             config.data = JSON.stringify(config.data);
