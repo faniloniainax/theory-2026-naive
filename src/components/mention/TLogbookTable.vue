@@ -4,6 +4,11 @@
             <NEmpty description="Aucune donnée." />
         </template>
     </NDataTable>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+        <NPagination show-size-picker :page-sizes="[5, 10, 20, 50]" :page="page" :page-count="totalPages"
+            :page-size="pageSize" @update:page="onUpdatePage" @update:page-size="onUpdatePageSize" />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -17,12 +22,18 @@ import EyeIcon from 'vicons/ionicons-v5/EyeOutline.vue';
 
 type Props = {
     progresses: ProgressBlock[];
+    page: number;
+    pageSize: number;
+    totalPages: number;
 };
 
 type Emits = {
     (event: 'click:edit', row: ProgressBlock): void;
     (event: 'click:delete', row: ProgressBlock): void;
     (event: 'click:context', row: ProgressBlock): void;
+    (event: 'update:page', page: number): void;
+    (event: 'update:page-size', pageSize: number): void;
+    (event: 'update:total-pages', totalPages: number): void;
 };
 
 const props = defineProps<Props>();
@@ -84,4 +95,7 @@ const onDeleteClick = (p: ProgressBlock) => {
         onPositiveClick: () => emits('click:delete', p)
     })
 };
+
+const onUpdatePage = (page: number) => emits('update:page', page);
+const onUpdatePageSize = (pageSize: number) => emits('update:page-size', pageSize);
 </script>

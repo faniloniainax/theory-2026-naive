@@ -1,23 +1,32 @@
 import { Http } from "@/lib/http";
+import type { CrudData, CrudPaginatedData } from "@/types/crud";
 import type { Progress, ProgressBlock } from "@/types/progress";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
 export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
     classId?: string,
-}): Promise<Progress[]> => {
+}, page?: number, pageSize?: number): Promise<CrudData<Progress>> => {
     l?.start();
 
     try {
         const classId = filters?.classId ?? undefined;
 
-        const p = { include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement', class_id: classId };
+        const p = {
+            include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement',
+            class_id: classId,
+            page: page,
+            per_page: pageSize
+        };
         const r = await Http.get("/progresses", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
 
         l?.finish();
+
+        if (page && pageSize)
+            return r.data as CrudPaginatedData<Progress>;
         return r.data as Progress[];
     } catch (e) {
         l?.error();

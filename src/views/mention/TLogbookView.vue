@@ -43,7 +43,8 @@
     </NSpace>
 
     <TLogbookTable :progresses="progresses" @click:edit="onEditClick" @click:delete="onDeleteClick"
-        @click:context="onContextClicked" />
+        @click:context="onContextClicked" v-model:page="page" v-model:page-size="pageSize"
+        v-model:total-pages="totalPages" />
     <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="progress"
         :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
 
@@ -75,6 +76,7 @@ import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchPr
 import { fetchStages } from '@/services/stages';
 import type { Branch } from '@/types/branch';
 import type { Class } from '@/types/class';
+import type { CrudData, CrudPaginatedData } from '@/types/crud';
 import type { Field } from '@/types/field';
 import type { Progress, ProgressBlock } from '@/types/progress';
 import type { Stage } from '@/types/stage';
@@ -109,6 +111,28 @@ const progress = ref<ProgressBlock | null>(null);
 
 const currentCtxSubject = ref<ProgressBlock | null>(null);
 const contextDisplayRequested = ref(false);
+
+const page = ref<number>(1);
+const pageSize = ref<number>(10);
+const totalPages = ref<number>(1);
+
+const fetchData = async () => {
+    const res = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }, page.value, pageSize.value) as CrudPaginatedData<Progress>;
+
+    if (res.data === undefined || res.pagination === undefined) {
+        progresses.value = res as CrudData<Progress> as unknown as ProgressBlock[];
+
+        totalPages.value = 1;
+        return;
+    }
+
+    const pg = res.pagination;
+    progresses.value = res.data as unknown as ProgressBlock[];
+
+    page.value = pg['page'] || page.value;
+    totalPages.value = pg['total_pages'] || 1;
+    pageSize.value = pg['per_page'] || pageSize.value;
+};
 
 const onAddClick = () => {
     isEditMode.value = false;
@@ -149,7 +173,7 @@ const onSubmit = async (p: ProgressBlock) => {
     if (ok)
         showFormModal.value = false;
 
-    progresses.value = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }) as unknown as ProgressBlock[];
+    await fetchData();
 };
 
 // When the class changes, the save course button isn't disabled.
@@ -174,7 +198,7 @@ watch(() => saveCourseDisabled.value, async (newS, _) => {
 
     // FIXME: This should fetch the block data
     // instead of the raw data, but w/e.
-    progresses.value = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }) as unknown as ProgressBlock[];
+    await fetchData();
 });
 
 // When the field filter changes, branches are fetched.
