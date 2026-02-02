@@ -2,7 +2,7 @@
     <NSpace justify="center" style="width: 100%;" align="center" vertical>
         <NCard>
             <NSpace justify="space-between">
-                <NSpace>
+                <NSpace justify="center">
                     <NSelect filterable clearable placeholder="Aucune mention..." v-model:value="filters.fieldId"
                         :options="Options.formatFields(fields)">
                         <template #empty>

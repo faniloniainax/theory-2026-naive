@@ -1,33 +1,33 @@
 <template>
     <NSpace justify="center" style="width: 100%;">
         <NCard>
-            <NSpace>
-                <NSelect filterable clearable placeholder="Aucune mention..." v-model:value="filters.fieldId"
-                    :options="Options.formatFields(fields)">
+            <NSpace justify="center">
+                <NSelect style="width: 200px;" filterable clearable placeholder="Aucune mention..."
+                    v-model:value="filters.fieldId" :options="Options.formatFields(fields)">
                     <template #empty>
                         <NEmpty description="Aucune donnée." />
                     </template>
                 </NSelect>
-                <NSelect filterable clearable placeholder="Aucun parcours..." v-model:value="filters.branchId"
-                    :options="Options.formatBranches(branches)">
+                <NSelect style="width: 100px;" filterable clearable placeholder="Aucun parcours..."
+                    v-model:value="filters.branchId" :options="Options.formatBranches(branches)">
                     <template #empty>
                         <NEmpty description="Aucune donnée." />
                     </template>
                 </NSelect>
-                <NSelect filterable clearable placeholder="Aucun niveau..." v-model:value="filters.stageId"
-                    :options="Options.formatStages(stages)">
+                <NSelect style="width: 80px;" filterable clearable placeholder="Aucun niveau..."
+                    v-model:value="filters.stageId" :options="Options.formatStages(stages)">
                     <template #empty>
                         <NEmpty description="Aucune donnée." />
                     </template>
                 </NSelect>
-                <NSelect filterable clearable placeholder="Aucune classe..." v-model:value="filters.classId"
-                    :options="Options.formatClasses(classes)">
+                <NSelect style="width: 150px;" filterable clearable placeholder="Aucune classe..."
+                    v-model:value="filters.classId" :options="Options.formatClasses(classes)">
                     <template #empty>
                         <NEmpty description="Aucune donnée." />
                     </template>
                 </NSelect>
-                <NSelect filterable clearable placeholder="Aucun enseignant..." v-model:value="filters.teacherId"
-                    :options="Options.formatTeachers(teachers)">
+                <NSelect style="width: 450px;" filterable clearable placeholder="Aucun enseignant..."
+                    v-model:value="filters.teacherId" :options="Options.formatTeachers(teachers)">
                     <template #empty>
                         <NEmpty description="Aucune donnée." />
                     </template>
