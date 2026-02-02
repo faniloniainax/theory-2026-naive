@@ -46,6 +46,7 @@ export const Auth = {
         await Routes.replaceRoutesProperly(true);
     },
     async attemptLogOut() {
+        localStorage.clear();
         storeUserObject(this.itemName, undefined);
         await Routes.replaceRoutesProperly(true);
     }
