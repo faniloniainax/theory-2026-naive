@@ -78,6 +78,8 @@ const props = withDefaults(defineProps<Props>(), {
     filters: [] as any,
 });
 
+const STORAGE_KEY = `crud:${props.url}`
+
 const dialog = useDialog();
 const message = useMessage();
 const loadingBar = useLoadingBar();
@@ -131,9 +133,6 @@ const fetchData = async () => {
     loadingBar.finish();
 };
 
-watch([currentPage, perPage], () => {
-    fetchData();
-});
 
 const onAddClick = () => {
     e.value = {};
@@ -205,21 +204,6 @@ const onFormSubmit = async (e: any) => {
     await fetchData();
 };
 
-onMounted(async () => {
-    await fetchData();
-
-    props.filters.forEach(async (f) => {
-        // Skip dependent filters initially
-        if (f.dependentOn && f.dependentOn.length > 0) return;
-
-        const p = { ...f.params };
-        const res = await Http.get(f.url, { params: p });
-        if (res.status === 200) {
-            filterOptions.value[f.path] = res.data.map(f.mapFn);
-        }
-    });
-});
-
 let debounceTimer: any = null;
 const debounce = (fn: Function, delay: number) => {
     return (...args: any[]) => {
@@ -232,6 +216,23 @@ const debouncedFetch = debounce(async () => {
     currentPage.value = 1;
     await fetchData();
 }, 500);
+
+watch(
+    () => ({
+        q: searchQuery.value,
+        filters: filterValues.value,
+        page: currentPage.value,
+        perPage: perPage.value,
+    }),
+    (state) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    },
+    { deep: true }
+);
+
+watch([currentPage, perPage], () => {
+    fetchData();
+});
 
 watch(searchQuery, () => {
     debouncedFetch();
@@ -272,4 +273,55 @@ watch(() => ({ ...filterValues.value }), (newValues, oldValues) => {
     currentPage.value = 1;
     fetchData();
 }, { deep: true });
+
+onMounted(async () => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const parsed = stored ? JSON.parse(stored) : null
+
+    if (parsed) {
+        searchQuery.value = parsed.q ?? ''
+        currentPage.value = parsed.page ?? 1
+        perPage.value = parsed.perPage ?? perPage.value
+    }
+
+    await fetchData()
+
+    for (const f of props.filters) {
+        if (f.dependentOn && f.dependentOn.length > 0) continue
+
+        const res = await Http.get(f.url, { params: f.params })
+        if (res.status === 200) {
+            filterOptions.value[f.path] = res.data.map(f.mapFn)
+        }
+    }
+
+    if (parsed?.filters) {
+        for (const f of props.filters) {
+            const value = parsed.filters[f.path]
+            if (!value) continue
+
+            filterValues.value[f.path] = value
+
+            // If filter has dependents, fetch their options
+            const dependents = props.filters.filter(x =>
+                x.dependentOn?.includes(f.path)
+            )
+
+            for (const dep of dependents) {
+                const deps = Array.isArray(dep.dependentOn)
+                    ? dep.dependentOn
+                    : [dep.dependentOn]
+
+                const allReady = deps.every(d => d && filterValues.value[d])
+                if (!allReady) continue
+
+                const p = { ...filterValues.value, ...dep.params }
+                const res = await Http.get(dep.url, { params: p })
+                if (res.status === 200) {
+                    filterOptions.value[dep.path] = res.data.map(dep.mapFn)
+                }
+            }
+        }
+    }
+})
 </script>
