@@ -178,29 +178,20 @@ const onSubmit = async (p: ProgressBlock) => {
 };
 
 // When the class changes, the save course button isn't disabled.
-watch(() => filters.value.classId, (newClass, oldClass) => {
-    if (!newClass || newClass.length == 0)
+watch(() => filters.value.classId, async (newClass, oldClass) => {
+    if (!newClass || newClass.length == 0) {
+        progresses.value = [];
         saveCourseDisabled.value = true;
-    else
-        saveCourseDisabled.value = false;
+        return;
+    }
+
+    saveCourseDisabled.value = false;
+    await fetchData();
 });
 
 watch(filters, (newFilters) => {
     localStorage.setItem('logbook-filters', JSON.stringify(newFilters));
 }, { deep: true });
-
-// When the save course button isn't disabled, we fetch progress data
-// for the specific class.
-watch(() => saveCourseDisabled.value, async (newS, _) => {
-    if (newS === true) {
-        progresses.value = [];
-        return;
-    }
-
-    // FIXME: This should fetch the block data
-    // instead of the raw data, but w/e.
-    await fetchData();
-});
 
 // When the field filter changes, branches are fetched.
 watch(() => filters.value.fieldId, async (newFieldId, _) => {
