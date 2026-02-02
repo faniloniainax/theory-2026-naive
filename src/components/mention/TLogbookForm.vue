@@ -10,7 +10,8 @@
                         </NFormItem>
                         <NFormItem path="class_id" label="Classe concernée:">
                             <NSelect filterable clearable placeholder="Aucune classe..."
-                                :options="Options.formatClasses(classes)" v-model:value="formValue['class_id']">
+                                :options="Options.formatClasses(classes)" v-model:value="formValue['class_id']"
+                                @update:value="onUpdateClassValue">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
@@ -197,6 +198,16 @@ const onCancelClick = () => {
     }
 
     emits('update:show', false);
+};
+
+const onUpdateClassValue = async (classId: string) => {
+    const class_ = classes.value.find((c) => c['id'] == classId);
+
+    if (!class_)
+        return;
+
+    formValue.value['const_element_id'] = null;
+    constElements.value = await fetchConstElements(loadingBar, message, { branchId: class_['branch_id'], stageId: class_['stage_id'] })
 };
 
 const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBlock | null) => {
