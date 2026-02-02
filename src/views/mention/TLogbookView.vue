@@ -152,6 +152,7 @@ const onEditClick = (p: ProgressBlock) => {
 
 const onDeleteClick = async (p: ProgressBlock) => {
     await deleteProgress(p['id'], loadingBar, message);
+    await fetchData();
 };
 
 const onContextClicked = (p: ProgressBlock) => {
