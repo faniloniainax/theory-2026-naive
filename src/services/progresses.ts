@@ -69,14 +69,17 @@ export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: Mess
         const r = await Http.post("/progresses", p);
 
         if (r.status !== 201)
-            throw Error("Erreur inconnue.");
+            throw r.data;
 
         l?.finish();
         m?.success("Séance ajoutée avec succès.");
         return true;
-    } catch (e) {
+    } catch (e: any) {
         l?.error();
-        m?.error("Erreur durant l'ajout de la séance.");
+        if (e?.error)
+            m?.error(e.error);
+        else
+            m?.error("Erreur durant l'ajout de la séance.");
         console.error(e);
         return false;
     }
