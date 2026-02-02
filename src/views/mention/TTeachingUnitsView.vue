@@ -14,7 +14,7 @@ import type { Title } from '@/types/title';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/teaching_units";
+const url = "/mention/teaching_units";
 const params = { include: "Stage, Branch" }
 const singular = "unité d'enseignement";
 const plural = "unités d'enseignements";
@@ -91,7 +91,7 @@ const formInputs: CrudInput[] = [
     },
     {
         kind: 'foreign',
-        url: '/titles',
+        url: '/mention/titles',
         name: 'Titre',
         path: 'title_id',
         required: true,
@@ -104,7 +104,7 @@ const formInputs: CrudInput[] = [
     },
     {
         kind: 'foreign',
-        url: '/ranks',
+        url: '/mention/ranks',
         name: 'Rang',
         path: 'rank_id',
         required: true,

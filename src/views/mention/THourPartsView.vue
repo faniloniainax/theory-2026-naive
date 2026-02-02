@@ -10,7 +10,7 @@ import type { HourPart } from '@/types/hour_part';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/hour_parts";
+const url = "/mention/hour_parts";
 const params = { include: "" }
 const singular = "tranche horaire";
 const plural = "tranches horaires";

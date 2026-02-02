@@ -11,7 +11,7 @@ import type { Room } from '@/types/room';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/rooms";
+const url = "/mention/rooms";
 const singular = "salle";
 const plural = "salles";
 const isMasculine = false;

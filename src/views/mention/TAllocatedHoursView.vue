@@ -13,7 +13,7 @@ import type { TeachingType } from '@/types/teaching_type';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/allocated_hours";
+const url = "/mention/allocated_hours";
 const params = { include: "ConstElement, TeachingType" }
 const singular = "volume horaire";
 const plural = "volumes horaires";
@@ -51,7 +51,7 @@ const formInputs: CrudInput[] = [
         path: 'quantity',
     },
     {
-        url: '/const_elements',
+        url: '/mention/const_elements',
         kind: 'foreign',
         path: 'const_element_id',
         name: 'Element constitutif',
@@ -66,7 +66,7 @@ const formInputs: CrudInput[] = [
         },
     },
     {
-        url: '/teaching_types',
+        url: '/mention/teaching_types',
         kind: 'foreign',
         path: 'teaching_type_id',
         name: "Type d'enseignement",

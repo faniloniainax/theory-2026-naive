@@ -14,7 +14,7 @@ import type { Title } from '@/types/title';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/teachers";
+const url = "/mention/teachers";
 const params = { include: "Title, Rank" }
 const singular = "enseignant";
 const plural = "enseignants";
@@ -26,7 +26,7 @@ const filters = [
     {
         path: 'title_id',
         placeholder: 'Titre',
-        url: '/titles',
+        url: '/mention/titles',
         mapFn: (title: Title) => ({
             label: title['name'],
             value: title['id'],
@@ -35,7 +35,7 @@ const filters = [
     {
         path: 'rank_id',
         placeholder: 'Grade',
-        url: '/ranks',
+        url: '/mention/ranks',
         mapFn: (rank: Rank) => ({
             label: rank['name'],
             value: rank['id'],
@@ -119,7 +119,7 @@ const formInputs: CrudInput[] = [
     },
     {
         kind: 'foreign',
-        url: '/titles',
+        url: '/mention/titles',
         name: 'Titre',
         path: 'title_id',
         required: true,
@@ -132,7 +132,7 @@ const formInputs: CrudInput[] = [
     },
     {
         kind: 'foreign',
-        url: '/ranks',
+        url: '/mention/ranks',
         name: 'Rang',
         path: 'rank_id',
         required: true,

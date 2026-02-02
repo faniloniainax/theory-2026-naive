@@ -12,7 +12,7 @@ import type { Unavailability } from '@/types/unavailability';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/unavailabilities";
+const url = "/mention/unavailabilities";
 const params = { include: "Teacher, Teacher.Title" }
 const singular = "indisponibilité";
 const plural = "indisponibilités";
@@ -53,7 +53,7 @@ const formInputs: CrudInput[] = [
         required: true,
     },
     {
-        url: '/teachers',
+        url: '/mention/teachers',
         kind: 'foreign',
         name: 'Enseignant',
         path: 'teacher_id',

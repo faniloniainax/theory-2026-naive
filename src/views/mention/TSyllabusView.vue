@@ -73,7 +73,7 @@ import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 import TrashOutline from 'vicons/ionicons-v5/TrashOutline.vue';
 import { h, onMounted, ref, watch } from 'vue';
 
-const url = "/program_elements";
+const url = "/mention/program_elements";
 
 const message = useMessage();
 const dialog = useDialog();
@@ -93,7 +93,7 @@ const formModel = ref<any>({});
 const isEditMode = ref(false);
 
 const fetchTeachingUnits = async () => {
-    const res = await Http.get("/teaching_units");
+    const res = await Http.get("/mention/teaching_units");
     if (res.status === 200) {
         teachingUnitOptions.value = res.data.map((t: TeachingUnit) => ({
             label: t.name,
@@ -107,7 +107,7 @@ const fetchConstElements = async () => {
         constElementOptions.value = [];
         return;
     }
-    const res = await Http.get("/const_elements", { params: { teaching_unit_id: teachingUnitId.value } });
+    const res = await Http.get("/mention/const_elements", { params: { teaching_unit_id: teachingUnitId.value } });
     if (res.status === 200) {
         constElementOptions.value = res.data.map((c: ConstElement) => ({
             label: `${c.name} (${c.code})`,

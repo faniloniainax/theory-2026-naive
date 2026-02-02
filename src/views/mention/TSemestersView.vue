@@ -12,7 +12,7 @@ import type { Stage } from '@/types/stage';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/semesters";
+const url = "/mention/semesters";
 const params = { include: "Stage" }
 const singular = "semestre";
 const plural = "semestres";
@@ -52,7 +52,7 @@ const formInputs: CrudInput[] = [
         required: true,
     },
     {
-        url: '/stages',
+        url: '/mention/stages',
         kind: 'foreign',
         name: 'Promotion',
         path: 'stage_id',

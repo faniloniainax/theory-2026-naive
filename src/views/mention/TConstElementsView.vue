@@ -12,7 +12,7 @@ import type { Teacher } from '@/types/teacher';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/const_elements";
+const url = "/mention/const_elements";
 const params = { include: "Teacher, Teacher.Title, TeachingUnit, Semester", per_page: 10 }
 const singular = "élement constitutif";
 const plural = "élements constitutifs";
@@ -76,7 +76,7 @@ const formInputs: CrudInput[] = [
         required: true,
     },
     {
-        url: '/teachers',
+        url: '/mention/teachers',
         kind: 'foreign',
         name: 'Enseignant',
         path: 'teacher_id',
