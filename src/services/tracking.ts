@@ -12,7 +12,7 @@ export const fetchActivityForTeacher = async (teacherId: string, classId: string
         if (year) {
             params.year = year;
         }
-        const r = await Http.get(`/tracking/teacher_activity/${teacherId}/${classId}/${constElementId}`, { params });
+        const r = await Http.get(`/mention/tracking/teacher_activity/${teacherId}/${classId}/${constElementId}`, { params });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
@@ -32,7 +32,7 @@ export const fetchTUCompletion = async (stageId: string, branchId: string, class
     l?.start();
 
     try {
-        const r = await Http.get(`/tracking/progress/${stageId}/${branchId}/${classId}`);
+        const r = await Http.get(`/mention/tracking/progress/${stageId}/${branchId}/${classId}`);
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
@@ -52,7 +52,7 @@ export const fetchCECompletion = async (teachingUnitId: string, classId: string,
     l?.start();
 
     try {
-        const r = await Http.get(`/tracking/detailed_progress/${teachingUnitId}/${classId}`);
+        const r = await Http.get(`/mention/tracking/detailed_progress/${teachingUnitId}/${classId}`);
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

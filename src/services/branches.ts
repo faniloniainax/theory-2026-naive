@@ -12,7 +12,7 @@ export const fetchBranches = async (l?: LoadingBarInst, m?: MessageApiInjection,
         const fieldId = filters?.fieldId ?? undefined;
 
         const p = { include: '', field_id: fieldId };
-        const r = await Http.get("/branches", { params: p, });
+        const r = await Http.get("/mention/branches", { params: p, });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

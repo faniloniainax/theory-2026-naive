@@ -8,7 +8,7 @@ export const fetchTeachers = async (l?: LoadingBarInst, m?: MessageApiInjection)
 
     try {
         const p = { include: 'Title, Rank' };
-        const r = await Http.get("/teachers", { params: p });
+        const r = await Http.get("/mention/teachers", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

@@ -8,7 +8,7 @@ export const fetchHourParts = async (l?: LoadingBarInst, m?: MessageApiInjection
 
     try {
         const p = { include: '' };
-        const r = await Http.get("/hour_parts", { params: p });
+        const r = await Http.get("/mention/hour_parts", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

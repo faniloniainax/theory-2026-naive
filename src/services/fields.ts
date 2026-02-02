@@ -8,7 +8,7 @@ export const fetchFields = async (l?: LoadingBarInst, m?: MessageApiInjection): 
 
     try {
         const p = { include: '' };
-        const r = await Http.get("/fields", { params: p });
+        const r = await Http.get("/mention/fields", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

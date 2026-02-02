@@ -18,7 +18,7 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
             page: page,
             per_page: pageSize
         };
-        const r = await Http.get("/progresses", { params: p });
+        const r = await Http.get("/mention/progresses", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
@@ -46,7 +46,7 @@ export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInje
         const classId = filters?.classId ?? undefined;
 
         const p = { include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement', class_id: classId };
-        const r = await Http.get("/progresses/blocks", { params: p });
+        const r = await Http.get("/mention/progresses/blocks", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
@@ -66,7 +66,7 @@ export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: Mess
     l?.start();
 
     try {
-        const r = await Http.post("/progresses", p);
+        const r = await Http.post("/mention/progresses", p);
 
         if (r.status !== 201)
             throw r.data;
@@ -89,7 +89,7 @@ export const editProgress = async (id: string, p: ProgressBlock, l?: LoadingBarI
     l?.start();
 
     try {
-        const r = await Http.put(`/progresses/${id}`, p);
+        const r = await Http.put(`/mention/progresses/${id}`, p);
 
         if (r.status !== 200)
             throw r.data;
@@ -111,7 +111,7 @@ export const deleteProgress = async (id: string, l?: LoadingBarInst, m?: Message
     l?.start();
 
     try {
-        const r = await Http.delete(`/progresses/${id}`);
+        const r = await Http.delete(`/mention/progresses/${id}`);
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

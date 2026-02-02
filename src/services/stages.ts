@@ -8,7 +8,7 @@ export const fetchStages = async (l?: LoadingBarInst, m?: MessageApiInjection): 
 
     try {
         const p = { include: '' };
-        const r = await Http.get("/stages", { params: p });
+        const r = await Http.get("/mention/stages", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");

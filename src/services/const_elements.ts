@@ -18,7 +18,7 @@ export const fetchConstElements = async (l?: LoadingBarInst, m?: MessageApiInjec
         const tId = filters?.teacherId ?? undefined;
 
         const p = { include: 'Teacher.Title, TeachingUnit, Semester', teaching_unit_id: tuId, branch_id: bId, stage_id: sId, teacher_id: tId };
-        const r = await Http.get("/const_elements", { params: p });
+        const r = await Http.get("/mention/const_elements", { params: p });
 
         if (r.status !== 200)
             throw Error("Erreur inconnue.");
