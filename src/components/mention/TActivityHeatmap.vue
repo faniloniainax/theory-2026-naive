@@ -23,7 +23,10 @@
                         Plus
                     </template>
                     <template #footer>
-                        <NP :depth="3">
+                        <NP v-if="isLoading" :depth="3">
+                            Sélectionnez un élément constitutif pour charger les données.
+                        </NP>
+                        <NP v-else :depth="3">
                             *Seules les matières associées à l'enseignant sont affichées ici.
                         </NP>
                     </template>
