@@ -92,15 +92,17 @@ export const editProgress = async (id: string, p: ProgressBlock, l?: LoadingBarI
         const r = await Http.put(`/progresses/${id}`, p);
 
         if (r.status !== 200)
-            throw Error("Erreur inconnue.");
+            throw r.data;
 
         l?.finish();
         m?.success("Séance modifiée avec succès.");
         return true;
-    } catch (e) {
+    } catch (e: any) {
         l?.error();
-        m?.error("Erreur durant la modification de la séance.");
-        console.error(e);
+        if (e?.error)
+            m?.error(e.error);
+        else
+            m?.error("Erreur durant l'ajout de la séance."); console.error(e);
         return false;
     }
 };
