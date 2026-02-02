@@ -9,27 +9,27 @@
                                 :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
                         </NFormItem>
                         <NFormItem path="class_id" label="Classe concernée:">
-                            <NSelect placeholder="Aucune classe..." :options="Options.formatClasses(classes)"
-                                v-model:value="formValue['class_id']">
+                            <NSelect filterable clearable placeholder="Aucune classe..."
+                                :options="Options.formatClasses(classes)" v-model:value="formValue['class_id']">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
                         <NFormItem path="hour_part_id" label="Horaire de la séance:">
-                            <NSelect placeholder="Aucun horaire..." :options="Options.formatHourParts(hourParts)"
-                                v-model:value="formValue['hour_part_id']">
+                            <NSelect filterable clearable placeholder="Aucun horaire..."
+                                :options="Options.formatHourParts(hourParts)" v-model:value="formValue['hour_part_id']">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
                         <NFormItem path="const_element_id" label="Elément constitutif concerné:">
-                            <NSelect placeholder="Aucun élément constitutif..."
+                            <NSelect filterable clearable placeholder="Aucun élément constitutif..."
                                 :options="Options.formatConstElements(constElements)"
                                 v-model:value="formValue['const_element_id']">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
                         <NFormItem path="teacher_id" label="Enseignant responsable:">
-                            <NSelect placeholder="Aucun enseignant..." :options="Options.formatTeachers(teachers)"
-                                v-model:value="formValue['teacher_id']">
+                            <NSelect filterable clearable placeholder="Aucun enseignant..."
+                                :options="Options.formatTeachers(teachers)" v-model:value="formValue['teacher_id']">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
@@ -38,7 +38,7 @@
                 <NTabPane name="contextForm" tab="Contexte de la séance">
                     <NForm ref="contextFormRef" :model="formValue" :rules="contextFormRules">
                         <NFormItem path="fallback_context" label="Description du contenu du cours:">
-                            <NInput type="textarea" maxlength="255" show-count
+                            <NInput clearable type="textarea" maxlength="255" show-count
                                 placeholder="Racontez ce qui a été éffectué durant cette séance..."
                                 v-model:value="formValue['fallback_context']" />
                         </NFormItem>
@@ -184,7 +184,9 @@ const onValidateClick = async () => {
         if (typeof submittedValue['date'] === 'string') {
             submittedValue['date'] = new Date(submittedValue['date']).getTime();
         }
+
         emits('submit', submittedValue);
+        formsTab.value = "coreForm";
     }
 };
 
