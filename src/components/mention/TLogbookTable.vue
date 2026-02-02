@@ -22,6 +22,7 @@ type Props = {
 type Emits = {
     (event: 'click:edit', row: ProgressBlock): void;
     (event: 'click:delete', row: ProgressBlock): void;
+    (event: 'click:context', row: ProgressBlock): void;
 };
 
 const props = defineProps<Props>();
@@ -61,7 +62,7 @@ const columns: DataTableColumns<ProgressBlock> = [
         key: 'context',
         title: 'Contexte',
         align: 'center',
-        render: (p: ProgressBlock) => h(NButton, () => h(NIcon, () => h(EyeIcon)))
+        render: (p: ProgressBlock) => h(NButton, { onClick: () => emits('click:context', p) }, () => h(NIcon, () => h(EyeIcon)))
     },
     {
         key: 'actions',

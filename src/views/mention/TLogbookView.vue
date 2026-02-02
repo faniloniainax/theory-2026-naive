@@ -42,14 +42,32 @@
         </NCard>
     </NSpace>
 
-    <TLogbookTable :progresses="progresses" @click:edit="onEditClick" @click:delete="onDeleteClick" />
+    <TLogbookTable :progresses="progresses" @click:edit="onEditClick" @click:delete="onDeleteClick"
+        @click:context="onContextClicked" />
     <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="progress"
         :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
+
+    <NModal preset="dialog" title="Informations sur le contexte" v-model:show="contextDisplayRequested" closable
+        close-on-esc>
+        <NSpace vertical>
+            <NP>
+                <b>Enseignant: </b>
+                {{ currentCtxSubject ?
+                    Texts.formatTeacher(currentCtxSubject['teacher']) :
+                    "<aucun>" }}
+            </NP>
+            <NP><b>Contexte du cours: </b></NP>
+            <NCard embedded>
+                {{ currentCtxSubject ? currentCtxSubject['fallback_context'] : "<aucun>" }}
+            </NCard>
+        </NSpace>
+    </NModal>
 </template>
 
 <script setup lang="ts">
 import { Dates } from '@/lib/dates';
 import { Options } from '@/lib/options';
+import { Texts } from '@/lib/texts';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
@@ -58,7 +76,7 @@ import { fetchStages } from '@/services/stages';
 import type { Branch } from '@/types/branch';
 import type { Class } from '@/types/class';
 import type { Field } from '@/types/field';
-import type { ProgressBlock } from '@/types/progress';
+import type { Progress, ProgressBlock } from '@/types/progress';
 import type { Stage } from '@/types/stage';
 import { useLoadingBar, useMessage } from 'naive-ui';
 import AddIcon from 'vicons/ionicons-v5/AddOutline.vue';
@@ -89,6 +107,9 @@ const showFormModal = ref(false);
 const isEditMode = ref(false);
 const progress = ref<ProgressBlock | null>(null);
 
+const currentCtxSubject = ref<ProgressBlock | null>(null);
+const contextDisplayRequested = ref(false);
+
 const onAddClick = () => {
     isEditMode.value = false;
     showFormModal.value = true;
@@ -107,6 +128,11 @@ const onEditClick = (p: ProgressBlock) => {
 
 const onDeleteClick = async (p: ProgressBlock) => {
     await deleteProgress(p['id'], loadingBar, message);
+};
+
+const onContextClicked = (p: ProgressBlock) => {
+    currentCtxSubject.value = p;
+    contextDisplayRequested.value = true;
 };
 
 const onSubmit = async (p: ProgressBlock) => {
