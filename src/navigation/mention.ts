@@ -25,7 +25,7 @@ export const mentionNavigation: MenuMixedOption[] = [
         icon: () => h(StatsChartOutline),
     },
     {
-        key: '/complete-logbook',
+        key: '/logbook',
         label: 'Cahier de texte',
         icon: () => h(BookOutline),
     },
