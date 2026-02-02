@@ -45,8 +45,8 @@
         </template>
     </NSpace>
 
-    <NModal preset="dialog" title="Progrès par éléments constitutifs" closable close-on-esc
-        v-model:show="anyTUCompletionSelected" style="width: 70%;">
+    <NModal preset="dialog" title="Progrès par éléments constitutifs" closable close-on-esc style="width: 70%;"
+        v-model:show="anyTUCompletionSelected" @update:show="onUpdateShow">
         <template v-if="ceCompletionData.length === 0">
             <NEmpty description="Aucune donnée." />
         </template>
@@ -88,20 +88,26 @@ const filters = ref<{
     branchId: string | null,
     stageId: string | null,
     classId: string | null,
-    tuCompletionId: string | null,
 }>({
     fieldId: null,
     branchId: null,
     stageId: null,
     classId: null,
-    tuCompletionId: null,
 });
 
 const tuCompletionData = ref<TUCompletion[]>([]);
 const ceCompletionData = ref<CECompletion[]>([]);
 
-const onTUCompletionCardOpen = (tu: TUCompletion) => {
-    filters.value.tuCompletionId = tu['id'];
+const onTUCompletionCardOpen = async (tu: TUCompletion) => {
+    anyTUCompletionSelected.value = true
+    ceCompletionData.value = await fetchCECompletion(tu.id, filters.value.classId!, loadingBar, message)
+};
+
+const onUpdateShow = (newShow: boolean) => {
+    if (newShow)
+        return;
+
+    anyTUCompletionSelected.value = false;
 };
 
 watch(() => filters.value.fieldId, async (newFieldId) => {
@@ -136,18 +142,6 @@ watch(() => filters.value.classId, async (newClassId) => {
 
     anyClassSelected.value = true;
     tuCompletionData.value = await fetchTUCompletion(filters.value.stageId!, filters.value.branchId!, filters.value.classId!, loadingBar, message);
-});
-
-watch(() => filters.value.tuCompletionId, async (newTUCompletionId) => {
-    ceCompletionData.value = [];
-
-    if (!newTUCompletionId) {
-        anyTUCompletionSelected.value = false;
-        return;
-    }
-
-    anyTUCompletionSelected.value = true;
-    ceCompletionData.value = await fetchCECompletion(newTUCompletionId, filters.value.classId!, loadingBar, message);
 });
 
 onMounted(async () => {
