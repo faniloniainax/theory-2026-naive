@@ -11,7 +11,7 @@
                 </NSelect>
                 <NDatePicker v-model:value="selectedDate" type="year" placeholder="Sélectionner une année"
                     style="min-width: 150px;" />
-                <NHeatmap :loading="isLoading" :data="data" :tooltip="true" size="large">
+                <NHeatmap :loading="isLoading" :data="data" :tooltip="true" size="small">
                     <template #tooltip="{ timestamp: ts, value }">
                         {{ Dates.format(ts, 'dd MMMM yyyy') }} <br>
                         {{ value?.toString().padStart(3, '0') ?? "00" }} séance(s)
