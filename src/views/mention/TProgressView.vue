@@ -110,6 +110,10 @@ const onUpdateShow = (newShow: boolean) => {
     anyTUCompletionSelected.value = false;
 };
 
+watch(filters, (newFilters) => {
+    localStorage.setItem('progress-filters', JSON.stringify(newFilters))
+}, { deep: true });
+
 watch(() => filters.value.fieldId, async (newFieldId) => {
     filters.value.branchId = null;
 
@@ -145,7 +149,27 @@ watch(() => filters.value.classId, async (newClassId) => {
 });
 
 onMounted(async () => {
+    const storedFilters = localStorage.getItem('progress-filters');
+    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null;
+
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);
+
+    if (parsed?.fieldId) {
+        filters.value.fieldId = parsed.fieldId;
+        branches.value = await fetchBranches(loadingBar, message, { fieldId: parsed.fieldId });
+    }
+
+    if (parsed?.branchId && parsed?.stageId) {
+        filters.value.stageId = parsed.stageId;
+        filters.value.branchId = parsed.branchId
+        classes.value = await fetchClasses(loadingBar, message, {
+            branchId: parsed.branchId,
+            stageId: parsed.stageId
+        })
+    }
+
+    if (parsed?.classId)
+        filters.value.classId = parsed.classId;
 });
 </script>
