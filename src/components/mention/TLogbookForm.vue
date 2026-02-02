@@ -1,9 +1,9 @@
 <template>
     <NModal preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate" closable close-on-esc>
         <NSpace vertical>
-            <NTabs type="line" animated>
+            <NTabs animated v-model:value="formsTab" @before-leave="() => false">
                 <NTabPane name="coreForm" tab="Informations basiques">
-                    <NForm ref="coreFormRef" :model="formValue">
+                    <NForm ref="coreFormRef" :model="formValue" :rules="coreFormRules">
                         <NFormItem path="date" label="Date de la séance:">
                             <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
                                 :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
@@ -36,20 +36,22 @@
                     </NForm>
                 </NTabPane>
                 <NTabPane name="contextForm" tab="Contexte de la séance">
-                    <NForm ref="contextFormRef" :model="formValue">
-                        <NInput type="textarea" maxlength="255" show-count
-                            placeholder="Racontez ce qui a été éffectué durant cette séance..."
-                            v-model:value="formValue['fallback_context']" />
+                    <NForm ref="contextFormRef" :model="formValue" :rules="contextFormRules">
+                        <NFormItem path="fallback_context" label="Description du contenu du cours:">
+                            <NInput type="textarea" maxlength="255" show-count
+                                placeholder="Racontez ce qui a été éffectué durant cette séance..."
+                                v-model:value="formValue['fallback_context']" />
+                        </NFormItem>
                     </NForm>
                 </NTabPane>
             </NTabs>
 
             <NSpace justify="end">
-                <NButton @click="onCancelClick">
-                    Annuler
+                <NButton ghost :type="formsTab === 'contextForm' ? 'info' : 'error'" @click="onCancelClick">
+                    {{ formsTab === 'contextForm' ? 'Précédent' : 'Annuler' }}
                 </NButton>
-                <NButton @click="onSubmitClick">
-                    Valider
+                <NButton ghost type="success" @click="onValidateClick">
+                    {{ formsTab === "coreForm" ? "Suivant" : "Valider" }}
                 </NButton>
             </NSpace>
         </NSpace>
@@ -69,7 +71,8 @@ import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
 import type { ProgressBlock } from '@/types/progress';
 import type { Teacher } from '@/types/teacher';
-import { type FormInst, useLoadingBar, useMessage } from 'naive-ui';
+import { type FormInst, type FormRules, useLoadingBar, useMessage } from 'naive-ui';
+import { render } from 'vue';
 
 type Props = {
     show: boolean;
@@ -93,6 +96,7 @@ const loadingBar = useLoadingBar();
 const coreFormRef = useTemplateRef('coreFormRef');
 const contextFormRef = useTemplateRef('contextFormRef');
 
+const formsTab = ref("coreForm");
 const formValue = ref<any>({});
 const classes = ref<Class[]>([]);
 const teachers = ref<Teacher[]>([]);
@@ -105,18 +109,91 @@ const showModal = computed({
     set: (newShow: boolean) => emits('update:show', newShow)
 });
 
+const coreFormRules: FormRules = {
+    class_id: {
+        type: 'string',
+        required: true,
+        message: "La classe est requise.",
+    },
+    hour_part_id: {
+        type: 'string',
+        required: true,
+        message: "La tranche horaire est requise.",
+    },
+    const_element_id: {
+        type: 'string',
+        required: true,
+        message: "L'élément constitutif est requis.",
+    },
+    teacher_id: {
+        type: 'string',
+        required: true,
+        message: "L'enseignant est requis.",
+    }
+};
+
+const contextFormRules: FormRules = {
+    fallback_context: {
+        type: 'string',
+        min: 5,
+        required: true,
+        message: 'Le contexte doit contenir au moins 5 caractères.'
+    },
+};
+
 const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
 
-const onSubmitClick = () => {
-    // Ensure date is always a number
-    const submittedValue = { ...formValue.value };
-    if (typeof submittedValue['date'] === 'string') {
-        submittedValue['date'] = new Date(submittedValue['date']).getTime();
+const validateCoreForm = async () => {
+    try {
+        await coreFormRef.value?.validate();
+        return true;
+    } catch (e: any) {
+        console.error(e);
     }
-    emits('submit', submittedValue);
+
+    return false;
+};
+
+const validateContextForm = async () => {
+    try {
+        await contextFormRef.value?.validate();
+        return true;
+    } catch (e: any) {
+        console.error(e);
+    }
+
+    return false;
+};
+
+const onValidateClick = async () => {
+    if (formsTab.value === "coreForm") {
+        const ok = await validateCoreForm();
+
+        if (!ok)
+            return;
+
+        formsTab.value = "contextForm";
+    } else if (formsTab.value === "contextForm") {
+        const ok = await validateContextForm();
+
+        if (!ok)
+            return;
+
+        // Ensure date is always a number
+        const submittedValue = { ...formValue.value };
+        if (typeof submittedValue['date'] === 'string') {
+            submittedValue['date'] = new Date(submittedValue['date']).getTime();
+        }
+        emits('submit', submittedValue);
+    }
 };
 
 const onCancelClick = () => {
+    if (formsTab.value === 'contextForm') {
+        formsTab.value = 'coreForm';
+        return;
+    }
+
     emits('update:show', false);
 };
 
