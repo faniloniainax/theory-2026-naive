@@ -134,6 +134,10 @@ watch(() => filters.value.classId, (newClass, oldClass) => {
         saveCourseDisabled.value = false;
 });
 
+watch(filters, (newFilters) => {
+    localStorage.setItem('logbook-filters', JSON.stringify(newFilters));
+}, { deep: true });
+
 // When the save course button isn't disabled, we fetch progress data
 // for the specific class.
 watch(() => saveCourseDisabled.value, async (newS, _) => {
@@ -173,7 +177,27 @@ watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId
 });
 
 onMounted(async () => {
+    const storedFilters = localStorage.getItem('logbook-filters')
+    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null
+
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);
+
+    if (parsed?.fieldId) {
+        filters.value.fieldId = parsed.fieldId
+        branches.value = await fetchBranches(loadingBar, message, { fieldId: parsed.fieldId })
+    }
+
+    if (parsed?.branchId && parsed?.stageId) {
+        filters.value.stageId = parsed.stageId
+        filters.value.branchId = parsed.branchId
+        classes.value = await fetchClasses(loadingBar, message, {
+            branchId: parsed.branchId,
+            stageId: parsed.stageId
+        })
+    }
+
+    if (parsed?.classId)
+        filters.value.classId = parsed.classId;
 });
 </script>
