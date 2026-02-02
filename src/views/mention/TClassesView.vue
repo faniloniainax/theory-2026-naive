@@ -14,7 +14,7 @@ import type { Stage } from '@/types/stage';
 import type { DataTableColumns } from 'naive-ui';
 
 
-const url = "/classes";
+const url = "/mention/classes";
 const params = { include: "Branch, Stage" }
 const singular = "classe";
 const plural = "classes";
@@ -26,7 +26,7 @@ const filters: CrudFilter[] = [
     {
         path: 'field_id',
         placeholder: 'Mention',
-        url: '/fields',
+        url: '/mention/fields',
         mapFn: (f: Field) => ({
             label: f['name'],
             value: f['id'],
@@ -35,7 +35,7 @@ const filters: CrudFilter[] = [
     {
         path: 'branch_id',
         placeholder: 'Parcours',
-        url: '/branches',
+        url: '/mention/branches',
         dependentOn: 'field_id',
         mapFn: (b: Branch) => ({
             label: b['abbreviation'],
@@ -45,7 +45,7 @@ const filters: CrudFilter[] = [
     {
         path: 'stage_id',
         placeholder: 'Niveau',
-        url: '/stages',
+        url: '/mention/stages',
         mapFn: (s: Stage) => ({
             label: s['name'],
             value: s['id'],
@@ -75,22 +75,7 @@ const otherActions: CrudAction[] = [];
 const formInputs: CrudInput[] = [
     {
         kind: 'foreign',
-        url: '/branches',
-        path: 'branch_id',
-        name: 'Parcours',
-        mapFn: (b: Branch) => {
-            return {
-                value: b['id'],
-                label: b['abbreviation'],
-            };
-        },
-        required: true,
-        placeholder: 'Aucun parcours...',
-        plural: 'parcours',
-    },
-    {
-        kind: 'foreign',
-        url: '/stages',
+        url: '/mention/stages',
         path: 'stage_id',
         name: 'Niveaux',
         mapFn: (s: Stage) => {
@@ -102,6 +87,21 @@ const formInputs: CrudInput[] = [
         required: true,
         placeholder: 'Aucun niveau...',
         plural: 'niveaux',
+    },
+    {
+        kind: 'foreign',
+        url: '/mention/branches',
+        path: 'branch_id',
+        name: 'Parcours',
+        mapFn: (b: Branch) => {
+            return {
+                value: b['id'],
+                label: b['abbreviation'],
+            };
+        },
+        required: true,
+        placeholder: 'Aucun parcours...',
+        plural: 'parcours',
     },
     {
         kind: 'number',
