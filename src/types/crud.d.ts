@@ -67,3 +67,16 @@ export type CrudFilter = {
     dependentOn?: string | string[];
     mapFn: (x: any) => SelectMixedOption;
 };
+
+export type CrudPagination = {
+    page: number;
+    per_page: number;
+    total_pages: number;
+};
+
+export type CrudPaginatedData<T> = {
+    data: T[];
+    pagination: CrudPagination;
+};
+
+export type CrudData<T> = T[] | CrudPaginatedData<T>;
