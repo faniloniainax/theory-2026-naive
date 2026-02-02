@@ -27,4 +27,7 @@ export const Store = {
     rawLoad(n: string): string | null {
         return localStorage.getItem(n);
     },
+    clear() {
+        localStorage.clear();
+    }
 };
