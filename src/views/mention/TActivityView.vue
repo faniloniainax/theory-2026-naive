@@ -77,6 +77,10 @@ const stages = ref<Stage[]>([]);
 const teachers = ref<Teacher[]>([]);
 const classes = ref<Class[]>([]);
 
+watch(filters, (newFilters) => {
+    localStorage.setItem('activity-filters', JSON.stringify(newFilters))
+}, { deep: true });
+
 watch(() => filters.value.fieldId, async (newFieldId) => {
     filters.value.branchId = null;
 
@@ -100,8 +104,30 @@ watch(() => [filters.value.branchId, filters.value.stageId], async ([newBranchId
 });
 
 onMounted(async () => {
-    fields.value = await fetchFields(loadingBar, message);
-    stages.value = await fetchStages(loadingBar, message);
-    teachers.value = await fetchTeachers(loadingBar, message);
-});
+    const storedFilters = localStorage.getItem('activity-filters')
+    const parsed: typeof filters.value | null = storedFilters ? JSON.parse(storedFilters) : null
+
+    fields.value = await fetchFields(loadingBar, message)
+    stages.value = await fetchStages(loadingBar, message)
+    teachers.value = await fetchTeachers(loadingBar, message)
+
+    if (parsed?.fieldId) {
+        filters.value.fieldId = parsed.fieldId
+        branches.value = await fetchBranches(loadingBar, message, { fieldId: parsed.fieldId })
+    }
+
+    if (parsed?.branchId && parsed?.stageId) {
+        filters.value.stageId = parsed.stageId
+        filters.value.branchId = parsed.branchId
+        classes.value = await fetchClasses(loadingBar, message, {
+            branchId: parsed.branchId,
+            stageId: parsed.stageId
+        })
+    }
+
+    if (parsed?.classId)
+        filters.value.classId = parsed.classId
+    if (parsed?.teacherId)
+        filters.value.teacherId = parsed.teacherId;
+})
 </script>
