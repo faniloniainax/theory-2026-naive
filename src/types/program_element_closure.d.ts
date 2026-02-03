@@ -1,4 +1,4 @@
-import type { ProgramElement } from "./program_element";
+import type { Element } from "./element";
 
 export type ProgramElementClosure = {
     id: string;
@@ -6,6 +6,6 @@ export type ProgramElementClosure = {
     parent_id: string;
     created_at?: string;
     updated_at?: string;
-    child?: ProgramElement;
-    parent?: ProgramElement;
+    child?: Element;
+    parent?: Element;
 };

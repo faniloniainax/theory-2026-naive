@@ -1,7 +1,7 @@
 import type { Class } from "./class";
 import type { ConstElement } from "./const_element";
 import type { HourPart } from "./hour_part";
-import type { ProgramElement } from "./program_element";
+import type { Element } from "./element";
 import type { Teacher } from "./teacher";
 
 type CourseCore = {
@@ -22,10 +22,10 @@ type CourseCore = {
 
 export type Course = CourseCore & {
     program_element_id: string;
-    program_element?: ProgramElement;
+    program_element?: Element;
 };
 
 export type CourseBlock = CourseCore & {
     program_element_ids: string[];
-    program_elements?: ProgramElement[];
+    program_elements?: Element[];
 };
