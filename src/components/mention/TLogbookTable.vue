@@ -15,22 +15,22 @@
 import { Dates } from '@/lib/dates';
 import { Http } from '@/lib/http';
 import { Texts } from '@/lib/texts';
-import type { Progress, ProgressBlock } from '@/types/progress';
+import type { Course, CourseBlock } from '@/types/course';
 import { formatDate } from 'date-fns';
 import { NButton, NIcon, NSpace, useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
 import EyeIcon from 'vicons/ionicons-v5/EyeOutline.vue';
 
 type Props = {
-    progresses: ProgressBlock[];
+    progresses: CourseBlock[];
     page: number;
     pageSize: number;
     totalPages: number;
 };
 
 type Emits = {
-    (event: 'click:edit', row: ProgressBlock): void;
-    (event: 'click:delete', row: ProgressBlock): void;
-    (event: 'click:context', row: ProgressBlock): void;
+    (event: 'click:edit', row: CourseBlock): void;
+    (event: 'click:delete', row: CourseBlock): void;
+    (event: 'click:context', row: CourseBlock): void;
     (event: 'update:page', page: number): void;
     (event: 'update:page-size', pageSize: number): void;
     (event: 'update:total-pages', totalPages: number): void;
@@ -43,7 +43,7 @@ const dialog = useDialog();
 const message = useMessage();
 const loadingBar = useLoadingBar();
 
-const columns: DataTableColumns<ProgressBlock> = [
+const columns: DataTableColumns<CourseBlock> = [
     {
         key: 'date',
         title: 'Date',
@@ -73,21 +73,21 @@ const columns: DataTableColumns<ProgressBlock> = [
         key: 'context',
         title: 'Contexte',
         align: 'center',
-        render: (p: ProgressBlock) => h(NButton, { onClick: () => emits('click:context', p) }, () => h(NIcon, () => h(EyeIcon)))
+        render: (p: CourseBlock) => h(NButton, { onClick: () => emits('click:context', p) }, () => h(NIcon, () => h(EyeIcon)))
     },
     {
         key: 'actions',
         title: 'Actions',
         align: 'center',
-        render: (p: ProgressBlock) => h(NSpace, { justify: 'center' }, () => [
+        render: (p: CourseBlock) => h(NSpace, { justify: 'center' }, () => [
             h(NButton, { ghost: true, type: 'info', onClick: () => onEditClick(p) }, { default: () => 'Modifier' }),
             h(NButton, { ghost: true, type: 'error', onClick: () => onDeleteClick(p) }, { default: () => 'Supprimer' }),
         ]),
     }
 ];
 
-const onEditClick = (p: ProgressBlock) => emits('click:edit', p)
-const onDeleteClick = (p: ProgressBlock) => {
+const onEditClick = (p: CourseBlock) => emits('click:edit', p)
+const onDeleteClick = (p: CourseBlock) => {
     dialog.error({
         content: 'Voulez-vous vraiment supprimer cet enregistrement de cours ?',
         positiveText: 'Confirmer',

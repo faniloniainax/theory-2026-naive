@@ -4,7 +4,7 @@ import type { HourPart } from "./hour_part";
 import type { ProgramElement } from "./program_element";
 import type { Teacher } from "./teacher";
 
-type ProgressCore = {
+type CourseCore = {
     id: string;
     date: string;
     class_id: string;
@@ -20,12 +20,12 @@ type ProgressCore = {
     const_element?: ConstElement;
 };
 
-export type Progress = ProgressCore & {
+export type Course = CourseCore & {
     program_element_id: string;
     program_element?: ProgramElement;
 };
 
-export type ProgressBlock = ProgressCore & {
+export type CourseBlock = CourseCore & {
     program_element_ids: string[];
     program_elements?: ProgramElement[];
 };

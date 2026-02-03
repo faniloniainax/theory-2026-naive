@@ -70,7 +70,7 @@ import { fetchTeachers } from '@/services/teachers';
 import type { Class } from '@/types/class';
 import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
-import type { ProgressBlock } from '@/types/progress';
+import type { CourseBlock } from '@/types/course';
 import type { Teacher } from '@/types/teacher';
 import { type FormInst, type FormRules, useLoadingBar, useMessage } from 'naive-ui';
 import { render } from 'vue';
@@ -78,14 +78,14 @@ import { render } from 'vue';
 type Props = {
     show: boolean;
     isEditMode: boolean;
-    progress: ProgressBlock | null;
+    progress: CourseBlock | null;
     stageId: string | null;
     branchId: string | null;
 };
 
 type Emits = {
     (event: 'update:show', show: boolean): void;
-    (event: 'submit', data: ProgressBlock): void;
+    (event: 'submit', data: CourseBlock): void;
 };
 
 const emits = defineEmits<Emits>();
@@ -210,7 +210,7 @@ const onUpdateClassValue = async (classId: string) => {
     constElements.value = await fetchConstElements(loadingBar, message, { branchId: class_['branch_id'], stageId: class_['stage_id'] })
 };
 
-const synchronizePropsToLocalData = (isEditMode: boolean, progress: ProgressBlock | null) => {
+const synchronizePropsToLocalData = (isEditMode: boolean, progress: CourseBlock | null) => {
     formValue.value = {};
 
     if (!progress)

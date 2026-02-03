@@ -73,13 +73,13 @@ import { Texts } from '@/lib/texts';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
-import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchProgresses } from '@/services/progresses';
+import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchProgresses } from '@/services/courses';
 import { fetchStages } from '@/services/stages';
 import type { Branch } from '@/types/branch';
 import type { Class } from '@/types/class';
 import type { CrudData, CrudPaginatedData } from '@/types/crud';
 import type { Field } from '@/types/field';
-import type { Progress, ProgressBlock } from '@/types/progress';
+import type { Course, CourseBlock } from '@/types/course';
 import type { Stage } from '@/types/stage';
 import { useLoadingBar, useMessage } from 'naive-ui';
 import AddIcon from 'vicons/ionicons-v5/AddOutline.vue';
@@ -103,14 +103,14 @@ const fields = ref<Field[]>([]);
 const branches = ref<Branch[]>([]);
 const stages = ref<Stage[]>([]);
 const classes = ref<Class[]>([]);
-const progresses = ref<ProgressBlock[]>([]);
+const progresses = ref<CourseBlock[]>([]);
 
 const saveCourseDisabled = ref(true);
 const showFormModal = ref(false);
 const isEditMode = ref(false);
-const progress = ref<ProgressBlock | null>(null);
+const progress = ref<CourseBlock | null>(null);
 
-const currentCtxSubject = ref<ProgressBlock | null>(null);
+const currentCtxSubject = ref<CourseBlock | null>(null);
 const contextDisplayRequested = ref(false);
 
 const page = ref<number>(1);
@@ -118,17 +118,17 @@ const pageSize = ref<number>(10);
 const totalPages = ref<number>(1);
 
 const fetchData = async () => {
-    const res = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }, page.value, pageSize.value) as CrudPaginatedData<Progress>;
+    const res = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }, page.value, pageSize.value) as CrudPaginatedData<Course>;
 
     if (res.data === undefined || res.pagination === undefined) {
-        progresses.value = res as CrudData<Progress> as unknown as ProgressBlock[];
+        progresses.value = res as CrudData<Course> as unknown as CourseBlock[];
 
         totalPages.value = 1;
         return;
     }
 
     const pg = res.pagination;
-    progresses.value = res.data as unknown as ProgressBlock[];
+    progresses.value = res.data as unknown as CourseBlock[];
 
     page.value = pg['page'] || page.value;
     totalPages.value = pg['total_pages'] || 1;
@@ -138,30 +138,30 @@ const fetchData = async () => {
 const onAddClick = () => {
     isEditMode.value = false;
     showFormModal.value = true;
-    progress.value = {} as ProgressBlock;
+    progress.value = {} as CourseBlock;
 
     progress.value['date'] = new Date().toISOString();
     progress.value['class_id'] = filters.value.classId!;
 };
 
-const onEditClick = (p: ProgressBlock) => {
+const onEditClick = (p: CourseBlock) => {
     isEditMode.value = true;
     showFormModal.value = true;
 
     progress.value = p;
 };
 
-const onDeleteClick = async (p: ProgressBlock) => {
+const onDeleteClick = async (p: CourseBlock) => {
     await deleteProgress(p['id'], loadingBar, message);
     await fetchData();
 };
 
-const onContextClicked = (p: ProgressBlock) => {
+const onContextClicked = (p: CourseBlock) => {
     currentCtxSubject.value = p;
     contextDisplayRequested.value = true;
 };
 
-const onSubmit = async (p: ProgressBlock) => {
+const onSubmit = async (p: CourseBlock) => {
     // If it's a timestamp, we'll transform it to UTC Midnight
     if (typeof p['date'] === 'number')
         p['date'] = Dates.toUTCMidnight(p['date']);

@@ -1,12 +1,12 @@
 import { Http } from "@/lib/http";
 import type { CrudData, CrudPaginatedData } from "@/types/crud";
-import type { Progress, ProgressBlock } from "@/types/progress";
+import type { Course, CourseBlock } from "@/types/course";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
 export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
     classId?: string,
-}, page?: number, pageSize?: number): Promise<CrudData<Progress>> => {
+}, page?: number, pageSize?: number): Promise<CrudData<Course>> => {
     l?.start();
 
     try {
@@ -26,8 +26,8 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
         l?.finish();
 
         if (page && pageSize)
-            return r.data as CrudPaginatedData<Progress>;
-        return r.data as Progress[];
+            return r.data as CrudPaginatedData<Course>;
+        return r.data as Course[];
     } catch (e) {
         l?.error();
         m?.error("Erreur durant le chargement des séances.");
@@ -39,7 +39,7 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
 
 export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
     classId?: string,
-}): Promise<ProgressBlock[]> => {
+}): Promise<CourseBlock[]> => {
     l?.start();
 
     try {
@@ -52,7 +52,7 @@ export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInje
             throw Error("Erreur inconnue.");
 
         l?.finish();
-        return r.data as ProgressBlock[];
+        return r.data as CourseBlock[];
     } catch (e) {
         l?.error();
         m?.error("Erreur durant le chargement des séances.");
@@ -62,7 +62,7 @@ export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInje
     return [];
 };
 
-export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+export const addProgress = async (p: CourseBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
     l?.start();
 
     try {
@@ -85,7 +85,7 @@ export const addProgress = async (p: ProgressBlock, l?: LoadingBarInst, m?: Mess
     }
 };
 
-export const editProgress = async (id: string, p: ProgressBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+export const editProgress = async (id: string, p: CourseBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
     l?.start();
 
     try {

@@ -28,7 +28,7 @@
 
 
 <script setup lang="ts">
-import type { Progress } from '@/types/progress';
+import type { Course } from '@/types/course';
 import { formatDate } from 'date-fns';
 import { NButton, NSpace, type DataTableColumns } from 'naive-ui';
 
@@ -36,7 +36,7 @@ import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
 import { Tags } from '@/lib/tags';
 
-const columns: DataTableColumns<Progress> = [
+const columns: DataTableColumns<Course> = [
     {
         key: 'date',
         title: 'Date',
@@ -79,7 +79,7 @@ const columns: DataTableColumns<Progress> = [
     }
 ];
 
-const data: Progress[] = [
+const data: Course[] = [
     {
         id: "FOOBAR",
         date: new Date().toISOString(),
