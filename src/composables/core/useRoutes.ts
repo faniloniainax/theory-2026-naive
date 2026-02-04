@@ -4,12 +4,13 @@ import { publicRoutes } from "@/router/public";
 import { delegateRoutes } from "@/router/delegate";
 import { mentionRoutes } from "@/router/mention";
 
+const router = createRouter({
+    history: createWebHistory(import.meta.env['BASE_URL']),
+    routes: [],
+});
+
 export default function useRoutes() {
     const { tryToLoadUser } = useAuth();
-    const router = createRouter({
-        history: createWebHistory(import.meta.env['BASE_URL']),
-        routes: [],
-    });
 
     function useNewRoutes(newRoutes: RouteRecordRaw[]) {
         router.clearRoutes();
