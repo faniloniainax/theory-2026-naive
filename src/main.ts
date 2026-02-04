@@ -2,10 +2,11 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import '@/styles/main.css'
-import { router, Routes } from './lib/routes'
+import useRoutes from './composables/core/useRoutes';
 
-const app = createApp(App)
+const app = createApp(App);
+const { router, useTypeDependentRoutes } = useRoutes();
 
-await Routes.replaceRoutesProperly();
+await useTypeDependentRoutes();
 app.use(router)
 app.mount('#app')
