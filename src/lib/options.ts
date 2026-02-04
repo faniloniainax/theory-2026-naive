@@ -6,6 +6,7 @@ import type { ConstElement } from "@/types/const_element";
 import type { Field } from "@/types/field";
 import type { Branch } from "@/types/branch";
 import type { Stage } from "@/types/stage";
+import type { Room } from "@/types/room";
 
 export const Options = {
     formatClasses(c: Class[]) {
@@ -49,5 +50,11 @@ export const Options = {
             value: s_['id'],
             label: s_['name'],
         }))
+    },
+    formatRooms(r: Room[]) {
+        return r.map(r_ => ({
+            value: r_['id'],
+            label: r_['name'],
+        }));
     },
 };
