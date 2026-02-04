@@ -1,5 +1,5 @@
 <template>
-    <NTree :data="treeData" :cascade="true" :pattern="pattern">
+    <NTree :data="treeData" :cascade="true" :pattern="pattern" :render-suffix="renderSuffix">
         <template #empty>
             <NEmpty description="Aucune donnée..." />
         </template>
@@ -30,22 +30,23 @@ const emits = defineEmits<Emits>();
 const dialog = useDialog();
 const treeData = ref<TreeOption[]>([]);
 
-const constructTreeSuffix = (e: ElementNode) => {
-    return () => h(NSpace, { justify: 'end' }, {
-        default: [
-            () => h(NButton, { onClick: () => onAddChildClick(e['id']) }, { default: () => 'Ajouter un élément' }),
-            () => h(NButton, { onClick: () => onEditClick(e) }, { default: () => 'Modifier' }),
-            () => h(NButton, { onClick: () => onDeleteClick(e) }, { default: () => 'Supprimer' }),
+const renderSuffix = ({ option: o }: { option: TreeOption }) => {
+    return h(NSpace, { justify: 'end' }, {
+        default: () => [
+            h(NButton, { onClick: () => onAddChildClick(o.key as string) }, { default: () => 'Ajouter un élément' }),
+            h(NButton, { onClick: () => onEditClick(o as any) }, { default: () => 'Modifier' }),
+            h(NButton, { onClick: () => onDeleteClick(o as any) }, { default: () => 'Supprimer' }),
         ]
-    });
+    })
 };
 
 const constructTreeData = () => {
     const mapCallback = (e: ElementNode): TreeOption => {
         return {
+            id: e['id'],
             key: e['id'],
             label: e['label'],
-            suffix: constructTreeSuffix(e),
+            parent_id: e['parent_id'],
             children: e['children'] ? e['children'].map(mapCallback) : undefined,
         };
     };
