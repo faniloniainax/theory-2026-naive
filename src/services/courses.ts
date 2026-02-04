@@ -4,7 +4,7 @@ import type { Course, CourseBlock } from "@/types/course";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
-export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
+export const fetchCourses = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
     classId?: string,
 }, page?: number, pageSize?: number): Promise<CrudData<Course>> => {
     l?.start();
@@ -13,15 +13,15 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
         const classId = filters?.classId ?? undefined;
 
         const p = {
-            include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement',
+            include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement, Room',
             class_id: classId,
             page: page,
             per_page: pageSize
         };
-        const r = await Http.get("/mention/progresses", { params: p });
+        const r = await Http.get("/mention/courses", { params: p });
 
         if (r.status !== 200)
-            throw Error("Erreur inconnue.");
+            throw r.data;
 
         l?.finish();
 
@@ -37,6 +37,9 @@ export const fetchProgresses = async (l?: LoadingBarInst, m?: MessageApiInjectio
     return [];
 };
 
+/**
+ * @deprecated
+ */
 export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInjection, filters?: {
     classId?: string,
 }): Promise<CourseBlock[]> => {
@@ -62,11 +65,11 @@ export const fetchProgressBlocks = async (l?: LoadingBarInst, m?: MessageApiInje
     return [];
 };
 
-export const addProgress = async (p: CourseBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+export const addCourse = async (c: Course, l?: LoadingBarInst, m?: MessageApiInjection) => {
     l?.start();
 
     try {
-        const r = await Http.post("/mention/progresses", p);
+        const r = await Http.post("/mention/courses", c);
 
         if (r.status !== 201)
             throw r.data;
@@ -85,11 +88,11 @@ export const addProgress = async (p: CourseBlock, l?: LoadingBarInst, m?: Messag
     }
 };
 
-export const editProgress = async (id: string, p: CourseBlock, l?: LoadingBarInst, m?: MessageApiInjection) => {
+export const editCourse = async (id: string, c: Course, l?: LoadingBarInst, m?: MessageApiInjection) => {
     l?.start();
 
     try {
-        const r = await Http.put(`/mention/progresses/${id}`, p);
+        const r = await Http.put(`/mention/courses/${id}`, c);
 
         if (r.status !== 200)
             throw r.data;
@@ -102,26 +105,29 @@ export const editProgress = async (id: string, p: CourseBlock, l?: LoadingBarIns
         if (e?.error)
             m?.error(e.error);
         else
-            m?.error("Erreur durant l'ajout de la séance."); console.error(e);
+            m?.error("Erreur durant la modification de la séance."); console.error(e);
         return false;
     }
 };
 
-export const deleteProgress = async (id: string, l?: LoadingBarInst, m?: MessageApiInjection) => {
+export const deleteCourse = async (id: string, l?: LoadingBarInst, m?: MessageApiInjection) => {
     l?.start();
 
     try {
-        const r = await Http.delete(`/mention/progresses/${id}`);
+        const r = await Http.delete(`/mention/courses/${id}`);
 
         if (r.status !== 200)
-            throw Error("Erreur inconnue.");
+            throw r.data;
 
         l?.finish();
         m?.success("Séance supprimée avec succès.");
         return true;
-    } catch (e) {
+    } catch (e: any) {
         l?.error();
-        m?.error("Erreur durant la suppression de la séance.");
+        if (e?.error)
+            m?.error(e.error);
+        else
+            m?.error("Erreur durant la suppression de la séance.");
         console.error(e);
         return false;
     }
