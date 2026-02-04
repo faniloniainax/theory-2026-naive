@@ -11,3 +11,11 @@ export type Element = {
     const_element?: ConstElement;
 };
 
+export type ElementNode = {
+    id: string;
+    label: string;
+    parent_id: string;
+    const_element_id: string;
+    is_done: boolean;
+    children?: ElementNode[];
+};
