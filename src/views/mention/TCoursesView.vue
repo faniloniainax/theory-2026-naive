@@ -42,13 +42,13 @@
         </NCard>
     </NSpace>
 
-    <TLogbookTable :progresses="progresses" @click:edit="onEditClick" @click:delete="onDeleteClick"
-        @click:context="onContextClicked" v-model:page="page" v-model:page-size="pageSize"
+    <TLogbookTable :courses="courses" @click:edit="onEditClick" @click:delete="onDeleteClick"
+        @click:context="onShowContextClicked" v-model:page="page" v-model:page-size="pageSize"
         v-model:total-pages="totalPages" />
-    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="progress"
+    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="course"
         :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
 
-    <NModal preset="dialog" title="Informations sur le contexte" v-model:show="contextDisplayRequested" closable
+    <!-- <NModal preset="dialog" title="Informations sur le contexte" v-model:show="contextDisplayRequested" closable
         close-on-esc>
         <NSpace vertical>
             <NP>
@@ -62,7 +62,7 @@
                 {{ currentCtxSubject ? currentCtxSubject['fallback_context'] : "<aucun>" }}
             </NCard>
         </NSpace>
-    </NModal>
+    </NModal> -->
 </template>
 
 <script setup lang="ts">
@@ -73,7 +73,7 @@ import { Texts } from '@/lib/texts';
 import { fetchBranches } from '@/services/branches';
 import { fetchClasses } from '@/services/classes';
 import { fetchFields } from '@/services/fields';
-import { addProgress, deleteProgress, editProgress, fetchProgressBlocks, fetchProgresses } from '@/services/courses';
+import { addCourse, deleteCourse, editCourse, fetchProgressBlocks, fetchCourses } from '@/services/courses';
 import { fetchStages } from '@/services/stages';
 import type { Branch } from '@/types/branch';
 import type { Class } from '@/types/class';
@@ -83,6 +83,8 @@ import type { Course, CourseBlock } from '@/types/course';
 import type { Stage } from '@/types/stage';
 import { useLoadingBar, useMessage } from 'naive-ui';
 import AddIcon from 'vicons/ionicons-v5/AddOutline.vue';
+import type { TeachingType } from '@/types/teaching_type';
+import { fetchTeachingTypes } from '@/services/teaching_types';
 
 const message = useMessage();
 const loadingBar = useLoadingBar();
@@ -103,14 +105,15 @@ const fields = ref<Field[]>([]);
 const branches = ref<Branch[]>([]);
 const stages = ref<Stage[]>([]);
 const classes = ref<Class[]>([]);
-const progresses = ref<CourseBlock[]>([]);
+const courses = ref<Course[]>([]);
+const teachingTypes = ref<TeachingType[]>([]);
 
 const saveCourseDisabled = ref(true);
 const showFormModal = ref(false);
 const isEditMode = ref(false);
-const progress = ref<CourseBlock | null>(null);
+const course = ref<CourseBlock | null>(null);
 
-const currentCtxSubject = ref<CourseBlock | null>(null);
+const currentCourse = ref<Course | null>(null);
 const contextDisplayRequested = ref(false);
 
 const page = ref<number>(1);
@@ -118,17 +121,17 @@ const pageSize = ref<number>(10);
 const totalPages = ref<number>(1);
 
 const fetchData = async () => {
-    const res = await fetchProgresses(loadingBar, message, { classId: filters.value.classId! }, page.value, pageSize.value) as CrudPaginatedData<Course>;
+    const res = await fetchCourses(loadingBar, message, { classId: filters.value.classId! }, page.value, pageSize.value) as CrudPaginatedData<Course>;
 
     if (res.data === undefined || res.pagination === undefined) {
-        progresses.value = res as CrudData<Course> as unknown as CourseBlock[];
+        courses.value = res as CrudData<Course> as unknown as Course[];
 
         totalPages.value = 1;
         return;
     }
 
     const pg = res.pagination;
-    progresses.value = res.data as unknown as CourseBlock[];
+    courses.value = res.data as unknown as Course[];
 
     page.value = pg['page'] || page.value;
     totalPages.value = pg['total_pages'] || 1;
@@ -138,26 +141,27 @@ const fetchData = async () => {
 const onAddClick = () => {
     isEditMode.value = false;
     showFormModal.value = true;
-    progress.value = {} as CourseBlock;
+    course.value = {} as CourseBlock;
 
-    progress.value['date'] = new Date().toISOString();
-    progress.value['class_id'] = filters.value.classId!;
+    course.value['date'] = new Date().toISOString();
+    course.value['class_id'] = filters.value.classId!;
 };
 
-const onEditClick = (p: CourseBlock) => {
+const onEditClick = (c: Course) => {
     isEditMode.value = true;
     showFormModal.value = true;
 
-    progress.value = p;
+    currentCourse.value = c;
 };
 
-const onDeleteClick = async (p: CourseBlock) => {
-    await deleteProgress(p['id'], loadingBar, message);
+const onDeleteClick = async (c: Course) => {
+    await deleteCourse(c['id'], loadingBar, message);
     await fetchData();
 };
 
-const onContextClicked = (p: CourseBlock) => {
-    currentCtxSubject.value = p;
+const onShowContextClicked = (c: Course) => {
+    // FIXME: Load the context here
+    currentCourse.value = c;
     contextDisplayRequested.value = true;
 };
 
@@ -166,14 +170,15 @@ const onSubmit = async (p: CourseBlock) => {
     if (typeof p['date'] === 'number')
         p['date'] = Dates.toUTCMidnight(p['date']);
 
-    let ok = true;
-    if (!isEditMode.value)
-        ok = await addProgress(p, loadingBar, message);
-    else
-        ok = await editProgress(p['id'], p, loadingBar, message);
+    // FIXME: Handle this correctly
+    // let ok = true;
+    // if (!isEditMode.value)
+    //     ok = await addCourse(p, loadingBar, message);
+    // else
+    //     ok = await editCourse(p['id'], p, loadingBar, message);
 
-    if (ok)
-        showFormModal.value = false;
+    // if (ok)
+    //     showFormModal.value = false;
 
     await fetchData();
 };
@@ -181,7 +186,7 @@ const onSubmit = async (p: CourseBlock) => {
 // When the class changes, the save course button isn't disabled.
 watch(() => filters.value.classId, async (newClass, oldClass) => {
     if (!newClass || newClass.length == 0) {
-        progresses.value = [];
+        courses.value = [];
         saveCourseDisabled.value = true;
         return;
     }
@@ -224,6 +229,7 @@ onMounted(async () => {
 
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);
+    teachingTypes.value = await fetchTeachingTypes(loadingBar, message);
 
     if (parsed?.fieldId) {
         filters.value.fieldId = parsed.fieldId

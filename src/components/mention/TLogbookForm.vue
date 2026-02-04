@@ -15,6 +15,18 @@
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
+                        <NFormItem path="teacher_id" label="Enseignant responsable:">
+                            <NSelect filterable clearable placeholder="Aucun enseignant..."
+                                :options="Options.formatTeachers(teachers)" v-model:value="formValue['teacher_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
+                        <NFormItem path="room_id" label="Salle de la séance:">
+                            <NSelect filterable clearable placeholder="Aucune salle..."
+                                :options="Options.formatRooms(rooms)" v-model:value="formValue['room_id']">
+                                <NEmpty description="Aucune donnée." />
+                            </NSelect>
+                        </NFormItem>
                         <NFormItem path="hour_part_id" label="Horaire de la séance:">
                             <NSelect filterable clearable placeholder="Aucun horaire..."
                                 :options="Options.formatHourParts(hourParts)" v-model:value="formValue['hour_part_id']">
@@ -25,12 +37,6 @@
                             <NSelect filterable clearable placeholder="Aucun élément constitutif..."
                                 :options="Options.formatConstElements(constElements)"
                                 v-model:value="formValue['const_element_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="teacher_id" label="Enseignant responsable:">
-                            <NSelect filterable clearable placeholder="Aucun enseignant..."
-                                :options="Options.formatTeachers(teachers)" v-model:value="formValue['teacher_id']">
                                 <NEmpty description="Aucune donnée." />
                             </NSelect>
                         </NFormItem>
@@ -73,7 +79,8 @@ import type { HourPart } from '@/types/hour_part';
 import type { CourseBlock } from '@/types/course';
 import type { Teacher } from '@/types/teacher';
 import { type FormInst, type FormRules, useLoadingBar, useMessage } from 'naive-ui';
-import { render } from 'vue';
+import type { Room } from '@/types/room';
+import { fetchRooms } from '@/services/rooms';
 
 type Props = {
     show: boolean;
@@ -99,6 +106,7 @@ const contextFormRef = useTemplateRef('contextFormRef');
 
 const formsTab = ref("coreForm");
 const formValue = ref<any>({});
+const rooms = ref<Room[]>([]);
 const classes = ref<Class[]>([]);
 const teachers = ref<Teacher[]>([]);
 const hourParts = ref<HourPart[]>([]);
@@ -116,6 +124,16 @@ const coreFormRules: FormRules = {
         required: true,
         message: "La classe est requise.",
     },
+    teacher_id: {
+        type: 'string',
+        required: true,
+        message: "L'enseignant est requis.",
+    },
+    room_id: {
+        type: 'string',
+        required: true,
+        message: "La salle est requise.",
+    },
     hour_part_id: {
         type: 'string',
         required: true,
@@ -126,11 +144,6 @@ const coreFormRules: FormRules = {
         required: true,
         message: "L'élément constitutif est requis.",
     },
-    teacher_id: {
-        type: 'string',
-        required: true,
-        message: "L'enseignant est requis.",
-    }
 };
 
 const contextFormRules: FormRules = {
@@ -236,8 +249,8 @@ const synchronizePropsToLocalData = (isEditMode: boolean, progress: CourseBlock 
     formValue.value['class_id'] = progress['class_id'];
     formValue.value['teacher_id'] = progress['teacher_id'];
     formValue.value['hour_part_id'] = progress['hour_part_id'];
+    // formValue.value['room_id'] = progress['room_id'];
     formValue.value['const_element_id'] = progress['const_element_id'];
-    formValue.value['fallback_context'] = progress['fallback_context'];
 };
 
 
@@ -271,6 +284,7 @@ watch(() => formValue.value['const_element_id'], (newCEId, _) => {
 onMounted(async () => {
     synchronizePropsToLocalData(props.isEditMode, props.progress);
 
+    rooms.value = await fetchRooms(loadingBar, message);
     classes.value = await fetchClasses(loadingBar, message);
     teachers.value = await fetchTeachers(loadingBar, message);
     hourParts.value = await fetchHourParts(loadingBar, message);

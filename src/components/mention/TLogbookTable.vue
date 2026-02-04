@@ -1,5 +1,5 @@
 <template>
-    <NDataTable :columns="columns" :data="progresses">
+    <NDataTable :columns="columns" :data="courses">
         <template #empty>
             <NEmpty description="Aucune donnée." />
         </template>
@@ -13,24 +13,22 @@
 
 <script setup lang="ts">
 import { Dates } from '@/lib/dates';
-import { Http } from '@/lib/http';
 import { Texts } from '@/lib/texts';
-import type { Course, CourseBlock } from '@/types/course';
-import { formatDate } from 'date-fns';
+import type { Course } from '@/types/course';
 import { NButton, NIcon, NSpace, useDialog, useLoadingBar, useMessage, type DataTableColumns } from 'naive-ui';
 import EyeIcon from 'vicons/ionicons-v5/EyeOutline.vue';
 
 type Props = {
-    progresses: CourseBlock[];
+    courses: Course[];
     page: number;
     pageSize: number;
     totalPages: number;
 };
 
 type Emits = {
-    (event: 'click:edit', row: CourseBlock): void;
-    (event: 'click:delete', row: CourseBlock): void;
-    (event: 'click:context', row: CourseBlock): void;
+    (event: 'click:edit', row: Course): void;
+    (event: 'click:delete', row: Course): void;
+    (event: 'click:context', row: Course): void;
     (event: 'update:page', page: number): void;
     (event: 'update:page-size', pageSize: number): void;
     (event: 'update:total-pages', totalPages: number): void;
@@ -40,59 +38,62 @@ const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
 const dialog = useDialog();
-const message = useMessage();
-const loadingBar = useLoadingBar();
 
-const columns: DataTableColumns<CourseBlock> = [
+const columns: DataTableColumns<Course> = [
     {
         key: 'date',
         title: 'Date',
-        render: p => Dates.format(p['date'], 'dd MMMM yyyy'),
+        render: c => Dates.format(c['date'], 'dd MMMM yyyy'),
+    },
+    {
+        key: 'room',
+        title: 'Salle',
+        render: c => c['room']!['name'],
     },
     {
         key: 'class_id',
         title: 'Classe',
-        render: p => Texts.formatClass(p['class'])
+        render: c => Texts.formatClass(c['class'])
     },
     {
         key: 'teacher_id',
         title: 'Enseignant',
-        render: p => Texts.formatTeacher(p['teacher'])
+        render: c => Texts.formatTeacher(c['teacher'])
     },
     {
         key: 'hour_part_id',
         title: 'Horaire',
-        render: p => Texts.formatHourPart(p['hour_part'])
+        render: c => Texts.formatHourPart(c['hour_part'])
     },
     {
         key: 'const_element_id',
         title: 'EC',
-        render: p => Texts.formatConstElement(p['const_element']),
+        render: c => Texts.formatConstElement(c['const_element']),
     },
     {
         key: 'context',
         title: 'Contexte',
         align: 'center',
-        render: (p: CourseBlock) => h(NButton, { onClick: () => emits('click:context', p) }, () => h(NIcon, () => h(EyeIcon)))
+        render: (c: Course) => h(NButton, { onClick: () => emits('click:context', c) }, () => h(NIcon, () => h(EyeIcon)))
     },
     {
         key: 'actions',
         title: 'Actions',
         align: 'center',
-        render: (p: CourseBlock) => h(NSpace, { justify: 'center' }, () => [
-            h(NButton, { ghost: true, type: 'info', onClick: () => onEditClick(p) }, { default: () => 'Modifier' }),
-            h(NButton, { ghost: true, type: 'error', onClick: () => onDeleteClick(p) }, { default: () => 'Supprimer' }),
+        render: (c: Course) => h(NSpace, { justify: 'center' }, () => [
+            h(NButton, { ghost: true, type: 'info', onClick: () => onEditClick(c) }, { default: () => 'Modifier' }),
+            h(NButton, { ghost: true, type: 'error', onClick: () => onDeleteClick(c) }, { default: () => 'Supprimer' }),
         ]),
     }
 ];
 
-const onEditClick = (p: CourseBlock) => emits('click:edit', p)
-const onDeleteClick = (p: CourseBlock) => {
+const onEditClick = (c: Course) => emits('click:edit', c)
+const onDeleteClick = (c: Course) => {
     dialog.error({
-        content: 'Voulez-vous vraiment supprimer cet enregistrement de cours ?',
+        content: 'Voulez-vous vraiment supprimer cet enregistrement de séance ?',
         positiveText: 'Confirmer',
         negativeText: 'Annuler',
-        onPositiveClick: () => emits('click:delete', p)
+        onPositiveClick: () => emits('click:delete', c)
     })
 };
 
