@@ -25,9 +25,14 @@ export const mentionNavigation: MenuMixedOption[] = [
         icon: () => h(StatsChartOutline),
     },
     {
-        key: '/logbook',
-        label: 'Cahier de texte',
+        key: '/courses',
+        label: 'Séances',
         icon: () => h(BookOutline),
+    },
+    {
+        key: '/syllabus',
+        label: 'Syllabus',
+        icon: () => h(WarningOutline),
     },
     {
         key: '/program',
@@ -48,11 +53,6 @@ export const mentionNavigation: MenuMixedOption[] = [
                 key: '/const-elements',
                 label: 'Elements constitutifs',
                 icon: () => h(DocumentOutline),
-            },
-            {
-                key: '/syllabus',
-                label: 'Syllabus',
-                icon: () => h(WarningOutline),
             },
         ]
     },

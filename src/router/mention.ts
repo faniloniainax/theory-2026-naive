@@ -21,42 +21,42 @@ export const mentionRoutes: RouteRecordRaw[] = [
             {
                 path: '/allocated-hours',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TAllocatedHoursView.vue'),
+                component: () => import('@/views/mention/program/TAllocatedHoursView.vue'),
             },
             {
                 path: '/rooms',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TRoomsView.vue'),
+                component: () => import('@/views/mention/repartition/TRoomsView.vue'),
             },
             {
                 path: '/classes',
                 meta: { layout: TMainLayout },
-                component: () => import("@/views/mention/TClassesView.vue"),
+                component: () => import("@/views/mention/repartition/TClassesView.vue"),
             },
             {
                 path: '/const-elements',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TConstElementsView.vue'),
+                component: () => import('@/views/mention/program/TConstElementsView.vue'),
             },
             {
-                path: '/logbook',
+                path: '/courses',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TLogbookView.vue'),
+                component: () => import('@/views/mention/TCoursesView.vue'),
             },
             {
                 path: '/teachers',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TTeachersView.vue'),
+                component: () => import('@/views/mention/repartition/TTeachersView.vue'),
             },
             {
                 path: '/hour-parts',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/THourPartsView.vue'),
+                component: () => import('@/views/mention/repartition/THourPartsView.vue'),
             },
             {
                 path: '/teaching-units',
                 meta: { layout: TMainLayout },
-                component: () => import('@/views/mention/TTeachingUnitsView.vue'),
+                component: () => import('@/views/mention/program/TTeachingUnitsView.vue'),
             },
             {
                 path: '/syllabus',
