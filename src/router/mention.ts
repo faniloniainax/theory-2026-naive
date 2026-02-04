@@ -61,8 +61,7 @@ export const mentionRoutes: RouteRecordRaw[] = [
             {
                 path: '/syllabus',
                 meta: { layout: TMainLayout },
-                // component: () => import('@/views/mention/TSyllabusView.vue'),
-                component: () => import('@/views/public/TInConstruction.vue'),
+                component: () => import('@/views/mention/TSyllabusView.vue'),
             },
             {
                 path: '/contacts',
