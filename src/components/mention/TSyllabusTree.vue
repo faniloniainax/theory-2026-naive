@@ -1,6 +1,6 @@
 <template>
-    <NTree block-line style="width: 100%;" :data="treeData" :cascade="true" :pattern="pattern"
-        :render-suffix="renderSuffix">
+    <NTree draggable block-line style="width: 100%;" :data="treeData" :cascade="true" :pattern="pattern"
+        :render-suffix="renderSuffix" @drop="onNodeDrop" :allow-drop="({ dropPosition }) => dropPosition !== 'before'">
         <template #empty>
             <NEmpty description="Aucune donnée..." />
         </template>
@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { ElementNode } from '@/types/element';
-import { NButton, NSpace, useDialog, type TreeOption } from 'naive-ui';
+import { NButton, NSpace, useDialog, type TreeDropInfo, type TreeOption } from 'naive-ui';
 
 type Props = {
     tree: ElementNode[];
@@ -21,6 +21,7 @@ type Emits = {
     (event: 'click:add-child', parentId: string): void;
     (event: 'click:edit', e: ElementNode): void;
     (event: 'click:delete', e: ElementNode): void;
+    (event: 'drag-n-drop', e: ElementNode): void;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -71,6 +72,33 @@ const onDeleteClick = (e: ElementNode) => {
         negativeText: 'Annuler',
         onPositiveClick: () => emits('click:delete', e),
     });
+};
+
+const onNodeDrop = ({ node: subjectNode, dragNode: draggedNode, dropPosition }: TreeDropInfo) => {
+    const nodeName = draggedNode['label'];
+    const otherNodeName = subjectNode['label'];
+
+    if (dropPosition === 'after') {
+        dialog.info({
+            content: `Voulez-vous vraiment déplacer "${nodeName}" après "${otherNodeName}" ?`,
+            positiveText: 'Confirmer',
+            negativeText: 'Annuler',
+            onPositiveClick: () => {
+                draggedNode['parent_id'] = subjectNode['parent_id'];
+                emits('drag-n-drop', draggedNode as any);
+            },
+        })
+    } else if (dropPosition === 'inside') {
+        dialog.info({
+            content: `Voulez-vous vraiment déplacer "${nodeName}" dans "${otherNodeName}" ?`,
+            positiveText: 'Confirmer',
+            negativeText: 'Annuler',
+            onPositiveClick: () => {
+                draggedNode['parent_id'] = subjectNode['id'];
+                emits('drag-n-drop', draggedNode as any);
+            },
+        })
+    }
 };
 
 watch(() => props.tree, () => {

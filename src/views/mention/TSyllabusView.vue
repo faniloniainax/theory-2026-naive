@@ -59,7 +59,8 @@
         </template>
         <template v-else>
             <TSyllabusTree :tree="elementNodes" :const-element-id="filters.constElementId" :pattern="treePattern"
-                @click:add-child="onAddChildClick" @click:edit="onEditClick" @click:delete="onDeleteClick" />
+                @click:add-child="onAddChildClick" @click:edit="onEditClick" @click:delete="onDeleteClick"
+                @drag-n-drop="onDragNDrop" />
         </template>
     </NFlex>
 
@@ -153,7 +154,7 @@ const onDeleteClick = async (e: ElementNode) => {
     const ok = await deleteElement(e['id'], loadingBar, message);
 
     if (ok)
-        elementNodes.value = await fetchElementsNodeTree(filters.value.constElementId!, loadingBar, message);
+        await fetchData();
 };
 
 const onFormSubmit = async (e: ElementNode) => {
@@ -164,10 +165,17 @@ const onFormSubmit = async (e: ElementNode) => {
     else
         ok = await editElement(e['id'], e, loadingBar, message);
 
-    if (ok)
+    if (ok) {
         shouldShowElementForm.value = false;
+        await fetchData();
+    }
+};
 
-    await fetchData();
+const onDragNDrop = async (e: ElementNode) => {
+    const ok = await editElement(e['id'], e, loadingBar, message);
+
+    if (ok)
+        await fetchData();
 };
 
 watch(filters, (newFilters) => {
