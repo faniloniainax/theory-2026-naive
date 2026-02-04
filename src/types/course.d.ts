@@ -3,6 +3,7 @@ import type { ConstElement } from "./const_element";
 import type { HourPart } from "./hour_part";
 import type { Element } from "./element";
 import type { Teacher } from "./teacher";
+import type { Room } from "./room";
 
 type CourseCore = {
     id: string;
@@ -20,9 +21,19 @@ type CourseCore = {
     const_element?: ConstElement;
 };
 
-export type Course = CourseCore & {
-    program_element_id: string;
-    program_element?: Element;
+export type Course = {
+    id: string;
+    date: string;
+    hour_part_id: string;
+    class_id: string;
+    teacher_id: string;
+    room_id: string;
+    const_element_id: string;
+    hour_part?: HourPart;
+    class?: Class;
+    teacher?: Teacher;
+    room?: Room;
+    const_element?: ConstElement;
 };
 
 export type CourseBlock = CourseCore & {
