@@ -52,7 +52,7 @@
         </NSpace>
     </NSpace>
 
-    <NSpace justify="center" style="width: 100%;">
+    <NFlex justify="center" style="width: 100%;">
         <template v-if="!shouldLoadSyllabusData">
             <NEmpty
                 description="Sélectionnez une mention, un parcours, un niveau, et un élément constitutif pour charger les données." />
@@ -61,7 +61,7 @@
             <TSyllabusTree :tree="elementNodes" :const-element-id="filters.constElementId" :pattern="treePattern"
                 @click:add-child="onAddChildClick" @click:edit="onEditClick" @click:delete="onDeleteClick" />
         </template>
-    </NSpace>
+    </NFlex>
 
     <TSyllabusForm v-model:show="shouldShowElementForm" :is-edit-mode="isEditMode" :const-elements="constElements"
         :const-element-id="filters.constElementId" :element="element" @submit="onFormSubmit" />

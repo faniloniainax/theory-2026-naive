@@ -1,5 +1,6 @@
 <template>
-    <NTree :data="treeData" :cascade="true" :pattern="pattern" :render-suffix="renderSuffix">
+    <NTree block-line style="width: 100%;" :data="treeData" :cascade="true" :pattern="pattern"
+        :render-suffix="renderSuffix">
         <template #empty>
             <NEmpty description="Aucune donnée..." />
         </template>
