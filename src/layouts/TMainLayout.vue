@@ -57,12 +57,13 @@
 </template>
 
 <script setup lang="ts">
+import useAuth from '@/composables/core/useAuth'
+import useRoutes from '@/composables/core/useRoutes'
 import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
 import LogOutOutline from 'vicons/ionicons-v5/LogOutOutline.vue'
 import TrashBinOutline from 'vicons/ionicons-v5/TrashBinOutline.vue'
 import AccountOutline from 'vicons/fluent/PersonAccounts24Regular.vue'
 import { useRoute, useRouter } from 'vue-router';
-import { Auth } from '@/lib/auth';
 import type { User } from '@/types/auth';
 import { delegateNavigation } from '@/navigation/delegate';
 import { type MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
@@ -73,10 +74,12 @@ const route = useRoute();
 const router = useRouter();
 const dialog = useDialog();
 const message = useMessage();
+const { makeInitialsAndName, clearCache, attemptToLogOut, tryToLoadUser, } = useAuth();
+const { useTypeDependentRoutes } = useRoutes();
 
 const options = ref<MenuMixedOption[]>([]);
 const selectedKey = computed(() => route.path);
-const [initials, name] = Auth.getInitialsAndName();
+const [initials, name] = makeInitialsAndName();
 
 const showMenuDrawer = ref(false);
 
@@ -95,7 +98,7 @@ const onEmptyCacheClick = () => {
         positiveText: "Confirmer",
         negativeText: "Annuler",
         onPositiveClick: () => {
-            Auth.emptyCache();
+            clearCache();
             message.success("Cache vidé.");
         },
     });
@@ -106,20 +109,21 @@ const onLogOutClick = () => {
         content: "Voulez-vous vraiment vous déconnecter ?",
         positiveText: "Confirmer",
         negativeText: "Annuler",
-        onPositiveClick: async () => {
-            await Auth.attemptLogOut();
+        onPositiveClick: () => {
+            attemptToLogOut();
+            useTypeDependentRoutes(true);
             message.success("Déconnexion réussie.");
         },
     });
 };
 
 onMounted(async () => {
-    const [data, isValid] = await Auth.isValid();
+    const [user, ok] = await tryToLoadUser();
 
-    if (!isValid)
+    if (!ok || !user) {
         options.value = [];
-
-    const user = data as User;
+        return;
+    }
 
     // TODO: Fix these
     if (user['type'] === 'admin')

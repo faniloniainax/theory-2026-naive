@@ -8,24 +8,32 @@
 
 
 <script setup lang="ts">
-import { Auth } from '@/lib/auth';
-import { ErrorKind, Errors } from '@/lib/errors';
-import { Http } from '@/lib/http';
+import useAuth from '@/composables/core/useAuth';
+import useRoutes from '@/composables/core/useRoutes';
+
 import type { Login } from '@/types/auth';
 import { useLoadingBar, useMessage } from 'naive-ui';
 
 const message = useMessage();
 const loadingBar = useLoadingBar();
+const { attemptToLogIn } = useAuth();
+const { useTypeDependentRoutes } = useRoutes();
 
-const onFormSubmit = async (data: Login) => {
+const onFormSubmit = async (user: Login) => {
     try {
         loadingBar.start();
-        await Auth.attemptLogin(data);
+
+        await attemptToLogIn(user);
+        await useTypeDependentRoutes(true);
+
         loadingBar.finish();
         message.success("Connexion réussie.");
-    } catch (e) {
+    } catch (e: any) {
         loadingBar.error();
-        message.error(Errors.getErrorMessage((e as any).type));
+        if (e?.error)
+            message.error(e.error);
+        else
+            message.error("Une erreur inattendue a été rencontrée.");
     }
 };
 </script>
