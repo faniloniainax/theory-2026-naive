@@ -76,7 +76,7 @@ import { fetchTeachers } from '@/services/teachers';
 import type { Class } from '@/types/class';
 import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
-import type { CourseBlock } from '@/types/course';
+import type { Course } from '@/types/course';
 import type { Teacher } from '@/types/teacher';
 import { type FormInst, type FormRules, useLoadingBar, useMessage } from 'naive-ui';
 import type { Room } from '@/types/room';
@@ -85,14 +85,14 @@ import { fetchRooms } from '@/services/rooms';
 type Props = {
     show: boolean;
     isEditMode: boolean;
-    progress: CourseBlock | null;
+    course: Course | null;
     stageId: string | null;
     branchId: string | null;
 };
 
 type Emits = {
     (event: 'update:show', show: boolean): void;
-    (event: 'submit', data: CourseBlock): void;
+    (event: 'submit', data: Course): void;
 };
 
 const emits = defineEmits<Emits>();
@@ -223,10 +223,10 @@ const onUpdateClassValue = async (classId: string) => {
     constElements.value = await fetchConstElements(loadingBar, message, { branchId: class_['branch_id'], stageId: class_['stage_id'] })
 };
 
-const synchronizePropsToLocalData = (isEditMode: boolean, progress: CourseBlock | null) => {
+const synchronizePropsToLocalData = (isEditMode: boolean, course: Course | null) => {
     formValue.value = {};
 
-    if (!progress)
+    if (!course)
         return;
 
     // Convert date to numeric timestamp (milliseconds)
@@ -236,26 +236,26 @@ const synchronizePropsToLocalData = (isEditMode: boolean, progress: CourseBlock 
         return Dates.getTimeStamp(date);
     };
 
-    const dateTimestamp = getDateTimestamp(progress['date']);
+    const dateTimestamp = getDateTimestamp(course['date']);
 
     if (!isEditMode) {
         formValue.value['date'] = dateTimestamp;
-        formValue.value['class_id'] = progress['class_id'];
+        formValue.value['class_id'] = course['class_id'];
         return;
     }
 
-    formValue.value['id'] = progress['id'];
+    formValue.value['id'] = course['id'];
     formValue.value['date'] = dateTimestamp;
-    formValue.value['class_id'] = progress['class_id'];
-    formValue.value['teacher_id'] = progress['teacher_id'];
-    formValue.value['hour_part_id'] = progress['hour_part_id'];
-    // formValue.value['room_id'] = progress['room_id'];
-    formValue.value['const_element_id'] = progress['const_element_id'];
+    formValue.value['class_id'] = course['class_id'];
+    formValue.value['teacher_id'] = course['teacher_id'];
+    formValue.value['hour_part_id'] = course['hour_part_id'];
+    formValue.value['room_id'] = course['room_id'];
+    formValue.value['const_element_id'] = course['const_element_id'];
 };
 
 
-watch(() => props.progress, (newProgress, _) => {
-    synchronizePropsToLocalData(props.isEditMode, newProgress);
+watch(() => props.course, (newCourse, _) => {
+    synchronizePropsToLocalData(props.isEditMode, newCourse);
 });
 
 watch(() => [props.branchId, props.stageId], async ([newBranchId, newStageId], [_, __]) => {
@@ -282,7 +282,7 @@ watch(() => formValue.value['const_element_id'], (newCEId, _) => {
 });
 
 onMounted(async () => {
-    synchronizePropsToLocalData(props.isEditMode, props.progress);
+    synchronizePropsToLocalData(props.isEditMode, props.course);
 
     rooms.value = await fetchRooms(loadingBar, message);
     classes.value = await fetchClasses(loadingBar, message);

@@ -45,7 +45,7 @@
     <TLogbookTable :courses="courses" @click:edit="onEditClick" @click:delete="onDeleteClick"
         @click:context="onShowContextClicked" v-model:page="page" v-model:page-size="pageSize"
         v-model:total-pages="totalPages" />
-    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :progress="course"
+    <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :course="currentCourse"
         :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
 
     <!-- <NModal preset="dialog" title="Informations sur le contexte" v-model:show="contextDisplayRequested" closable
@@ -106,12 +106,10 @@ const branches = ref<Branch[]>([]);
 const stages = ref<Stage[]>([]);
 const classes = ref<Class[]>([]);
 const courses = ref<Course[]>([]);
-const teachingTypes = ref<TeachingType[]>([]);
 
 const saveCourseDisabled = ref(true);
 const showFormModal = ref(false);
 const isEditMode = ref(false);
-const course = ref<CourseBlock | null>(null);
 
 const currentCourse = ref<Course | null>(null);
 const contextDisplayRequested = ref(false);
@@ -141,10 +139,10 @@ const fetchData = async () => {
 const onAddClick = () => {
     isEditMode.value = false;
     showFormModal.value = true;
-    course.value = {} as CourseBlock;
+    currentCourse.value = {} as Course;
 
-    course.value['date'] = new Date().toISOString();
-    course.value['class_id'] = filters.value.classId!;
+    currentCourse.value['date'] = new Date().toISOString();
+    currentCourse.value['class_id'] = filters.value.classId!;
 };
 
 const onEditClick = (c: Course) => {
@@ -165,10 +163,10 @@ const onShowContextClicked = (c: Course) => {
     contextDisplayRequested.value = true;
 };
 
-const onSubmit = async (p: CourseBlock) => {
+const onSubmit = async (c: Course) => {
     // If it's a timestamp, we'll transform it to UTC Midnight
-    if (typeof p['date'] === 'number')
-        p['date'] = Dates.toUTCMidnight(p['date']);
+    if (typeof c['date'] === 'number')
+        c['date'] = Dates.toUTCMidnight(c['date']);
 
     // FIXME: Handle this correctly
     // let ok = true;
@@ -229,7 +227,6 @@ onMounted(async () => {
 
     fields.value = await fetchFields(loadingBar, message);
     stages.value = await fetchStages(loadingBar, message);
-    teachingTypes.value = await fetchTeachingTypes(loadingBar, message);
 
     if (parsed?.fieldId) {
         filters.value.fieldId = parsed.fieldId
