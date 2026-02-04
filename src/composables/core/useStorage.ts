@@ -79,6 +79,13 @@ export default function useStorage<T>() {
         return JSON.parse(json) as T;
     }
 
+    /**
+     * Clears the whole localStorage.
+     */
+    function clearStorage() {
+        localStorage.clear();
+    }
+
     return ({
         store,
         storeRaw,
@@ -86,5 +93,6 @@ export default function useStorage<T>() {
         load,
         loadRaw,
         loadDecrypted,
+        clearStorage,
     });
 };
