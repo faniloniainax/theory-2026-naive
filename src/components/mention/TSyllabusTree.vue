@@ -1,8 +1,8 @@
 <template>
     <NTree draggable block-line style="width: 100%;" :data="treeData" :cascade="true" :pattern="pattern"
-        :render-suffix="renderSuffix" @drop="onNodeDrop" :allow-drop="({ dropPosition }) => dropPosition !== 'before'">
+        :show-irrelevant-nodes="false" :render-suffix="renderSuffix" @drop="onNodeDrop" :allow-drop="() => true">
         <template #empty>
-            <NEmpty description="Aucune donnée..." />
+            <NEmpty description="Aucune donnée." />
         </template>
     </NTree>
 </template>
@@ -78,9 +78,9 @@ const onNodeDrop = ({ node: subjectNode, dragNode: draggedNode, dropPosition }: 
     const nodeName = draggedNode['label'];
     const otherNodeName = subjectNode['label'];
 
-    if (dropPosition === 'after') {
+    if (dropPosition === 'after' || dropPosition === 'before') {
         dialog.info({
-            content: `Voulez-vous vraiment déplacer "${nodeName}" après "${otherNodeName}" ?`,
+            content: `Voulez-vous vraiment déplacer "${nodeName}" avec "${otherNodeName}" ?`,
             positiveText: 'Confirmer',
             negativeText: 'Annuler',
             onPositiveClick: () => {
