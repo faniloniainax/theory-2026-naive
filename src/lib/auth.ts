@@ -36,4 +36,17 @@ export const Auth = {
         Store.encryptStore<User>("_", undefined);
         await Routes.replaceRoutesProperly(true);
     },
+    getInitialsAndName() {
+        const user = Store.decryptLoad<User>("_");
+
+        if (!user || user.name.length == 0)
+            return ["-", "..."];
+
+        return [user.name.slice(0, 3), user.name];
+    },
+    emptyCache() {
+        const user = Store.rawLoad("_");
+        Store.clear();
+        Store.rawStore("_", user ?? "");
+    },
 };

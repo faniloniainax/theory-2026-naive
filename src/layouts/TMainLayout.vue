@@ -7,7 +7,7 @@
                     <NPopover trigger="click" placement="left">
                         <template #trigger>
                             <NButton @click="onBurgerClick">
-                                <NIcon>
+                                <NIcon size="large">
                                     <MenuOutline />
                                 </NIcon>
                             </NButton>
@@ -16,12 +16,34 @@
                     </NPopover>
                 </NFlex>
 
-                <NButton type="error" ghost @click="onLogOutClick">
-                    <template #icon>
-                        <LogOutOuline />
+                <NPopover trigger="click" placement="right">
+                    <template #trigger>
+                        <NButton>
+                            <NIcon size="large">
+                                <AccountOutline />
+                            </NIcon>
+                        </NButton>
                     </template>
-                    Se déconnecter
-                </NButton>
+
+                    <NFlex vertical>
+                        <NSpace align="center" justify="center">
+                            <NAvatar size="large">{{ initials }}</NAvatar>
+                            <NP :depth="3">{{ name }}</NP>
+                        </NSpace>
+                        <NButton ghost type="warning" @click="onEmptyCacheClick">
+                            <NIcon>
+                                <TrashBinOutline />
+                            </NIcon>
+                            Vider le cache
+                        </NButton>
+                        <NButton ghost type="error" @click="onLogOutClick">
+                            <NIcon>
+                                <LogOutOutline />
+                            </NIcon>
+                            Se déconnecter
+                        </NButton>
+                    </NFlex>
+                </NPopover>
             </NFlex>
         </NLayoutHeader>
         <NLayoutContent>
@@ -36,7 +58,9 @@
 
 <script setup lang="ts">
 import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
-import LogOutOuline from 'vicons/ionicons-v5/LogOutOutline.vue'
+import LogOutOutline from 'vicons/ionicons-v5/LogOutOutline.vue'
+import TrashBinOutline from 'vicons/ionicons-v5/TrashBinOutline.vue'
+import AccountOutline from 'vicons/fluent/PersonAccounts24Regular.vue'
 import { useRoute, useRouter } from 'vue-router';
 import { Auth } from '@/lib/auth';
 import type { User } from '@/types/auth';
@@ -51,7 +75,8 @@ const dialog = useDialog();
 const message = useMessage();
 
 const options = ref<MenuMixedOption[]>([]);
-const selectedKey = computed(() => route.path)
+const selectedKey = computed(() => route.path);
+const [initials, name] = Auth.getInitialsAndName();
 
 const showMenuDrawer = ref(false);
 
@@ -62,6 +87,18 @@ const onBurgerClick = () => {
 const onMenuOptionClick = (key: string) => {
     showMenuDrawer.value = false;
     router.push(key);
+};
+
+const onEmptyCacheClick = () => {
+    dialog.warning({
+        content: 'Voulez-vous vraiment vider le cache ?',
+        positiveText: "Confirmer",
+        negativeText: "Annuler",
+        onPositiveClick: () => {
+            Auth.emptyCache();
+            message.success("Cache vidé.");
+        },
+    });
 };
 
 const onLogOutClick = () => {
