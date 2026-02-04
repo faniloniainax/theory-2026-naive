@@ -32,9 +32,7 @@ type Props = {
     show: boolean;
     isEditMode: boolean;
     constElements: ConstElement[];
-    label: string | null;
-    parentId: string | null;
-    constElementId: string | null;
+    element: ElementNode | null;
 };
 
 type Emits = {
@@ -49,6 +47,7 @@ const title = computed(() => !props.isEditMode ? "Ajouter un élément" : "Modif
 
 const formRef = useTemplateRef('formRef');
 const formValue = ref({
+    id: null as string | null,
     label: null as string | null,
     parent_id: null as string | null,
     const_element_id: null as string | null
@@ -69,9 +68,17 @@ const formRules: FormRules = {
 };
 
 const syncWithLocalData = () => {
-    formValue.value['label'] = props.label;
-    formValue.value['parent_id'] = props.parentId;
-    formValue.value['const_element_id'] = props.constElementId;
+    if (!props.element) {
+        formValue.value['id'] = null;
+        formValue.value['label'] = null;
+        formValue.value['parent_id'] = null;
+        formValue.value['const_element_id'] = null;
+    } else {
+        formValue.value['id'] = props.element['id'] ?? null;
+        formValue.value['label'] = props.element['label'] ?? null;
+        formValue.value['parent_id'] = props.element['parent_id'] ?? null;
+        formValue.value['const_element_id'] = props.element['const_element_id'] ?? null;
+    }
 };
 
 const onUpdateShow = (newShow: boolean) => {
@@ -83,7 +90,7 @@ const onSubmitClick = async () => {
     emits('submit', formValue.value);
 };
 
-watch(() => [props.label, props.parentId, props.constElementId], () => {
+watch(() => [props.element], () => {
     syncWithLocalData();
 });
 

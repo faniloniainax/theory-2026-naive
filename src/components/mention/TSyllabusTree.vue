@@ -47,6 +47,7 @@ const constructTreeData = () => {
             key: e['id'],
             label: e['label'],
             parent_id: e['parent_id'],
+            const_element_id: e['const_element_id'],
             children: e['children'] ? e['children'].map(mapCallback) : undefined,
         };
     };

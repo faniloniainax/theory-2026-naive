@@ -63,9 +63,8 @@
         </template>
     </NSpace>
 
-    <TSyllabusForm v-model:show="shouldShowElementForm" :is-edit-mode="isEditMode" :label="elementLabel"
-        :const-elements="constElements" :const-element-id="filters.constElementId" :parent-id="elementParentId"
-        @submit="onFormSubmit" />
+    <TSyllabusForm v-model:show="shouldShowElementForm" :is-edit-mode="isEditMode" :const-elements="constElements"
+        :const-element-id="filters.constElementId" :element="element" @submit="onFormSubmit" />
 </template>
 
 <script setup lang="ts">
@@ -112,8 +111,7 @@ const treePattern = ref("");
 const isEditMode = ref(false);
 const shouldShowElementForm = ref(false);
 const shouldLoadSyllabusData = ref(false);
-const elementLabel = ref<string | null>(null);
-const elementParentId = ref<string | null>(null);
+const element = ref<ElementNode | null>(null);
 
 const fetchData = async () => {
     const ceId = filters.value.constElementId;
@@ -129,23 +127,25 @@ const fetchData = async () => {
 };
 
 const onAddRootElementClick = () => {
+    element.value = {
+        const_element_id: filters.value.constElementId,
+    } as ElementNode;
     isEditMode.value = false;
-    elementLabel.value = null;
-    elementParentId.value = null;
     shouldShowElementForm.value = true;
 };
 
 const onAddChildClick = (parentId: string) => {
+    element.value = {
+        parent_id: parentId,
+        const_element_id: filters.value.constElementId,
+    } as ElementNode;
     isEditMode.value = false;
-    elementLabel.value = null;
-    elementParentId.value = parentId;
     shouldShowElementForm.value = true;
 };
 
 const onEditClick = (e: ElementNode) => {
+    element.value = e;
     isEditMode.value = true;
-    elementLabel.value = e['label'];
-    elementParentId.value = e['parent_id'];
     shouldShowElementForm.value = true;
 };
 
@@ -158,6 +158,7 @@ const onDeleteClick = async (e: ElementNode) => {
 
 const onFormSubmit = async (e: ElementNode) => {
     let ok = true;
+
     if (!isEditMode.value)
         ok = await addElement(e, loadingBar, message);
     else
