@@ -42,7 +42,7 @@ export const Auth = {
         if (!user || user.name.length == 0)
             return ["-", "..."];
 
-        return [user.name.slice(0, 3), user.name];
+        return [user.name.slice(0, 3).toUpperCase(), user.name];
     },
     emptyCache() {
         const user = Store.rawLoad("_");
