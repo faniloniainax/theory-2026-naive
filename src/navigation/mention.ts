@@ -12,6 +12,7 @@ import BookDatabaseOutline from 'vicons/fluent/BookDatabase24Regular.vue';
 import CalendarAddOutline from 'vicons/fluent/CalendarAdd24Regular.vue';
 import AppsListOutline from 'vicons/fluent/AppsList24Regular.vue';
 import MoreOutline from 'vicons/fluent/More24Regular.vue';
+import AppsAddOutline from 'vicons/fluent/AppsAddIn24Regular.vue';
 
 export const mentionNavigation: MenuMixedOption[] = [
     {
@@ -32,7 +33,7 @@ export const mentionNavigation: MenuMixedOption[] = [
     {
         key: '/syllabus',
         label: 'Syllabus',
-        icon: () => h(WarningOutline),
+        icon: () => h(AppsAddOutline),
     },
     {
         key: '/program',
