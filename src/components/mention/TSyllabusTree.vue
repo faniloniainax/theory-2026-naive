@@ -34,9 +34,9 @@ const treeData = ref<TreeOption[]>([]);
 const renderSuffix = ({ option: o }: { option: TreeOption }) => {
     return h(NSpace, { justify: 'end' }, {
         default: () => [
-            h(NButton, { onClick: () => onAddChildClick(o.key as string) }, { default: () => 'Ajouter un élément' }),
-            h(NButton, { onClick: () => onEditClick(o as any) }, { default: () => 'Modifier' }),
-            h(NButton, { onClick: () => onDeleteClick(o as any) }, { default: () => 'Supprimer' }),
+            h(NButton, { ghost: true, type: 'success', onClick: () => onAddChildClick(o.key as string) }, { default: () => 'Ajouter un élément' }),
+            h(NButton, { ghost: true, type: 'info', onClick: () => onEditClick(o as any) }, { default: () => 'Modifier' }),
+            h(NButton, { ghost: true, type: 'error', onClick: () => onDeleteClick(o as any) }, { default: () => 'Supprimer' }),
         ]
     })
 };
