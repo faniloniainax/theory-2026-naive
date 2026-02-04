@@ -95,3 +95,26 @@ export const deleteElement = async (id: string, l?: LoadingBarInst, m?: MessageA
         return false;
     }
 };
+
+export const reassignElement = async (id: string, newParentId: string, l?: LoadingBarInst, m?: MessageApiInjection) => {
+    l?.start();
+
+    try {
+        const r = await Http.post(`/mention/elements/reassign_parent/${id}/${newParentId}`);
+
+        if (r.status !== 200)
+            throw r.data;
+
+        l?.finish();
+        m?.success("Elément déplacé avec succès.");
+        return true;
+    } catch (e: any) {
+        l?.error();
+        if (e?.error)
+            m?.error(e.error);
+        else
+            m?.error("Erreur durant le déplacement de l'élément.");
+        console.error(e);
+        return false;
+    }
+};
