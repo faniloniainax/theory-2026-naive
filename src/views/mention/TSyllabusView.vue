@@ -73,7 +73,7 @@ import { Options } from '@/lib/options';
 import { Store } from '@/lib/store';
 import { fetchBranches } from '@/services/branches';
 import { fetchConstElements } from '@/services/const_elements';
-import { addElement, deleteElement, editElement, fetchElementsNodeTree } from '@/services/elements';
+import { addElement, deleteElement, editElement, fetchElementsNodeTree, reassignElement } from '@/services/elements';
 import { fetchFields } from '@/services/fields';
 import { fetchStages } from '@/services/stages';
 import type { Branch } from '@/types/branch';
@@ -171,8 +171,8 @@ const onFormSubmit = async (e: ElementNode) => {
     }
 };
 
-const onDragNDrop = async (e: ElementNode) => {
-    const ok = await editElement(e['id'], e, loadingBar, message);
+const onDragNDrop = async (id: string, newParentId: string) => {
+    const ok = await reassignElement(id, newParentId, loadingBar, message);
 
     if (ok)
         await fetchData();

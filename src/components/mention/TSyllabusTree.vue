@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { ElementNode } from '@/types/element';
-import { NButton, NSpace, useDialog, type TreeDropInfo, type TreeOption } from 'naive-ui';
+import { dialogDark, NButton, NSpace, useDialog, type TreeDropInfo, type TreeOption } from 'naive-ui';
 
 type Props = {
     tree: ElementNode[];
@@ -21,7 +21,7 @@ type Emits = {
     (event: 'click:add-child', parentId: string): void;
     (event: 'click:edit', e: ElementNode): void;
     (event: 'click:delete', e: ElementNode): void;
-    (event: 'drag-n-drop', e: ElementNode): void;
+    (event: 'drag-n-drop', id: string, newParentId: string): void;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,8 +84,10 @@ const onNodeDrop = ({ node: subjectNode, dragNode: draggedNode, dropPosition }: 
             positiveText: 'Confirmer',
             negativeText: 'Annuler',
             onPositiveClick: () => {
-                draggedNode['parent_id'] = subjectNode['parent_id'];
-                emits('drag-n-drop', draggedNode as any);
+                const id = draggedNode['id'] as string;
+                const newParentId = subjectNode['parent_id'] as string;
+
+                emits('drag-n-drop', id, newParentId);
             },
         })
     } else if (dropPosition === 'inside') {
@@ -94,8 +96,10 @@ const onNodeDrop = ({ node: subjectNode, dragNode: draggedNode, dropPosition }: 
             positiveText: 'Confirmer',
             negativeText: 'Annuler',
             onPositiveClick: () => {
-                draggedNode['parent_id'] = subjectNode['id'];
-                emits('drag-n-drop', draggedNode as any);
+                const id = draggedNode['id'] as string;
+                const newParentId = subjectNode['id'] as string;
+
+                emits('drag-n-drop', id, newParentId);
             },
         })
     }
