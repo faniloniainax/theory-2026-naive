@@ -30,6 +30,24 @@
                             <NAvatar size="large">{{ initials }}</NAvatar>
                             <NP :depth="3">{{ name }}</NP>
                         </NSpace>
+                        <NSwitch :value="themeIsChecked" @update:value="onThemeSwitchValueUpdate">
+                            <template #checked-icon>
+                                <NIcon>
+                                    <MoonOutline />
+                                </NIcon>
+                            </template>
+                            <template #checked>
+                                Sombre
+                            </template>
+                            <template #unchecked-icon>
+                                <NIcon>
+                                    <SunnyOutline />
+                                </NIcon>
+                            </template>
+                            <template #unchecked>
+                                Clair
+                            </template>
+                        </NSwitch>
                         <NButton ghost type="warning" @click="onEmptyCacheClick">
                             <NIcon>
                                 <TrashBinOutline />
@@ -63,12 +81,15 @@ import MenuOutline from 'vicons/ionicons-v5/MenuOutline.vue'
 import LogOutOutline from 'vicons/ionicons-v5/LogOutOutline.vue'
 import TrashBinOutline from 'vicons/ionicons-v5/TrashBinOutline.vue'
 import AccountOutline from 'vicons/fluent/PersonAccounts24Regular.vue'
+import SunnyOutline from 'vicons/ionicons-v5/SunnyOutline.vue'
+import MoonOutline from 'vicons/ionicons-v5/MoonOutline.vue'
 import { useRoute, useRouter } from 'vue-router';
 import type { User } from '@/types/auth';
 import { delegateNavigation } from '@/navigation/delegate';
 import { type MenuMixedOption } from 'naive-ui/lib/menu/src/interface';
 import { useDialog, useMessage } from 'naive-ui';
 import { mentionNavigation } from '@/navigation/mention';
+import useStorage from '@/composables/core/useStorage'
 
 const route = useRoute();
 const router = useRouter();
@@ -82,6 +103,17 @@ const selectedKey = computed(() => route.path);
 const [initials, name] = makeInitialsAndName();
 
 const showMenuDrawer = ref(false);
+const themeIsChecked = computed(() => {
+    const { loadRaw, storeRaw } = useStorage();
+    let theme = loadRaw("theme");
+
+    if (!theme) {
+        theme = "light";
+        storeRaw("theme", theme);
+    }
+
+    return theme === 'dark';
+});
 
 const onBurgerClick = () => {
     showMenuDrawer.value = true;
@@ -115,6 +147,18 @@ const onLogOutClick = () => {
             message.success("Déconnexion réussie.");
         },
     });
+};
+
+const onThemeSwitchValueUpdate = (isChecked: boolean) => {
+    const { loadRaw, storeRaw } = useStorage();
+    const { router } = useRoutes();
+
+    if (isChecked)
+        storeRaw("theme", "dark");
+    else
+        storeRaw("theme", "light");
+
+    router.go(0);
 };
 
 onMounted(async () => {
