@@ -3,11 +3,13 @@ import type { ElementNode } from "@/types/element";
 import type { LoadingBarInst } from "naive-ui/lib/loading-bar/src/LoadingBarProvider";
 import type { MessageApiInjection } from "naive-ui/lib/message/src/MessageProvider";
 
-export const fetchElementsNodeTree = async (constElementId: string, l?: LoadingBarInst, m?: MessageApiInjection): Promise<ElementNode[]> => {
+export const fetchElementsNodeTree = async (constElementId: string, mode: 'node_tree' | 'clean_node_tree' | 'mostly_clean_node_tree', l?: LoadingBarInst, m?: MessageApiInjection,
+    classId?: string, excludedCourseId?: string
+): Promise<ElementNode[]> => {
     l?.start();
 
     try {
-        const p = { include: '', mode: 'node_tree', const_element_id: constElementId };
+        const p = { include: '', mode, const_element_id: constElementId, class_id: classId, excluded_course_id: excludedCourseId };
         const r = await Http.get("/mention/elements", { params: p });
 
         if (r.status !== 200)
