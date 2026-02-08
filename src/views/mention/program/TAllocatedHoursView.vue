@@ -43,7 +43,7 @@ const otherActions: CrudAction[] = [];
 const formInputs: CrudInput[] = [
     {
         kind: 'number',
-        min: 1,
+        min: 0,
         max: 100,
         placeholder: '67, 26, ...',
         name: 'Valeur',
