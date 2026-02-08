@@ -1,66 +1,102 @@
 <template>
-    <NModal preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate" closable close-on-esc>
-        <NSpace vertical>
-            <NTabs animated v-model:value="formsTab" @before-leave="() => false">
-                <NTabPane name="coreForm" tab="Informations basiques">
-                    <NForm ref="coreFormRef" :model="formValue" :rules="coreFormRules">
-                        <NFormItem path="date" label="Date de la séance:">
-                            <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
-                                :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
-                        </NFormItem>
-                        <NFormItem path="class_id" label="Classe concernée:">
-                            <NSelect filterable clearable placeholder="Aucune classe..."
-                                :options="Options.formatClasses(classes)" v-model:value="formValue['class_id']"
-                                @update:value="onUpdateClassValue">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="teacher_id" label="Enseignant responsable:">
-                            <NSelect filterable clearable placeholder="Aucun enseignant..."
-                                :options="Options.formatTeachers(teachers)" v-model:value="formValue['teacher_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="room_id" label="Salle de la séance:">
-                            <NSelect filterable clearable placeholder="Aucune salle..."
-                                :options="Options.formatRooms(rooms)" v-model:value="formValue['room_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="hour_part_id" label="Horaire de la séance:">
-                            <NSelect filterable clearable placeholder="Aucun horaire..."
-                                :options="Options.formatHourParts(hourParts)" v-model:value="formValue['hour_part_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                        <NFormItem path="const_element_id" label="Elément constitutif concerné:">
-                            <NSelect filterable clearable placeholder="Aucun élément constitutif..."
-                                :options="Options.formatConstElements(constElements)"
-                                v-model:value="formValue['const_element_id']">
-                                <NEmpty description="Aucune donnée." />
-                            </NSelect>
-                        </NFormItem>
-                    </NForm>
-                </NTabPane>
-                <NTabPane name="contextForm" tab="Contexte de la séance">
-                    <NForm ref="contextFormRef" :model="formValue" :rules="contextFormRules">
-                        <NFormItem path="fallback_context" label="Description du contenu du cours:">
-                            <NInput clearable type="textarea" maxlength="255" show-count
-                                placeholder="Racontez ce qui a été éffectué durant cette séance..."
-                                v-model:value="formValue['fallback_context']" />
-                        </NFormItem>
-                    </NForm>
-                </NTabPane>
-            </NTabs>
+    <NModal style="width: 40%;" preset="dialog" :title="title" v-model:show="showModal" @update:show="onShowUpdate"
+        closable close-on-esc>
+        <NSpace vertical justify="center" align="center">
+            <NSteps size="medium" :current="currentStep" content-placement="bottom">
+                <NStep>
+                    Informations principales
+                </NStep>
+                <template v-for="tt in teachingTypes">
+                    <NStep>
+                        Contexte {{ tt['name'].toLowerCase() }}
+                    </NStep>
+                </template>
+            </NSteps>
 
-            <NSpace justify="end">
-                <NButton ghost :type="formsTab === 'contextForm' ? 'info' : 'error'" @click="onCancelClick">
-                    {{ formsTab === 'contextForm' ? 'Précédent' : 'Annuler' }}
-                </NButton>
-                <NButton ghost type="success" @click="onValidateClick">
-                    {{ formsTab === "coreForm" ? "Suivant" : "Valider" }}
-                </NButton>
-            </NSpace>
+            <NTabs justify-content="center" type="line" animated @before-leave="() => false" v-model:value="currentTab">
+                <NTabPane :name="-1" tab="Infos">
+                    <NForm ref="coreFormRef" :model="formValue" :rules="coreFormRules">
+                        <NGrid :cols="2" :x-gap="20">
+                            <NFormItemGi path="date" label="Date de la séance:">
+                                <NDatePicker type="date" format="dd MMMM yyyy" v-model:value="formValue['date']"
+                                    :placeholder="Dates.format(new Date(), 'dd MMMM yyyy')" />
+                            </NFormItemGi>
+                            <NFormItemGi path="hour_part_id" label="Horaire de la séance:">
+                                <NSelect filterable clearable placeholder="Aucun horaire..."
+                                    :options="Options.formatHourParts(hourParts)"
+                                    v-model:value="formValue['hour_part_id']">
+                                    <template #empty>
+                                        <NEmpty description="Aucune donnée." />
+                                    </template>
+                                </NSelect>
+                            </NFormItemGi>
+                            <NFormItemGi path="class_id" label="Classe concernée:">
+                                <NSelect filterable clearable placeholder="Aucune classe..."
+                                    :options="Options.formatClasses(classes)" v-model:value="formValue['class_id']"
+                                    @update:value="onUpdateClassValue">
+                                    <template #empty>
+                                        <NEmpty description="Aucune donnée." />
+                                    </template>
+                                </NSelect>
+                            </NFormItemGi>
+                            <NFormItemGi path="teacher_id" label="Enseignant responsable:">
+                                <NSelect filterable clearable placeholder="Aucun enseignant..."
+                                    :options="Options.formatTeachers(teachers)" v-model:value="formValue['teacher_id']">
+                                    <template #empty>
+                                        <NEmpty description="Aucune donnée." />
+                                    </template>
+                                </NSelect>
+                            </NFormItemGi>
+                            <NFormItemGi path="room_id" label="Salle de la séance:">
+                                <NSelect filterable clearable placeholder="Aucune salle..."
+                                    :options="Options.formatRooms(rooms)" v-model:value="formValue['room_id']">
+                                    <template #empty>
+                                        <NEmpty description="Aucune donnée." />
+                                    </template>
+                                </NSelect>
+                            </NFormItemGi>
+                            <NFormItemGi path="const_element_id" label="Elément constitutif concerné:">
+                                <NSelect filterable clearable placeholder="Aucun élément constitutif..."
+                                    :options="Options.formatConstElements(constElements)"
+                                    v-model:value="formValue['const_element_id']">
+                                    <template #empty>
+                                        <NEmpty description="Aucune donnée." />
+                                    </template>
+                                </NSelect>
+                            </NFormItemGi>
+                        </NGrid>
+                    </NForm>
+                </NTabPane>
+                <template v-for="tt, i in teachingTypes">
+                    <NTabPane :name="i" :tab="tt['name']">
+                        <NForm :ref="`contextForm${i}`" :model="contextFormValues[i]" :rules="contextFormRules">
+                            <template v-if="tt['is_theoric']">
+                                <template v-if="elementsTree.length > 0">
+                                    <NTree block-line cascade checkable :data="realTreeData" />
+                                </template>
+                                <template v-else>
+                                    <NP :depth="3">Tout le syllabus a été parcouru...</NP>
+                                    <NFormItem path="description" label="Description du contexte:">
+                                        <NInput rows="9" clearable type="textarea" maxlength="255" show-count
+                                            placeholder="Racontez ce qui a été effectué durant cette séance..." />
+                                    </NFormItem>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <NFormItem path="description" label="Description du contexte:">
+                                    <NInput rows="9" clearable type="textarea" maxlength="255" show-count
+                                        placeholder="Racontez ce qui a été effectué durant cette séance..." />
+                                </NFormItem>
+                            </template>
+                        </NForm>
+                    </NTabPane>
+                </template>
+            </NTabs>
+        </NSpace>
+
+        <NSpace justify="end">
+            <NButton ghost :type="cancelType" @click="onCancelClick">{{ cancelText }}</NButton>
+            <NButton ghost :type="submitType" @click="onSubmitClick">{{ submitText }}</NBUtton>
         </NSpace>
     </NModal>
 </template>
@@ -78,9 +114,13 @@ import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
 import type { Course } from '@/types/course';
 import type { Teacher } from '@/types/teacher';
-import { type FormInst, type FormRules, useLoadingBar, useMessage } from 'naive-ui';
+import { type FormInst, type FormRules, type TreeOption, useLoadingBar, useMessage } from 'naive-ui';
 import type { Room } from '@/types/room';
 import { fetchRooms } from '@/services/rooms';
+import type { TeachingType } from '@/types/teaching_type';
+import { fetchTeachingTypes } from '@/services/teaching_types';
+import type { ElementNode } from '@/types/element';
+import { fetchElementsNodeTree } from '@/services/elements';
 
 type Props = {
     show: boolean;
@@ -88,6 +128,7 @@ type Props = {
     course: Course | null;
     stageId: string | null;
     branchId: string | null;
+    classId: string | null;
 };
 
 type Emits = {
@@ -102,15 +143,27 @@ const message = useMessage();
 const loadingBar = useLoadingBar();
 
 const coreFormRef = useTemplateRef('coreFormRef');
-const contextFormRef = useTemplateRef('contextFormRef');
+const contextFormRef = useTemplateRef('coreFormRef');
 
-const formsTab = ref("coreForm");
-const formValue = ref<any>({});
 const rooms = ref<Room[]>([]);
 const classes = ref<Class[]>([]);
 const teachers = ref<Teacher[]>([]);
 const hourParts = ref<HourPart[]>([]);
+const teachingTypes = ref<TeachingType[]>([]);
 const constElements = ref<ConstElement[]>([]);
+const elementsTree = ref<ElementNode[]>([]);
+const realTreeData = ref<TreeOption[]>([]);
+
+const formValue = ref<any>({});
+const contextFormValues = ref<Ref<any>[]>([]);
+
+const currentStep = ref(1);
+const currentTab = ref(-1);
+
+const cancelType = computed(() => currentTab.value < 0 ? "error" : "info")
+const cancelText = computed(() => currentTab.value < 0 ? "Annuler" : "Précédent");
+const submitType = computed(() => currentTab.value < teachingTypes.value.length - 1 ? "info" : "success")
+const submitText = computed(() => currentTab.value < teachingTypes.value.length - 1 ? "Suivant" : "Valider");
 
 const title = computed(() => !props.isEditMode ? "Enregistrer une séance" : "Modifier un enregistrement de séance");
 const showModal = computed({
@@ -147,15 +200,13 @@ const coreFormRules: FormRules = {
 };
 
 const contextFormRules: FormRules = {
-    fallback_context: {
-        type: 'string',
+    description: {
         min: 5,
-        required: true,
+        type: 'string',
         message: 'Le contexte doit contenir au moins 5 caractères.'
     },
 };
 
-const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
 
 const validateCoreForm = async () => {
     try {
@@ -179,38 +230,62 @@ const validateContextForm = async () => {
     return false;
 };
 
-const onValidateClick = async () => {
-    if (formsTab.value === "coreForm") {
-        const ok = await validateCoreForm();
+const constructTreeData = () => {
+    const mapCallback = (e: ElementNode): TreeOption => {
+        return {
+            id: e['id'],
+            key: e['id'],
+            label: e['label'],
+            parent_id: e['parent_id'],
+            const_element_id: e['const_element_id'],
+            children: e['children'] ? e['children'].map(mapCallback) : undefined,
+        };
+    };
 
-        if (!ok)
-            return;
-
-        formsTab.value = "contextForm";
-    } else if (formsTab.value === "contextForm") {
-        const ok = await validateContextForm();
-
-        if (!ok)
-            return;
-
-        // Ensure date is always a number
-        const submittedValue = { ...formValue.value };
-        if (typeof submittedValue['date'] === 'string') {
-            submittedValue['date'] = new Date(submittedValue['date']).getTime();
-        }
-
-        emits('submit', submittedValue);
-        formsTab.value = "coreForm";
-    }
+    realTreeData.value = elementsTree.value.map(mapCallback);
 };
 
+const onShowUpdate = (newShow: boolean) => emits('update:show', newShow);
+
+
 const onCancelClick = () => {
-    if (formsTab.value === 'contextForm') {
-        formsTab.value = 'coreForm';
+    if (currentTab.value >= 0) {
+        currentTab.value--;
+        currentStep.value--;
         return;
     }
 
     emits('update:show', false);
+};
+
+const onSubmitClick = async () => {
+    if (currentTab.value < teachingTypes.value.length - 1) {
+        currentTab.value++;
+        currentStep.value++;
+        return;
+    }
+    // if (formsTab.value === "coreForm") {
+    //     const ok = await validateCoreForm();
+
+    //     if (!ok)
+    //         return;
+
+    //     formsTab.value = "contextForm";
+    // } else if (formsTab.value === "contextForm") {
+    //     const ok = await validateContextForm();
+
+    //     if (!ok)
+    //         return;
+
+    //     // Ensure date is always a number
+    //     const submittedValue = { ...formValue.value };
+    //     if (typeof submittedValue['date'] === 'string') {
+    //         submittedValue['date'] = new Date(submittedValue['date']).getTime();
+    //     }
+
+    //     emits('submit', submittedValue);
+    //     formsTab.value = "coreForm";
+    // }
 };
 
 const onUpdateClassValue = async (classId: string) => {
@@ -253,8 +328,23 @@ const synchronizePropsToLocalData = (isEditMode: boolean, course: Course | null)
     formValue.value['const_element_id'] = course['const_element_id'];
 };
 
+const fetchElementsTree = async () => {
+    if (!props.isEditMode) {
+        if (!props.classId || !formValue.value['const_element_id']) {
+            elementsTree.value = [];
+            return;
+        }
+
+        elementsTree.value = await fetchElementsNodeTree(formValue.value['const_element_id'], "clean_node_tree", loadingBar, message, props.classId);
+        constructTreeData();
+    } else {
+        // FIXME: Handle this
+    }
+};
 
 watch(() => props.course, (newCourse, _) => {
+    currentStep.value = 1;
+    currentTab.value = -1;
     synchronizePropsToLocalData(props.isEditMode, newCourse);
 });
 
@@ -267,7 +357,7 @@ watch(() => [props.branchId, props.stageId], async ([newBranchId, newStageId], [
     constElements.value = await fetchConstElements(loadingBar, message, { branchId: newBranchId, stageId: newStageId });
 });
 
-watch(() => formValue.value['const_element_id'], (newCEId, _) => {
+watch(() => formValue.value['const_element_id'], async (newCEId, _) => {
     if (newCEId === null)
         return;
 
@@ -279,6 +369,7 @@ watch(() => formValue.value['const_element_id'], (newCEId, _) => {
     }
 
     formValue.value['teacher_id'] = first['teacher_id'];
+    await fetchElementsTree();
 });
 
 onMounted(async () => {
@@ -288,5 +379,7 @@ onMounted(async () => {
     classes.value = await fetchClasses(loadingBar, message);
     teachers.value = await fetchTeachers(loadingBar, message);
     hourParts.value = await fetchHourParts(loadingBar, message);
+    teachingTypes.value = await fetchTeachingTypes(loadingBar, message);
+    contextFormValues.value = Array(teachingTypes.value.length).fill(ref({}));
 })
 </script>
