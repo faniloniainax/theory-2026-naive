@@ -46,7 +46,7 @@
         @click:context="onShowContextClicked" v-model:page="page" v-model:page-size="pageSize"
         v-model:total-pages="totalPages" />
     <TLogbookForm v-model:show="showFormModal" :is-edit-mode="isEditMode" :course="currentCourse"
-        :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" />
+        :branch-id="filters.branchId!" :stage-id="filters.stageId!" @submit="onSubmit" :class-id="filters.classId" />
 
     <!-- <NModal preset="dialog" title="Informations sur le contexte" v-model:show="contextDisplayRequested" closable
         close-on-esc>

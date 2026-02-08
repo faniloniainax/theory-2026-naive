@@ -124,7 +124,7 @@ const fetchData = async () => {
     }
 
     shouldLoadSyllabusData.value = true;
-    elementNodes.value = await fetchElementsNodeTree(ceId, loadingBar, message);
+    elementNodes.value = await fetchElementsNodeTree(ceId, 'node_tree', loadingBar, message);
 };
 
 const onAddRootElementClick = () => {
