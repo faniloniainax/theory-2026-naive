@@ -10,7 +10,7 @@ export const publicRoutes: RouteRecordRaw[] = [
         children: [
             {
                 path: '/login',
-                component: () => import('@/views/public/TLoginView.vue'),
+                component: () => import('@/views/public/TRootLoginView.vue'),
             }
         ]
     },
