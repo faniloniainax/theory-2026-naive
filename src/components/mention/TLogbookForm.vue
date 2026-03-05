@@ -69,23 +69,28 @@
                 </NTabPane>
                 <template v-for="tt, i in teachingTypes">
                     <NTabPane :name="i" :tab="tt['name']">
-                        <NForm :ref="`contextForm${i}`" :model="contextFormValues[i]" :rules="contextFormRules">
+                        <NForm :model="formValue['contexts'][tt.id]"
+                            :ref="el => contextFormRefs[i] = el as unknown as FormInst">
                             <template v-if="tt['is_theoric']">
                                 <template v-if="elementsTree.length > 0">
+                                    <!-- FIXME: Ts isn't working yet... -->
                                     <NTree block-line cascade checkable :data="realTreeData" />
                                 </template>
                                 <template v-else>
-                                    <NP :depth="3">Tout le syllabus a été parcouru...</NP>
-                                    <NFormItem path="description" label="Description du contexte:">
+                                    <NP :depth="3">Tout le syllabus a été effectué...</NP>
+                                    <NFormItem path="description" label="Description du contexte:"
+                                        :rule="requiredContextFormRule">
                                         <NInput rows="9" clearable type="textarea" maxlength="255" show-count
-                                            placeholder="Racontez ce qui a été effectué durant cette séance..." />
+                                            placeholder="Racontez ce qui a été effectué durant cette séance..."
+                                            v-model:value="formValue['contexts'][tt.id].description" />
                                     </NFormItem>
                                 </template>
                             </template>
                             <template v-else>
-                                <NFormItem path="description" label="Description du contexte:">
+                                <NFormItem path="description" label="Description du contexte:" :rule="contextFormRule">
                                     <NInput rows="9" clearable type="textarea" maxlength="255" show-count
-                                        placeholder="Racontez ce qui a été effectué durant cette séance..." />
+                                        placeholder="Racontez ce qui a été effectué durant cette séance..."
+                                        v-model:value="formValue['contexts'][tt.id].description" />
                                 </NFormItem>
                             </template>
                         </NForm>
@@ -114,13 +119,14 @@ import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
 import type { Course } from '@/types/course';
 import type { Teacher } from '@/types/teacher';
-import { type FormInst, type FormRules, type TreeOption, useLoadingBar, useMessage } from 'naive-ui';
+import { type FormInst, type FormItemRule, type FormRules, type TreeOption, useLoadingBar, useMessage } from 'naive-ui';
 import type { Room } from '@/types/room';
 import { fetchRooms } from '@/services/rooms';
 import type { TeachingType } from '@/types/teaching_type';
 import { fetchTeachingTypes } from '@/services/teaching_types';
 import type { ElementNode } from '@/types/element';
 import { fetchElementsNodeTree } from '@/services/elements';
+import type { Context } from '@/types/context';
 
 type Props = {
     show: boolean;
@@ -143,7 +149,6 @@ const message = useMessage();
 const loadingBar = useLoadingBar();
 
 const coreFormRef = useTemplateRef('coreFormRef');
-const contextFormRef = useTemplateRef('coreFormRef');
 
 const rooms = ref<Room[]>([]);
 const classes = ref<Class[]>([]);
@@ -155,7 +160,7 @@ const elementsTree = ref<ElementNode[]>([]);
 const realTreeData = ref<TreeOption[]>([]);
 
 const formValue = ref<any>({});
-const contextFormValues = ref<Ref<any>[]>([]);
+const contextFormRefs = ref<(FormInst | null)[]>([]);
 
 const currentStep = ref(1);
 const currentTab = ref(-1);
@@ -175,59 +180,48 @@ const coreFormRules: FormRules = {
     class_id: {
         type: 'string',
         required: true,
+        trigger: ['blur', 'input'],
         message: "La classe est requise.",
     },
     teacher_id: {
         type: 'string',
         required: true,
+        trigger: ['blur', 'input'],
         message: "L'enseignant est requis.",
     },
     room_id: {
         type: 'string',
         required: true,
+        trigger: ['blur', 'input'],
         message: "La salle est requise.",
     },
     hour_part_id: {
         type: 'string',
         required: true,
+        trigger: ['blur', 'input'],
         message: "La tranche horaire est requise.",
     },
     const_element_id: {
         type: 'string',
         required: true,
+        trigger: ['blur', 'input'],
         message: "L'élément constitutif est requis.",
     },
 };
 
-const contextFormRules: FormRules = {
-    description: {
-        min: 5,
-        type: 'string',
-        message: 'Le contexte doit contenir au moins 5 caractères.'
-    },
+const contextFormRule: FormItemRule = {
+    min: 5,
+    type: 'string',
+    trigger: ['blur', 'input'],
+    message: 'Le contexte doit contenir au moins 5 caractères.',
 };
 
-
-const validateCoreForm = async () => {
-    try {
-        await coreFormRef.value?.validate();
-        return true;
-    } catch (e: any) {
-        console.error(e);
-    }
-
-    return false;
-};
-
-const validateContextForm = async () => {
-    try {
-        await contextFormRef.value?.validate();
-        return true;
-    } catch (e: any) {
-        console.error(e);
-    }
-
-    return false;
+const requiredContextFormRule: FormItemRule = {
+    required: true,
+    min: 5,
+    type: 'string',
+    trigger: ['blur', 'input'],
+    message: 'Le contexte est requis, et doit contenir au moins 5 caractères.',
 };
 
 const constructTreeData = () => {
@@ -259,10 +253,22 @@ const onCancelClick = () => {
 };
 
 const onSubmitClick = async () => {
-    if (currentTab.value < teachingTypes.value.length - 1) {
-        currentTab.value++;
-        currentStep.value++;
-        return;
+    const advanceTab = () => { currentTab.value++; currentStep.value++ };
+
+    if (currentTab.value === -1) {
+        try {
+            await coreFormRef.value?.validate();
+            advanceTab();
+        } catch (e) { }
+    }
+    else if (currentTab.value < teachingTypes.value.length - 1) {
+        try {
+            await contextFormRefs.value[currentTab.value]?.validate();
+            advanceTab();
+        } catch (e) { }
+    } else {
+        console.log(formValue.value);
+
     }
     // if (formsTab.value === "coreForm") {
     //     const ok = await validateCoreForm();
@@ -312,10 +318,13 @@ const synchronizePropsToLocalData = (isEditMode: boolean, course: Course | null)
     };
 
     const dateTimestamp = getDateTimestamp(course['date']);
+    const contextsMap = new Map<string, Context>();
 
     if (!isEditMode) {
         formValue.value['date'] = dateTimestamp;
         formValue.value['class_id'] = course['class_id'];
+        formValue.value['contexts'] = contextsMap;
+        console.log("CONTEXTS:", formValue.value['contexts']);
         return;
     }
 
@@ -326,6 +335,12 @@ const synchronizePropsToLocalData = (isEditMode: boolean, course: Course | null)
     formValue.value['hour_part_id'] = course['hour_part_id'];
     formValue.value['room_id'] = course['room_id'];
     formValue.value['const_element_id'] = course['const_element_id'];
+
+    course['contexts']?.forEach(ctx => {
+        contextsMap.set(ctx['teaching_type_id'], ctx);
+    });
+    formValue.value['contexts'] = contextsMap;
+    console.log("EDITMODE:", formValue.value['contexts']);
 };
 
 const fetchElementsTree = async () => {
@@ -380,6 +395,13 @@ onMounted(async () => {
     teachers.value = await fetchTeachers(loadingBar, message);
     hourParts.value = await fetchHourParts(loadingBar, message);
     teachingTypes.value = await fetchTeachingTypes(loadingBar, message);
-    contextFormValues.value = Array(teachingTypes.value.length).fill(ref({}));
+
+    if (!props.isEditMode) {
+        teachingTypes.value.forEach(tt => {
+            formValue.value['contexts'][tt.id] = {
+                description: '',
+            };
+        });
+    }
 })
 </script>
