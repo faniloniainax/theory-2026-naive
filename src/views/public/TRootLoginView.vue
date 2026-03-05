@@ -1,7 +1,7 @@
 <template>
     <NFlex justify="center" align="center">
         <NCard bordered embedded segmented class="login-card">
-            <TLoginCardBody @form:submit="onFormSubmit" />
+            <TRootLoginCardBody @form:submit="onFormSubmit" />
         </NCard>
     </NFlex>
 </template>

@@ -5,7 +5,7 @@
         </NSpace>
         <NDivider />
         <NH2>Connexion</NH2>
-        <TLoginForm @submit="onFormSubmit" />
+        <TRootLoginForm @submit="onFormSubmit" />
     </NSpace>
 </template>
 
