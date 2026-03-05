@@ -13,7 +13,7 @@ export const fetchCourses = async (l?: LoadingBarInst, m?: MessageApiInjection, 
         const classId = filters?.classId ?? undefined;
 
         const p = {
-            include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement, Room',
+            include: 'Class.Branch, Class.Stage, Teacher.Title, HourPart, ConstElement, Room, Contexts',
             class_id: classId,
             page: page,
             per_page: pageSize

@@ -4,6 +4,7 @@ import type { HourPart } from "./hour_part";
 import type { Element } from "./element";
 import type { Teacher } from "./teacher";
 import type { Room } from "./room";
+import type { Context } from "./context";
 
 type CourseCore = {
     id: string;
@@ -34,6 +35,7 @@ export type Course = {
     teacher?: Teacher;
     room?: Room;
     const_element?: ConstElement;
+    contexts?: Context[];
 };
 
 export type CourseBlock = CourseCore & {
