@@ -2,9 +2,9 @@
     <NLayout class="main-container">
         <NLayoutHeader bordered>
             <NFlex justify="space-between" align="center" class="header-space">
-                <NFlex justify="center" align="center">
-                    <NImage height="32" width="32" src="/logo.png" />
-                </NFlex>
+                <TMobileMenu :options="delegateNavigation" />
+                <TMobileLogo />
+                <TMobileSettings />
             </NFlex>
         </NLayoutHeader>
     </NLayout>
@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { delegateNavigation } from '@/navigation/delegate';
+
 </script>
 
 <style scoped>
