@@ -27,14 +27,14 @@ import { useLoadingBar, useMessage } from 'naive-ui';
 const message = useMessage();
 const loadingBar = useLoadingBar();
 const { attemptToLogIn } = useAuth();
-const { useTypeDependentRoutes } = useRoutes();
+const { useDelegateRoutes } = useRoutes();
 
 async function onFormSubmit(userData: Login) {
     try {
         loadingBar.start();
 
         await attemptToLogIn(userData);
-        await useTypeDependentRoutes(true);
+        await useDelegateRoutes(true);
 
         loadingBar.finish();
         message.success("Connexion réussie.");

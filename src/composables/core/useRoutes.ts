@@ -38,9 +38,16 @@ export default function useRoutes() {
             router.push("/");
     }
 
+    async function useDelegateRoutes(pushToRoot: boolean) {
+        useNewRoutes(delegateRoutes);
+        if (pushToRoot)
+            router.push("/");
+    }
+
     return ({
         router,
         useNewRoutes,
+        useDelegateRoutes,
         getTypeDependentRoutes,
         useTypeDependentRoutes,
     });
