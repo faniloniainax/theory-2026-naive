@@ -13,14 +13,37 @@
         </template>
 
         <template #default>
-            <TLoginForm />
-        </template>
-
-        <template #footer>
-
+            <TLoginForm @submit="onFormSubmit" />
         </template>
     </NCard>
 </template>
 
 <script setup lang="ts">
+import useAuth from '@/composables/core/useAuth';
+import useRoutes from '@/composables/core/useRoutes';
+import type { Login } from '@/types/auth';
+import { useLoadingBar, useMessage } from 'naive-ui';
+
+const message = useMessage();
+const loadingBar = useLoadingBar();
+const { attemptToLogIn } = useAuth();
+const { useTypeDependentRoutes } = useRoutes();
+
+async function onFormSubmit(userData: Login) {
+    try {
+        loadingBar.start();
+
+        await attemptToLogIn(userData);
+        await useTypeDependentRoutes(true);
+
+        loadingBar.finish();
+        message.success("Connexion réussie.");
+    } catch (e: any) {
+        loadingBar.error();
+        if (e?.error)
+            message.error(e.error);
+        else
+            message.error("Une erreur inattendu a été rencontrée.");
+    }
+}
 </script>
