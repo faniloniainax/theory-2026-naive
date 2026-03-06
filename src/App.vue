@@ -3,7 +3,7 @@
     <NDialogProvider>
       <NMessageProvider>
         <NLoadingBarProvider>
-          <component :is="appropriateLayout" />
+          <component :is="appropriateLayout" @toggle:theme="onThemeToggle" />
         </NLoadingBarProvider>
       </NMessageProvider>
     </NDialogProvider>
@@ -22,23 +22,7 @@ const route = useRoute();
 
 const osTheme = useOsTheme();
 
-const appropriateTheme = computed(() => {
-  const { loadRaw, storeRaw } = useStorage();
-  let storedTheme = loadRaw("theme");
-
-  if (!storedTheme) {
-    if (osTheme.value === 'dark')
-      storedTheme = "dark";
-    else
-      storedTheme = "light";
-
-    storeRaw("theme", storedTheme);
-  }
-
-  if (storedTheme === 'dark')
-    return darkTheme;
-  return lightTheme;
-});
+const appropriateTheme = shallowRef(lightTheme);
 
 const themeOverrides = computed(() => ({
   common:
@@ -63,6 +47,33 @@ const appropriateLayout = computed(() => {
   }
 
   return TPublicLayout;
+});
+
+// FIXME: Implement for all other layouts
+function onThemeToggle(isDark: boolean) {
+  appropriateTheme.value = getAppropriateTheme(isDark);
+}
+
+function getAppropriateTheme(isDark: boolean) {
+  if (isDark)
+    return darkTheme;
+  return lightTheme;
+}
+
+onMounted(() => {
+  const { loadRaw, storeRaw } = useStorage();
+  let storedTheme = loadRaw("theme");
+
+  if (!storedTheme) {
+    if (osTheme.value === 'dark')
+      storedTheme = "dark";
+    else
+      storedTheme = "light";
+
+    storeRaw("theme", storedTheme);
+  }
+
+  appropriateTheme.value = getAppropriateTheme(storedTheme === 'dark');
 });
 </script>
 
