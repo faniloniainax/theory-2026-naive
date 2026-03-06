@@ -51,9 +51,11 @@ export default function useAuth() {
 
     function clearCache() {
         const rawUser = loadRaw("_");
+        const rawTheme = loadRaw("theme");
 
         clearStorage();
         storeRaw("_", rawUser ?? "");
+        storeRaw("theme", rawTheme ?? "light");
     }
 
     return ({
