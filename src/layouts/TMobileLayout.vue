@@ -7,6 +7,11 @@
                 <TMobileSettings @toggle:theme="onThemeToggle" />
             </NFlex>
         </NLayoutHeader>
+        <NLayoutContent>
+            <NFlex class="main-space" justify="center" align="stretch">
+                <RouterView />
+            </NFlex>
+        </NLayoutContent>
     </NLayout>
 
     <TFloatingCopyright />
