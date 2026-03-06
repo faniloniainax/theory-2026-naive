@@ -10,6 +10,14 @@
     <TFloatingCopyright />
 </template>
 
+<script setup lang="ts">
+type Emits = {
+    (event: 'toggle:theme', isDark: boolean): void;
+};
+
+const emits = defineEmits<Emits>();
+</script>
+
 <style scoped>
 .main-container {
     width: 100vw;
