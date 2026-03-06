@@ -1,31 +1,41 @@
 <template>
-    <NCard title="Fréquence des cours">
-        <!-- TODO: Stop ts from loading -->
-        <NHeatmap :data="frequencyData" :loading="true">
-            <template #indicator-leading-text>
-                moins
-            </template>
-            <template #indicator-trailing-text>
-                plus
-            </template>
-        </NHeatmap>
+    <NCard>
+        <template #header>
+            <NFlex justify="center" align="center">
+                Fréquence des enseignements
+            </NFlex>
+        </template>
+        <NScrollbar x-scrollable>
+            <!-- TODO: Stop ts from loading -->
+            <NHeatmap :data="frequencyData">
+                <template #indicator-leading-text>
+                    moins
+                </template>
+                <template #indicator-trailing-text>
+                    plus
+                </template>
+            </NHeatmap>
+        </NScrollbar>
     </NCard>
 
-    <NCard title="Résumé des progrès">
-        <NFlex justify="space-between">
+    <NCard>
+        <template #header>
             <NFlex justify="center" align="center">
-                <NP :depth="3">Cours théoriques</NP>
-                <NProgress type="circle" :percentage="theoricCoursesPercentage" :color="themeVars.successColor" />
+                Résumé des progrès
             </NFlex>
-            <NFlex justify="center" align="center">
-                <NP :depth="3">Travaux dirigés</NP>
-                <NProgress type="circle" :percentage="directedWorkPercentage" :color="themeVars.errorColor" />
-            </NFlex>
-            <NFlex justify="center" align="center">
-                <NP :depth="3">Travaux pratiques</NP>
-                <NProgress type="circle" :percentage="practicalWorkPercentage" :color="themeVars.warningColor" />
-            </NFlex>
-        </NFlex>
+        </template>
+
+        <NTabs justify-content="center">
+            <NTabPane name="theoric-progress" tab="Théoriques">
+                <NProgress type="line" processing :percentage="theoricCoursesPercentage" />
+            </NTabPane>
+            <NTabPane name="directed-progress" tab="Dirigés">
+                <NProgress type="line" processing :percentage="directedWorkPercentage" />
+            </NTabPane>
+            <NTabPane name="practical-progress" tab="Pratiques">
+                <NProgress type="line" processing :percentage="practicalWorkPercentage" />
+            </NTabPane>
+        </NTabs>
     </NCard>
 </template>
 
