@@ -2,9 +2,11 @@
     <NPopover trigger="click" placement="left">
         <template #trigger>
             <NButton circle>
-                <NIcon size="large">
-                    <MenuOutline />
-                </NIcon>
+                <template #icon>
+                    <NIcon>
+                        <MenuOutline />
+                    </NIcon>
+                </template>
             </NButton>
         </template>
 
