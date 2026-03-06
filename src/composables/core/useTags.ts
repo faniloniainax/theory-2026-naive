@@ -1,4 +1,5 @@
 import useDates from "./useDates";
+import { NTag } from "naive-ui";
 
 export default function useTags() {
     function makeNoneTag(inFeminine: boolean = false) {

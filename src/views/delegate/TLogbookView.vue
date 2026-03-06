@@ -63,7 +63,7 @@ const columns: DataTableColumns<Course> = [
     {
         key: 'program_element_id',
         title: 'Contexte du cours',
-        render: p => p['fallback_context'] ? p['fallback_context'] : (p['program_element'] ? p['program_element']['label'] : Tags.getNoneTag()),
+        // render: p => p['fallback_context'] ? p['fallback_context'] : (p['program_element'] ? p['program_element']['label'] : Tags.getNoneTag()),
     },
     {
         key: 'actions',
@@ -83,14 +83,11 @@ const data: Course[] = [
     {
         id: "FOOBAR",
         date: new Date().toISOString(),
+        room_id: "ROOMID",
         class_id: "CLASSID",
         teacher_id: "TEACHERID",
         hour_part_id: "HOURPARTID",
         const_element_id: "CONSTELEMENTID",
-        program_element_id: "PROGRAMELEMENTID",
-        fallback_context: "Cours de mathématiques avancées",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
     }
 ]
 </script>
