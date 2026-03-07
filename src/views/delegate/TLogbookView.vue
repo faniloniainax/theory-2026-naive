@@ -20,6 +20,10 @@
         <NDataTable striped size="small" default-expand-all max-height="500" :row-key="r => r['id']"
             :columns="logbookColumns" :data="logbookCourses">
         </NDataTable>
+        <NSpace justify="center">
+            <NPagination v-model:page="page" v-model:page-size="pageSize" :page-count show-size-picker
+                :page-sizes="[5, 10, 20, 50]" />
+        </NSpace>
     </NSpace>
 </template>
 
@@ -27,6 +31,7 @@
 import TLogbookActions from '@/components/delegate/TLogbookActions.vue';
 import useDates from '@/composables/core/useDates';
 import useTexts from '@/composables/core/useTexts';
+import useCourses from '@/composables/services/useCourses';
 import type { Course } from '@/types/course';
 import { NButton, NIcon, NSpace, useDialog, useMessage, type DataTableColumns } from 'naive-ui';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
@@ -34,6 +39,7 @@ import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 
 const dialog = useDialog();
 const message = useMessage();
+const courses = useCourses();
 const { formatDate } = useDates();
 const { makeHourPartText } = useTexts();
 
@@ -82,68 +88,8 @@ const logbookColumns: DataTableColumns<Course> = [
     }
 ];
 
-const logbookCourses: Course[] = [
-    {
-        id: '0e235a4c-aeb0-404d-89fa-3d0280576a39',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'ANL1',
-        },
-        teacher: {
-            trilogy: 'BEN',
-        }
-    },
-    {
-        id: '5a5e1159-8840-420e-8aca-42f4c70bee66',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'ALG1',
-        },
-        teacher: {
-            trilogy: 'ANG',
-        }
-    },
-    {
-        id: '7e41dd41-2bd1-4cf8-8776-50068248f2a3',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'ADOMC',
-        },
-        teacher: {
-            trilogy: 'RAB',
-        }
-    },
-    {
-        id: '4f75e5a7-56fd-4741-a727-e98ac908b41e',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'SYSWIN',
-        },
-        teacher: {
-            trilogy: 'FON',
-        }
-    },
-    {
-        id: '617442fe-c3d2-41fe-932f-63a0c6b8de07',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'COMPALGO',
-        },
-        teacher: {
-            trilogy: 'CYP',
-        }
-    },
-    {
-        id: '50bcece2-01c4-45cf-b8e1-1c18329564e1',
-        date: new Date().toISOString(),
-        const_element: {
-            code: 'MTU'
-        },
-        teacher: {
-            trilogy: 'VIC',
-        }
-    },
-];
+const logbookCourses = ref<Course[]>([]);
+const [page, pageSize, pageCount] = [ref(1), ref(10), ref(1)];
 
 function onShowMoreClick(c: Course) {
     dialog.success({ title: "Voir plus", content: JSON.stringify(c) });
@@ -156,4 +102,9 @@ function onEditClick(c: Course) {
 function onDeleteClick(c: Course) {
     dialog.error({ title: "Confirmation", content: "Voulez-vous vraiment supprimer ce cours ?" });
 }
+
+onMounted(async () => {
+    logbookCourses.value = await courses.getCourses();
+    console.log(logbookCourses.value);
+});
 </script>
