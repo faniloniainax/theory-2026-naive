@@ -1,3 +1,3 @@
 <template>
-    <NH1>Delegate Calendar!</NH1>
+    <NH1>Calendar of the school year</NH1>
 </template>
