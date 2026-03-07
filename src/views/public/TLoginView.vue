@@ -36,7 +36,7 @@ async function onFormSubmit(userData: Login) {
     try {
         loadingBar.start();
 
-        await attemptToLogIn(userData);
+        await attemptToLogIn(userData, true);
         await useDelegateRoutes(true);
 
         loadingBar.finish();
