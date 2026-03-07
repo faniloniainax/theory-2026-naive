@@ -7,6 +7,9 @@
                 <TMobileSettings @toggle:theme="onThemeToggle" />
             </NFlex>
         </NLayoutHeader>
+        <NFlex id="breadcrumbs-container" justify="center" align="center">
+            <TBreadcrumbs />
+        </NFlex>
         <NLayoutContent>
             <NFlex class="main-space" justify="center" align="stretch">
                 <RouterView />
@@ -46,5 +49,9 @@ function onThemeToggle(isDark: boolean) {
 .main-space {
     flex: 1;
     padding: 20px;
+}
+
+#breadcrumbs-container {
+    padding-top: 4%;
 }
 </style>
