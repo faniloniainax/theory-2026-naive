@@ -17,13 +17,13 @@
                 Enregistrer un cours
             </NButton>
         </NSpace>
-
-        <NDataTable :data="data" :columns="columns" style="flex: 1; min-height: 0; overflow: auto;">
-            <template #empty>
-                <NEmpty description="Aucune donnée sur le cahier de texte." />
-            </template>
-        </NDataTable>
     </NFlex>
+
+    <NDataTable size="small" :data="data" :columns="columns" style="flex: 1; min-height: 0; overflow: auto;">
+        <template #empty>
+            <NEmpty description="Aucune donnée sur le cahier de texte." />
+        </template>
+    </NDataTable>
 </template>
 
 
@@ -50,21 +50,21 @@ const columns: DataTableColumns<Course> = [
     },
     {
         key: 'hour_part_id',
-        title: 'Tranche horaire',
+        title: 'Horaire',
         align: 'center',
         render: p => p['hour_part'] ? p['hour_part']['id'] : Tags.getNoneTag(true),
     },
     {
         key: 'const_element_id',
-        title: 'Élément constitutif',
+        title: 'Matière',
         align: 'center',
         render: p => p['const_element'] ? p['const_element']['name'] : Tags.getNoneTag(),
     },
-    {
-        key: 'program_element_id',
-        title: 'Contexte du cours',
-        // render: p => p['fallback_context'] ? p['fallback_context'] : (p['program_element'] ? p['program_element']['label'] : Tags.getNoneTag()),
-    },
+    // {
+    //     key: 'program_element_id',
+    //     title: 'Contexte du cours',
+    //     // render: p => p['fallback_context'] ? p['fallback_context'] : (p['program_element'] ? p['program_element']['label'] : Tags.getNoneTag()),
+    // },
     {
         key: 'actions',
         title: 'Actions',
@@ -72,8 +72,8 @@ const columns: DataTableColumns<Course> = [
         align: 'center',
         render: () => h(NSpace, null, {
             default: () => [
-                h(NButton, { type: 'info', size: 'small', ghost: true }, { default: () => 'Modifier' }),
-                h(NButton, { type: 'error', size: 'small', ghost: true }, { default: () => 'Supprimer' })
+                h(NButton, { type: 'info', size: 'small', ghost: true }, { default: () => 'M' }),
+                h(NButton, { type: 'error', size: 'small', ghost: true }, { default: () => 'S' })
             ]
         })
     }
