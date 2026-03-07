@@ -17,20 +17,23 @@
             </NButton>
         </NSpace>
 
-        <NDataTable size="small" default-expand-all max-height="250" :row-key="r => r['id']" :columns="logbookColumns"
-            :data="logbookCourses">
+        <NDataTable striped size="small" default-expand-all max-height="500" :row-key="r => r['id']"
+            :columns="logbookColumns" :data="logbookCourses">
         </NDataTable>
     </NSpace>
 </template>
 
 <script setup lang="ts">
+import TLogbookActions from '@/components/delegate/TLogbookActions.vue';
 import useDates from '@/composables/core/useDates';
 import useTexts from '@/composables/core/useTexts';
 import type { Course } from '@/types/course';
-import type { DataTableColumns } from 'naive-ui';
+import { NButton, NIcon, NSpace, useDialog, useMessage, type DataTableColumns } from 'naive-ui';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
 import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 
+const dialog = useDialog();
+const message = useMessage();
 const { formatDate } = useDates();
 const { makeHourPartText } = useTexts();
 
@@ -73,7 +76,9 @@ const logbookColumns: DataTableColumns<Course> = [
         type: 'expand',
         width: 28,
         align: 'center',
-        renderExpand: (c: Course) => "ACTIONS HERE"
+        renderExpand: (c: Course) => {
+            return h(TLogbookActions, { "onClick:show-more": () => onShowMoreClick(c), "onClick:edit": () => onEditClick(c), "onClick:delete": () => onDeleteClick(c) });
+        }
     }
 ];
 
@@ -139,4 +144,16 @@ const logbookCourses: Course[] = [
         }
     },
 ];
+
+function onShowMoreClick(c: Course) {
+    dialog.success({ title: "Voir plus", content: JSON.stringify(c) });
+}
+
+function onEditClick(c: Course) {
+    dialog.info({ title: "Modifier", content: JSON.stringify(c) });
+}
+
+function onDeleteClick(c: Course) {
+    dialog.error({ title: "Confirmation", content: "Voulez-vous vraiment supprimer ce cours ?" });
+}
 </script>
