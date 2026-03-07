@@ -8,7 +8,7 @@
                     </NIcon>
                 </template>
             </NInput>
-            <NButton type="success" ghost>
+            <NButton type="success" ghost @click="onAddClick">
                 <template #icon>
                     <NIcon size="large">
                         <AddOutline />
@@ -25,6 +25,8 @@
                 :page-sizes="[5, 10, 20, 50]" />
         </NSpace>
     </NSpace>
+
+    <TLogbookModal v-model:visible="modalVisible" :is-edit-mode />
 </template>
 
 <script setup lang="ts">
@@ -89,7 +91,12 @@ const logbookColumns: DataTableColumns<Course> = [
 ];
 
 const logbookCourses = ref<Course[]>([]);
-const [page, pageSize, pageCount] = [ref(1), ref(10), ref(1)];
+const [page, pageSize, pageCount, modalVisible, isEditMode] = [ref(1), ref(10), ref(1), ref(false), ref(false)];
+
+function onAddClick() {
+    isEditMode.value = false;
+    modalVisible.value = true;
+}
 
 function onShowMoreClick(c: Course) {
     dialog.success({ title: "Voir plus", content: JSON.stringify(c) });
