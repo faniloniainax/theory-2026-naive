@@ -16,7 +16,7 @@ export const delegateNavigation: MenuMixedOption[] = [
     },
     {
         key: '/calendar',
-        label: 'Calendrier',
+        label: 'Calendrier pédagogique',
         icon: () => h(CalendarOutline),
     },
 ];
