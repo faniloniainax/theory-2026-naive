@@ -6,7 +6,7 @@
             </NFlex>
             <NSpace justify="center">
                 <NP :depth="3">
-                    Application de suivi des enseignements.
+                    Application pour le suivi des enseignements.
                 </NP>
             </NSpace>
         </template>
