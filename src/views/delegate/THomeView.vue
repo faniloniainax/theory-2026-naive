@@ -7,7 +7,7 @@
         </template>
         <NScrollbar x-scrollable>
             <!-- TODO: Stop ts from loading -->
-            <NHeatmap :data="frequencyData">
+            <NHeatmap :data="frequencyData" loading>
                 <template #indicator-leading-text>
                     moins
                 </template>
@@ -45,9 +45,9 @@ import { heatmapMockData, useThemeVars } from 'naive-ui';
 const frequencyData = heatmapMockData(2026);
 const themeVars = useThemeVars();
 
-const theoricCoursesPercentage = computed(() => 67);
-const directedWorkPercentage = computed(() => 41);
-const practicalWorkPercentage = computed(() => 26);
+const theoricCoursesPercentage = computed(() => /* 67 */ 0);
+const directedWorkPercentage = computed(() => /* 41 */ 0);
+const practicalWorkPercentage = computed(() => /* 26 */ 0);
 </script>
 
 <style scoped></style>

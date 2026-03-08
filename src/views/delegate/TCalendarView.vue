@@ -1,14 +1,17 @@
 <template>
     <NSpace vertical justify="center" align="center">
-        <NTimeline>
+        <!-- <NTimeline>
             <TCalendarItem title="Done" :beg :end />
             <TCalendarItem title="Ongoing" :beg="beg2" :end="end2" />
             <TCalendarItem title="NotDone" :beg="beg3" :end="end3" />
-        </NTimeline>
+        </NTimeline> -->
+        <TInConstruction />
     </NSpace>
 </template>
 
 <script setup lang="ts">
+import TInConstruction from '../public/TInConstruction.vue';
+
 const beg = 1725148800000;
 const end = 1734220800000;
 
