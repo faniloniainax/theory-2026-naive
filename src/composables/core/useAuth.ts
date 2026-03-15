@@ -24,8 +24,7 @@ export default function useAuth() {
     }
 
     async function attemptToLogIn(user: Login, checkDelegate: boolean = false) {
-        const p = { "check_delegate": checkDelegate };
-        const r = await http.post("/auth/login", user, { params: p });
+        const r = await http.post("/class-credentials/check", user);
 
         if (r.status !== 200)
             throw r.data;
