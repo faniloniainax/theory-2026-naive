@@ -11,3 +11,17 @@ export type Class = {
     branch?: Branch;
     stage?: Stage;
 };
+
+export type V1Class = {
+    id: number;
+    name: string;
+    stageId: number;
+    branchId: number;
+};
+
+export type V1ClassCredentials = {
+    id: number;
+    hash: string;
+    classId: number;
+    identifier: string;
+};
