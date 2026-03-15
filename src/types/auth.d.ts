@@ -8,4 +8,5 @@ export type User = {
     type: string;
     email: string;
     token: string;
+    classId?: number;
 };
