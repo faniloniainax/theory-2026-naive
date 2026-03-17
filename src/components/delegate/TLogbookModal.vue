@@ -36,6 +36,7 @@ type Props = {
 
 type Emits = {
     (event: 'update:visible', newVisible: boolean): void;
+    (event: 'click:submit'): void;
 };
 
 const props = defineProps<Props>();
@@ -44,16 +45,7 @@ const emits = defineEmits<Emits>();
 const message = useMessage();
 
 const tabValue = ref("infos");
-const course = ref({
-    info: {
-        date: (new Date()).toISOString(),
-        room_id: null,
-        teacher_id: null,
-        hour_part_id: null,
-        const_element_id: null,
-    } as CourseInfo,
-    contexts: [],
-});
+const course = ref(getBaseCourse());
 
 const [{ getRooms }, { registerCourse }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
     useRooms(),
@@ -70,6 +62,19 @@ const [rooms, teachers, hourParts, teachingTypes, constElements] = [
     ref<TeachingType[]>([]),
     ref<ConstElement[]>([]),
 ];
+
+function getBaseCourse() {
+    return ({
+        info: {
+            date: (new Date()).toISOString(),
+            room_id: null,
+            teacher_id: null,
+            hour_part_id: null,
+            const_element_id: null,
+        } as CourseInfo,
+        contexts: [],
+    });
+}
 
 function getFormTitle() {
     return !props.isEditMode ?
@@ -107,7 +112,11 @@ async function onContextFormSubmit() {
     }
 
     message.success("Séance enregistrée avec succès.");
-    emits('update:visible', false);
+
+    tabValue.value = "infos";
+    course.value = getBaseCourse();
+
+    emits('click:submit');
 }
 
 onMounted(async () => {
