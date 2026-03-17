@@ -1,6 +1,7 @@
 import type { Login, User } from "@/types/auth";
 import useStorage from "./useStorage";
 import useHttp from "./useHttp";
+import type { Class } from "@/types/class";
 
 export default function useAuth() {
     const { http } = useHttp();
@@ -59,11 +60,21 @@ export default function useAuth() {
         storeRaw("theme", rawTheme ?? "light");
     }
 
+    function getClass(): null | Class {
+        const user = loadDecrypted("_");
+
+        if (!user || !user["class"])
+            return null;
+
+        return user["class"];
+    }
+
     return ({
         tryToLoadUser,
         attemptToLogIn,
         attemptToLogOut,
         makeInitialsAndName,
         clearCache,
+        getClass,
     });
 };
