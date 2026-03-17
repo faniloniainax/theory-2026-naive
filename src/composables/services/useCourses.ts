@@ -5,7 +5,10 @@ export default function useCourses() {
     const { http } = useHttp();
 
     async function getCourses(): Promise<Course[]> {
-        const courses = await http.get("/delegate/courses");
+        const params = {
+            include: "HourPart, Teacher, ConstElement"
+        };
+        const courses = await http.get("/delegate/courses", { params });
         return courses.data as Course[];
     }
 
