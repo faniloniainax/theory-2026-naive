@@ -21,17 +21,18 @@
             :columns="logbookColumns" :data="logbookCourses">
         </NDataTable>
         <NSpace justify="center">
-            <NPagination v-model:page="page" v-model:page-size="pageSize" :page-count show-size-picker
-                :page-sizes="[5, 10, 20, 50]" />
+            <NPagination v-model:page="page" v-model:page-size="perPage" :page-count="totalPages" show-size-picker
+                @update:page="onPageUpdate" @update:page-size="onPageSizeUpdate" :page-sizes="[5, 10, 20, 50]" />
         </NSpace>
     </NSpace>
 
-    <TLogbookModal v-model:visible="modalVisible" :is-edit-mode />
+    <TLogbookModal v-model:visible="modalVisible" :is-edit-mode @click:submit="onModalSubmit" />
 </template>
 
 <script setup lang="ts">
 import TLogbookActions from '@/components/delegate/TLogbookActions.vue';
 import useDates from '@/composables/core/useDates';
+import useLoading from '@/composables/core/useLoading';
 import useTexts from '@/composables/core/useTexts';
 import useCourses from '@/composables/services/useCourses';
 import type { Course } from '@/types/course';
@@ -44,6 +45,7 @@ const message = useMessage();
 const courses = useCourses();
 const { formatDate } = useDates();
 const { makeHourPartText } = useTexts();
+const { runAsyncLoading } = useLoading();
 
 const logbookColumns: DataTableColumns<Course> = [
     {
@@ -91,7 +93,19 @@ const logbookColumns: DataTableColumns<Course> = [
 ];
 
 const logbookCourses = ref<Course[]>([]);
-const [page, pageSize, pageCount, modalVisible, isEditMode] = [ref(1), ref(10), ref(1), ref(false), ref(false)];
+const [page, perPage, totalPages, modalVisible, isEditMode] = [ref(1), ref(5), ref(1), ref(false), ref(false)];
+
+async function getData(page_: number, perPage_: number) {
+    await runAsyncLoading(async () => {
+        const r = await courses.getCourses(page_, perPage_);
+
+        page.value = r.pagination['page'];
+        perPage.value = r.pagination['per_page'];
+        totalPages.value = r.pagination['total_pages'];
+        logbookCourses.value = r.data;
+        return true;
+    });
+}
 
 function onAddClick() {
     isEditMode.value = false;
@@ -110,8 +124,21 @@ function onDeleteClick(c: Course) {
     dialog.error({ title: "Confirmation", content: "Voulez-vous vraiment supprimer ce cours ?" });
 }
 
+async function onPageUpdate(newPage: number) {
+    await getData(newPage, perPage.value);
+}
+
+async function onPageSizeUpdate(newPageSize: number) {
+    page.value = 1;
+    await getData(page.value, newPageSize);
+}
+
+async function onModalSubmit() {
+    modalVisible.value = false;
+    await getData(page.value, perPage.value);
+}
+
 onMounted(async () => {
-    logbookCourses.value = await courses.getAllCourses();
-    console.log(logbookCourses.value);
+    await getData(page.value, perPage.value);
 });
 </script>
