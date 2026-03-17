@@ -33,12 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import useAuth from '@/composables/core/useAuth';
 import useSelectOptions from '@/composables/core/useSelectOptions';
-import useConstElements from '@/composables/services/useConstElements';
-import useHourParts from '@/composables/services/useHourParts';
-import useRooms from '@/composables/services/useRooms';
-import useTeachers from '@/composables/services/useTeachers';
 import type { ConstElement } from '@/types/const_element';
 import type { CourseInfo } from '@/types/course';
 import type { HourPart } from '@/types/hour_part';
@@ -48,6 +43,10 @@ import { useMessage, type FormRules } from 'naive-ui';
 
 type Props = {
     info?: CourseInfo | null;
+    rooms: Room[];
+    teachers: Teacher[];
+    hourParts: HourPart[];
+    constElements: ConstElement[];
 };
 
 type Emits = {
@@ -60,15 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
     info: null,
 });
 const emits = defineEmits<Emits>();
-
-const [{ getHourParts }, { getTeachers }, { getConstElements }, { getRooms }] = [useHourParts(), useTeachers(), useConstElements(), useRooms()];
 const { makeHourPartOptions, makeTeacherOptions, makeConstElementOptions, makeRoomOptions } = useSelectOptions();
-const [hourParts, teachers, constElements, rooms] = [
-    ref<HourPart[]>([]),
-    ref<Teacher[]>([]),
-    ref<ConstElement[]>([]),
-    ref<Room[]>([]),
-];
 
 const formRules: FormRules = {
     date: {
@@ -133,17 +124,6 @@ watch(() => courseInfo.value, (newCourseInfo) => {
 }, { deep: true });
 
 onMounted(async () => {
-    const { getClass } = useAuth();
-    const class_ = getClass();
-
     loadCourseInfo();
-    rooms.value = await getRooms();
-    teachers.value = await getTeachers();
-    hourParts.value = await getHourParts();
-
-    if (class_)
-        constElements.value = await getConstElements(class_["stage_id"], class_["branch_id"]);
-    else
-        constElements.value = [];
 });
 </script>

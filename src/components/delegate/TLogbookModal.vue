@@ -2,8 +2,8 @@
     <NModal preset="dialog" :title="getFormTitle" :show="visible" @update:show="onShowUpdate" closable close-on-esc>
         <NTabs v-model:value="tabValue" justify-content="center" @before-leave="() => false">
             <NTabPane name="infos" tab="Informations">
-                <TLogbookInfoTab v-model:info="course.info" @click:cancel="onInfoFormCancel"
-                    @click:submit="onInfoFormSubmit" />
+                <TLogbookInfoTab :rooms :teachers :hour-parts :const-elements v-model:info="course.info"
+                    @click:cancel="onInfoFormCancel" @click:submit="onInfoFormSubmit" />
             </NTabPane>
             <NTabPane name="context" tab="Contexte">
                 <TLogbookContextTab @click:prev="onContextFormPrev" />
@@ -13,7 +13,16 @@
 </template>
 
 <script setup lang="ts">
+import useAuth from '@/composables/core/useAuth';
+import useConstElements from '@/composables/services/useConstElements';
+import useHourParts from '@/composables/services/useHourParts';
+import useRooms from '@/composables/services/useRooms';
+import useTeachers from '@/composables/services/useTeachers';
+import type { ConstElement } from '@/types/const_element';
 import type { CourseInfo } from '@/types/course';
+import type { HourPart } from '@/types/hour_part';
+import type { Room } from '@/types/room';
+import type { Teacher } from '@/types/teacher';
 
 type Props = {
     visible: boolean;
@@ -38,6 +47,19 @@ const course = ref({
     } as CourseInfo,
 });
 
+const [{ getRooms }, { getTeachers }, { getHourParts }, { getConstElements }] = [
+    useRooms(),
+    useTeachers(),
+    useHourParts(),
+    useConstElements(),
+];
+const [rooms, teachers, hourParts, constElements] = [
+    ref<Room[]>([]),
+    ref<Teacher[]>([]),
+    ref<HourPart[]>([]),
+    ref<ConstElement[]>([]),
+];
+
 function getFormTitle() {
     return !props.isEditMode ?
         "Enregistrer une séance"
@@ -60,4 +82,17 @@ function onInfoFormSubmit(c: CourseInfo) {
 function onContextFormPrev() {
     tabValue.value = "infos";
 }
+
+onMounted(async () => {
+    const class_ = useAuth().getClass();
+
+    rooms.value = await getRooms();
+    teachers.value = await getTeachers();
+    hourParts.value = await getHourParts();
+
+    if (class_)
+        constElements.value = await getConstElements(class_["stage_id"], class_["branch_id"]);
+    else
+        constElements.value = [];
+});
 </script>
