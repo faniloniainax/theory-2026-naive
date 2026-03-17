@@ -6,7 +6,8 @@
                     @click:cancel="onInfoFormCancel" @click:submit="onInfoFormSubmit" />
             </NTabPane>
             <NTabPane name="context" tab="Contexte">
-                <TLogbookContextTab :teaching-types @click:prev="onContextFormPrev" />
+                <TLogbookContextTab :teaching-types v-model:course-contexts="course.contexts"
+                    @click:prev="onContextFormPrev" />
             </NTabPane>
         </NTabs>
     </NModal>
@@ -47,6 +48,7 @@ const course = ref({
         hour_slice_id: null,
         const_element_id: null,
     } as CourseInfo,
+    contexts: [],
 });
 
 const [{ getRooms }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [

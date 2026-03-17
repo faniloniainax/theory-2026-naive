@@ -50,3 +50,8 @@ export type CourseInfo = {
     const_element_id: string | null;
     room_id: string | null;
 };
+
+export type CourseContext = {
+    teaching_type_id: string;
+    description: string;
+};
