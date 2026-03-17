@@ -7,11 +7,13 @@
             </NFormItemGi>
             <!-- Tranche horaire -->
             <NFormItemGi :span="2" label="Tranche horaire:" path="hour_slice_id">
-                <NSelect filterable clearable v-model:value="courseInfo['hour_slice_id']" />
+                <NSelect filterable clearable v-model:value="courseInfo['hour_slice_id']"
+                    :options="makeHourPartOptions(hourParts)" />
             </NFormItemGi>
             <!-- Enseignant -->
             <NFormItemGi :span="4" label="Enseignant:" path="teacher_id">
-                <NSelect filterable clearable v-model:value="courseInfo['teacher_id']" />
+                <NSelect filterable clearable v-model:value="courseInfo['teacher_id']"
+                    :options="makeTeacherOptions(teachers)" />
             </NFormItemGi>
             <!-- Elément constitutif -->
             <NFormItemGi :span="2" label="Matière:" path="const_element_id">
@@ -30,6 +32,11 @@
 </template>
 
 <script setup lang="ts">
+import useSelectOptions from '@/composables/core/useSelectOptions';
+import useHourParts from '@/composables/services/useHourParts';
+import useTeachers from '@/composables/services/useTeachers';
+import type { HourPart } from '@/types/hour_part';
+import type { Teacher } from '@/types/teacher';
 import { useMessage, type FormRules } from 'naive-ui';
 
 // TODO: Isolate
@@ -54,6 +61,13 @@ const props = withDefaults(defineProps<Props>(), {
     info: null,
 });
 const emits = defineEmits<Emits>();
+
+const [{ getHourParts }, { getTeachers }] = [useHourParts(), useTeachers()];
+const { makeHourPartOptions, makeTeacherOptions } = useSelectOptions();
+const [hourParts, teachers] = [
+    ref<HourPart[]>([]),
+    ref<Teacher[]>([]),
+];
 
 const formRules: FormRules = {
     date: {
@@ -113,7 +127,10 @@ async function onNextClick() {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     loadCourseInfo();
+
+    hourParts.value = await getHourParts();
+    teachers.value = await getTeachers();
 });
 </script>
