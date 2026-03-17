@@ -42,3 +42,11 @@ export type CourseBlock = CourseCore & {
     program_element_ids: string[];
     program_elements?: Element[];
 };
+
+export type CourseInfo = {
+    date: number;
+    hour_slice_id: string | null;
+    teacher_id: string | null;
+    const_element_id: string | null;
+    room_id: string | null;
+};

@@ -40,19 +40,11 @@ import useHourParts from '@/composables/services/useHourParts';
 import useRooms from '@/composables/services/useRooms';
 import useTeachers from '@/composables/services/useTeachers';
 import type { ConstElement } from '@/types/const_element';
+import type { CourseInfo } from '@/types/course';
 import type { HourPart } from '@/types/hour_part';
 import type { Room } from '@/types/room';
 import type { Teacher } from '@/types/teacher';
 import { useMessage, type FormRules } from 'naive-ui';
-
-// TODO: Isolate
-type CourseInfo = {
-    date: number;
-    hour_slice_id: string | null;
-    teacher_id: string | null;
-    const_element_id: string | null;
-    room_id: string | null;
-};
 
 type Props = {
     info?: CourseInfo | null;
@@ -60,6 +52,7 @@ type Props = {
 
 type Emits = {
     (event: 'click:cancel'): void;
+    (event: 'update:info', c: CourseInfo): void;
     (event: 'click:submit', c: CourseInfo): void;
 };
 
@@ -134,6 +127,10 @@ async function onNextClick() {
         message.error("Le formulaire est invalide.");
     }
 }
+
+watch(() => courseInfo.value, (newCourseInfo) => {
+    emits('update:info', newCourseInfo);
+}, { deep: true });
 
 onMounted(async () => {
     const { getClass } = useAuth();
