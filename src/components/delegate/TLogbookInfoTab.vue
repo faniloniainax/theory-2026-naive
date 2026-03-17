@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FormRules } from 'naive-ui';
+import { useMessage, type FormRules } from 'naive-ui';
 
 // TODO: Isolate
 type CourseInfo = {
@@ -63,22 +63,28 @@ const formRules: FormRules = {
     hour_slice_id: {
         type: 'string',
         required: true,
+        message: "La tranche horaire est requise.",
     },
     teacher_id: {
         type: 'string',
         required: true,
+        message: "L'enseignant est requis.",
     },
     const_element_id: {
         type: 'string',
         required: true,
+        message: "La matière est requise.",
     },
     room_id: {
         type: 'string',
         required: true,
+        message: "La salle est requise.",
     },
 };
 
 const formRef = useTemplateRef('formRef');
+
+const message = useMessage();
 const courseInfo = ref<CourseInfo>({} as CourseInfo);
 
 function loadCourseInfo() {
@@ -98,9 +104,13 @@ function onCancelClick() {
     emits('click:cancel');
 }
 
-function onNextClick() {
-    // FIXME: Validate form input before submitting
-    emits('click:submit', courseInfo.value);
+async function onNextClick() {
+    try {
+        await formRef.value?.validate();
+        emits('click:submit', courseInfo.value);
+    } catch (e) {
+        message.error("Le formulaire est invalide.");
+    }
 }
 
 onMounted(() => {
