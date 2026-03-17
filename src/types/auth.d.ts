@@ -1,3 +1,5 @@
+import type { Class } from "./class";
+
 export type Login = {
     identifier: string;
     password: string;
@@ -8,5 +10,5 @@ export type User = {
     type: string;
     email: string;
     token: string;
-    class_id: string;
+    class: null | Class;
 };
