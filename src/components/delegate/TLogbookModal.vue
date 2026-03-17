@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import useAuth from '@/composables/core/useAuth';
 import useConstElements from '@/composables/services/useConstElements';
+import useCourses from '@/composables/services/useCourses';
 import useHourParts from '@/composables/services/useHourParts';
 import useRooms from '@/composables/services/useRooms';
 import useTeachers from '@/composables/services/useTeachers';
@@ -26,6 +27,7 @@ import type { HourPart } from '@/types/hour_part';
 import type { Room } from '@/types/room';
 import type { Teacher } from '@/types/teacher';
 import type { TeachingType } from '@/types/teaching_type';
+import { useMessage } from 'naive-ui';
 
 type Props = {
     visible: boolean;
@@ -39,20 +41,23 @@ type Emits = {
 const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
+const message = useMessage();
+
 const tabValue = ref("infos");
 const course = ref({
     info: {
         date: (new Date()).toISOString(),
         room_id: null,
         teacher_id: null,
-        hour_slice_id: null,
+        hour_part_id: null,
         const_element_id: null,
     } as CourseInfo,
     contexts: [],
 });
 
-const [{ getRooms }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
+const [{ getRooms }, { registerCourse }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
     useRooms(),
+    useCourses(),
     useTeachers(),
     useHourParts(),
     useConstElements(),
@@ -89,8 +94,20 @@ function onContextFormPrev() {
     tabValue.value = "infos";
 }
 
-function onContextFormSubmit() {
-    console.log(course.value);
+async function onContextFormSubmit() {
+    const class_ = useAuth().getClass();
+
+    if (!class_)
+        return;
+
+    const ok = await registerCourse(class_['id'], course.value.info, course.value.contexts);
+    if (!ok) {
+        message.error("Impossible d'enregistrer cette séance.");
+        return;
+    }
+
+    message.success("Séance enregistrée avec succès.");
+    emits('update:visible', false);
 }
 
 onMounted(async () => {

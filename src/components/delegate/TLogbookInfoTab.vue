@@ -7,7 +7,7 @@
             </NFormItemGi>
             <!-- Tranche horaire -->
             <NFormItemGi :span="2" label="Tranche horaire:" path="hour_slice_id">
-                <NSelect filterable clearable v-model:value="courseInfo['hour_slice_id']"
+                <NSelect filterable clearable v-model:value="courseInfo['hour_part_id']"
                     :options="makeHourPartOptions(hourParts)" />
             </NFormItemGi>
             <!-- Enseignant -->
@@ -66,7 +66,7 @@ const formRules: FormRules = {
         type: 'string',
         required: true,
     },
-    hour_slice_id: {
+    hour_part_id: {
         type: 'string',
         required: true,
         message: "La tranche horaire est requise.",
@@ -100,7 +100,7 @@ function loadCourseInfo() {
     }
 
     courseInfo.value['date'] = new Date().toISOString();
-    courseInfo.value['hour_slice_id'] = null;
+    courseInfo.value['hour_part_id'] = null;
     courseInfo.value['teacher_id'] = null;
     courseInfo.value['const_element_id'] = null;
     courseInfo.value['room_id'] = null;

@@ -45,7 +45,7 @@ export type CourseBlock = CourseCore & {
 
 export type CourseInfo = {
     date: string;
-    hour_slice_id: string | null;
+    hour_part_id: string | null;
     teacher_id: string | null;
     const_element_id: string | null;
     room_id: string | null;
