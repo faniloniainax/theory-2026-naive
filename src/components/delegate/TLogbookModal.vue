@@ -6,7 +6,7 @@
                     @click:cancel="onInfoFormCancel" @click:submit="onInfoFormSubmit" />
             </NTabPane>
             <NTabPane name="context" tab="Contexte">
-                <TLogbookContextTab @click:prev="onContextFormPrev" />
+                <TLogbookContextTab :teaching-types @click:prev="onContextFormPrev" />
             </NTabPane>
         </NTabs>
     </NModal>
@@ -18,11 +18,13 @@ import useConstElements from '@/composables/services/useConstElements';
 import useHourParts from '@/composables/services/useHourParts';
 import useRooms from '@/composables/services/useRooms';
 import useTeachers from '@/composables/services/useTeachers';
+import useTeachingTypes from '@/composables/services/useTeachingTypes';
 import type { ConstElement } from '@/types/const_element';
 import type { CourseInfo } from '@/types/course';
 import type { HourPart } from '@/types/hour_part';
 import type { Room } from '@/types/room';
 import type { Teacher } from '@/types/teacher';
+import type { TeachingType } from '@/types/teaching_type';
 
 type Props = {
     visible: boolean;
@@ -47,16 +49,18 @@ const course = ref({
     } as CourseInfo,
 });
 
-const [{ getRooms }, { getTeachers }, { getHourParts }, { getConstElements }] = [
+const [{ getRooms }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
     useRooms(),
     useTeachers(),
     useHourParts(),
     useConstElements(),
+    useTeachingTypes(),
 ];
-const [rooms, teachers, hourParts, constElements] = [
+const [rooms, teachers, hourParts, teachingTypes, constElements] = [
     ref<Room[]>([]),
     ref<Teacher[]>([]),
     ref<HourPart[]>([]),
+    ref<TeachingType[]>([]),
     ref<ConstElement[]>([]),
 ];
 
@@ -89,6 +93,7 @@ onMounted(async () => {
     rooms.value = await getRooms();
     teachers.value = await getTeachers();
     hourParts.value = await getHourParts();
+    teachingTypes.value = await getTeachingTypes();
 
     if (class_)
         constElements.value = await getConstElements(class_["stage_id"], class_["branch_id"]);
