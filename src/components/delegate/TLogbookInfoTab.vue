@@ -17,11 +17,12 @@
             </NFormItemGi>
             <!-- Elément constitutif -->
             <NFormItemGi :span="2" label="Matière:" path="const_element_id">
-                <NSelect filterable clearable v-model:value="courseInfo['const_element_id']" />
+                <NSelect filterable clearable v-model:value="courseInfo['const_element_id']"
+                    :options="makeConstElementOptions(constElements)" />
             </NFormItemGi>
             <!-- Salle -->
             <NFormItemGi :span="2" label="Salle:" path="room_id">
-                <NSelect filterable clearable v-model:value="courseInfo['room_id']" />
+                <NSelect filterable clearable v-model:value="courseInfo['room_id']" :options="makeRoomOptions(rooms)" />
             </NFormItemGi>
         </NGrid>
         <NSpace justify="end">
@@ -32,10 +33,15 @@
 </template>
 
 <script setup lang="ts">
+import useAuth from '@/composables/core/useAuth';
 import useSelectOptions from '@/composables/core/useSelectOptions';
+import useConstElements from '@/composables/services/useConstElements';
 import useHourParts from '@/composables/services/useHourParts';
+import useRooms from '@/composables/services/useRooms';
 import useTeachers from '@/composables/services/useTeachers';
+import type { ConstElement } from '@/types/const_element';
 import type { HourPart } from '@/types/hour_part';
+import type { Room } from '@/types/room';
 import type { Teacher } from '@/types/teacher';
 import { useMessage, type FormRules } from 'naive-ui';
 
@@ -62,11 +68,13 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emits = defineEmits<Emits>();
 
-const [{ getHourParts }, { getTeachers }] = [useHourParts(), useTeachers()];
-const { makeHourPartOptions, makeTeacherOptions } = useSelectOptions();
-const [hourParts, teachers] = [
+const [{ getHourParts }, { getTeachers }, { getConstElements }, { getRooms }] = [useHourParts(), useTeachers(), useConstElements(), useRooms()];
+const { makeHourPartOptions, makeTeacherOptions, makeConstElementOptions, makeRoomOptions } = useSelectOptions();
+const [hourParts, teachers, constElements, rooms] = [
     ref<HourPart[]>([]),
     ref<Teacher[]>([]),
+    ref<ConstElement[]>([]),
+    ref<Room[]>([]),
 ];
 
 const formRules: FormRules = {
@@ -128,9 +136,17 @@ async function onNextClick() {
 }
 
 onMounted(async () => {
-    loadCourseInfo();
+    const { getClass } = useAuth();
+    const class_ = getClass();
 
-    hourParts.value = await getHourParts();
+    loadCourseInfo();
+    rooms.value = await getRooms();
     teachers.value = await getTeachers();
+    hourParts.value = await getHourParts();
+
+    if (class_)
+        constElements.value = await getConstElements(class_["stage_id"], class_["branch_id"]);
+    else
+        constElements.value = [];
 });
 </script>
