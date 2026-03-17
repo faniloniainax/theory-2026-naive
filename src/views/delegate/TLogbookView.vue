@@ -111,7 +111,7 @@ function onDeleteClick(c: Course) {
 }
 
 onMounted(async () => {
-    logbookCourses.value = await courses.getCourses();
+    logbookCourses.value = await courses.getAllCourses();
     console.log(logbookCourses.value);
 });
 </script>

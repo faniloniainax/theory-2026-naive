@@ -4,7 +4,7 @@ import useHttp from "../core/useHttp";
 export default function useCourses() {
     const { http } = useHttp();
 
-    async function getCourses(): Promise<Course[]> {
+    async function getAllCourses(): Promise<Course[]> {
         const params = {
             include: "HourPart, Teacher, ConstElement"
         };
@@ -28,7 +28,7 @@ export default function useCourses() {
     }
 
     return ({
-        getCourses,
+        getAllCourses,
         registerCourse,
     });
 };
