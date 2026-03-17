@@ -3,7 +3,7 @@
         <NGrid :cols="4" :x-gap="5">
             <!-- Date -->
             <NFormItemGi :span="2" label="Date:" path="date">
-                <NDatePicker v-model:value="courseInfo['date']" />
+                <TISODatePicker v-model:value="courseInfo['date']" />
             </NFormItemGi>
             <!-- Tranche horaire -->
             <NFormItemGi :span="2" label="Tranche horaire:" path="hour_slice_id">
@@ -42,7 +42,7 @@ import type { Teacher } from '@/types/teacher';
 import { useMessage, type FormRules } from 'naive-ui';
 
 type Props = {
-    info?: CourseInfo | null;
+    info: CourseInfo | null;
     rooms: Room[];
     teachers: Teacher[];
     hourParts: HourPart[];
@@ -63,7 +63,7 @@ const { makeHourPartOptions, makeTeacherOptions, makeConstElementOptions, makeRo
 
 const formRules: FormRules = {
     date: {
-        type: 'number',
+        type: 'string',
         required: true,
     },
     hour_slice_id: {
@@ -99,7 +99,7 @@ function loadCourseInfo() {
         return;
     }
 
-    courseInfo.value['date'] = new Date().getTime();
+    courseInfo.value['date'] = new Date().toISOString();
     courseInfo.value['hour_slice_id'] = null;
     courseInfo.value['teacher_id'] = null;
     courseInfo.value['const_element_id'] = null;

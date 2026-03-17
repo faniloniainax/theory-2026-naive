@@ -7,7 +7,7 @@
             </NTabPane>
             <NTabPane name="context" tab="Contexte">
                 <TLogbookContextTab :teaching-types v-model:course-contexts="course.contexts"
-                    @click:prev="onContextFormPrev" />
+                    @click:prev="onContextFormPrev" @click:submit="onContextFormSubmit" />
             </NTabPane>
         </NTabs>
     </NModal>
@@ -42,7 +42,7 @@ const emits = defineEmits<Emits>();
 const tabValue = ref("infos");
 const course = ref({
     info: {
-        date: Date.now(),
+        date: (new Date()).toISOString(),
         room_id: null,
         teacher_id: null,
         hour_slice_id: null,
@@ -87,6 +87,10 @@ function onInfoFormSubmit(c: CourseInfo) {
 
 function onContextFormPrev() {
     tabValue.value = "infos";
+}
+
+function onContextFormSubmit() {
+    console.log(course.value);
 }
 
 onMounted(async () => {
