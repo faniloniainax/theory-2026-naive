@@ -140,7 +140,7 @@ watch(() => props.course, (newCourse) => {
         },
         contexts: newCourse['contexts']!,
     };
-})
+}, { deep: true });
 
 onMounted(async () => {
     const class_ = useAuth().getClass();
