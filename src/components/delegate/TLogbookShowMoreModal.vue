@@ -1,5 +1,5 @@
 <template>
-    <NModal preset="dialog" title="Détails du cours" :show="visible" @update:show="onVisibleUpdate" closable
+    <NModal preset="dialog" title="Détails de la séance" :show="visible" @update:show="onVisibleUpdate" closable
         close-on-esc>
         <NTabs v-model:value="tabValue">
             <NTabPane name="infos" tab="Informations">
