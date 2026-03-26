@@ -8,7 +8,7 @@ export default function useCourses() {
 
     async function getAllCourses(): Promise<Course[]> {
         const params = {
-            include: "HourPart, Teacher, ConstElement"
+            include: "HourPart, Teacher, ConstElement, Contexts"
         };
         const courses = await http.get("/delegate/courses", { params });
         return courses.data as Course[];
@@ -18,7 +18,7 @@ export default function useCourses() {
         const params = {
             "page": page,
             "per_page": perPage,
-            "include": "HourPart, Teacher, ConstElement",
+            "include": "HourPart, Teacher, ConstElement, Contexts",
         };
 
         const r = await http.get("/delegate/courses", { params });
