@@ -25,14 +25,19 @@ export default function useCourses() {
         return r.data as Paginated<Course>;
     };
 
-    async function registerCourse(classId: string, info: CourseInfo, contexts: CourseContext[]) {
+    async function registerCourse(classId: string, info: CourseInfo, contexts: CourseContext[], isEditMode: boolean = false) {
         const r = await http.post("/delegate/register_course", {
             "info": info,
             "contexts": contexts,
             "class_id": classId,
+        }, {
+            params: {
+                "is_edit_mode": isEditMode,
+            }
         });
 
-        if (r.status !== 201) {
+        const status = isEditMode ? 200 : 201;
+        if (r.status !== status) {
             console.error(r.data);
             return false;
         }

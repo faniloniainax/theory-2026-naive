@@ -69,6 +69,7 @@ const [rooms, teachers, hourParts, teachingTypes, constElements] = [
 function getBaseCourse() {
     return ({
         info: {
+            id: "",
             date: (new Date()).toISOString(),
             room_id: null,
             teacher_id: null,
@@ -108,7 +109,7 @@ async function onContextFormSubmit() {
     if (!class_)
         return;
 
-    const ok = await registerCourse(class_['id'], currentCourse.value.info, currentCourse.value.contexts);
+    const ok = await registerCourse(class_['id'], currentCourse.value.info, currentCourse.value.contexts, props.isEditMode);
     if (!ok) {
         message.error("Impossible d'enregistrer cette séance.");
         return;
@@ -130,6 +131,7 @@ watch(() => props.course, (newCourse) => {
 
     currentCourse.value = {
         info: {
+            id: newCourse['id'],
             date: newCourse['date'],
             room_id: newCourse['room_id'],
             teacher_id: newCourse['teacher_id'],
