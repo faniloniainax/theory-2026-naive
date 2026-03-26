@@ -4,12 +4,14 @@
             <NEmpty description="Aucun calendrier disponible" />
         </template>
         <template v-else>
-            <NTimeline v-for="c in calendarDates">
-                <TCalendarItem :title="`Cours théoriques (${c.name})`" :beg="c.courses_beg" :end="c.courses_end" />
-                <TCalendarItem :title="`Session normale (${c.name})`" :beg="c.exams_beg" :end="c.exams_end" />
-                <TCalendarItem :title="`Session de rattrapage (${c.name})`" :beg="c.retrials_beg"
-                    :end="c.retrials_end" />
-            </NTimeline>
+            <NCard v-for="c in calendarDates">
+                <NTimeline>
+                    <TCalendarItem :title="`Cours théoriques (${c.name})`" :beg="c.courses_beg" :end="c.courses_end" />
+                    <TCalendarItem :title="`Session normale (${c.name})`" :beg="c.exams_beg" :end="c.exams_end" />
+                    <TCalendarItem :title="`Session de rattrapage (${c.name})`" :beg="c.retrials_beg"
+                        :end="c.retrials_end" />
+                </NTimeline>
+            </NCard>
         </template>
     </NSpace>
 </template>
