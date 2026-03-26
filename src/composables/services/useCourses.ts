@@ -40,9 +40,39 @@ export default function useCourses() {
         return true;
     }
 
+    function makeContextRecord(ctxArray: CourseContext[]): Record<string, string> {
+        const record: Record<string, string> = {};
+
+        ctxArray.forEach(ctx => {
+            record[ctx['teaching_type_id']] = ctx['description'];
+        });
+
+        return record;
+    }
+
+    function makeContextArray(ctxRecord: Record<string, string>): CourseContext[] {
+        const ctxArray: CourseContext[] = [];
+
+        for (const teachingTypeId in ctxRecord) {
+            let description = ctxRecord[teachingTypeId];
+
+            if (!description)
+                description = "";
+
+            ctxArray.push({
+                teaching_type_id: teachingTypeId,
+                description: description,
+            });
+        }
+
+        return ctxArray;
+    }
+
     return ({
         getCourses,
         getAllCourses,
         registerCourse,
+        makeContextRecord,
+        makeContextArray
     });
 };
