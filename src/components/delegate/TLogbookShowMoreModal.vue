@@ -5,14 +5,16 @@
             <NTabPane name="infos" tab="Informations">
                 <template v-if="course">
                     <NDescriptions :columns="2" bordered>
-                        <NDescriptionsItem label="Date">{{ course['date'] }}</NDescriptionsItem>
+                        <NDescriptionsItem label="Date">
+                            {{ formatDate(course['date'], "dd MMMM yyyy") }}
+                        </NDescriptionsItem>
                         <NDescriptionsItem label="Tranche horaire">
                             {{ makeHourPartText(course['hour_part']) }}
                         </NDescriptionsItem>
                         <NDescriptionsItem label="Matière">
                             {{ makeConstElementText(course['const_element']) }}
                         </NDescriptionsItem>
-                        <NDescriptionsItem label="Enseignant responsable">
+                        <NDescriptionsItem label="Enseignant">
                             {{ makeTeacherText(course['teacher']) }}
                         </NDescriptionsItem>
                     </NDescriptions>
@@ -30,6 +32,7 @@
 </template>
 
 <script setup lang="ts">
+import useDates from '@/composables/core/useDates';
 import useTexts from '@/composables/core/useTexts';
 import type { Course } from '@/types/course';
 import type { TeachingType } from '@/types/teaching_type';
@@ -49,6 +52,7 @@ const emits = defineEmits<Emits>();
 
 const currentTt = ref(0);
 const tabValue = ref("infos");
+const { formatDate } = useDates();
 const { makeHourPartText, makeConstElementText, makeTeacherText } = useTexts();
 
 function lookupContextValue(ttId: string): string {
