@@ -1,5 +1,12 @@
 <template>
     <NTimelineItem :title :type="timelineType">
+        <template #icon>
+            <NIcon>
+                <CheckmarkCircleOutline v-if="getStatus() === 'done'" />
+                <SyncCircleOutline v-else-if="getStatus() === 'ongoing'" />
+                <CloseCircleOutline v-else />
+            </NIcon>
+        </template>
         <template #footer>
             <NTime :format="DATE_FORMAT" :time="beg" />
             ->
@@ -9,6 +16,9 @@
 </template>
 
 <script setup lang="ts">
+import SyncCircleOutline from 'vicons/ionicons-v5/SyncCircleOutline.vue';
+import CloseCircleOutline from 'vicons/ionicons-v5/CloseCircleOutline.vue';
+import CheckmarkCircleOutline from 'vicons/ionicons-v5/CheckmarkCircleOutline.vue';
 import useDates from '@/composables/core/useDates';
 
 type Props = {
@@ -17,24 +27,32 @@ type Props = {
     end: number | Date;
 };
 
+type Status = 'done' | 'ongoing' | 'not-done';
+
 const DATE_FORMAT = "dd MMMM yyyy";
 
 const props = defineProps<Props>();
 const timelineType = computed(() => {
-    const done: 'success' = 'success';
-    const ongoing: 'warning' = 'warning';
-    const notDone: 'error' = 'error';
+    switch (getStatus()) {
+        case 'done':
+            return 'success';
+        case 'ongoing':
+            return 'info';
+        case 'not-done':
+            return 'error';
+    }
+});
 
-    const { formatToTS } = useDates();
-
-    const begTs = typeof (props.beg) === 'number' ? props.beg : formatToTS(props.beg.toISOString());
-    const endTs = typeof (props.end) === 'number' ? props.end : formatToTS(props.end.toISOString());
-    const currentDate = formatToTS(new Date().toISOString());
+function getStatus(): Status {
+    const dates = useDates();
+    const begTs = typeof (props.beg) === 'number' ? props.beg : dates.formatToTS(props.beg.toISOString());
+    const endTs = typeof (props.end) === 'number' ? props.end : dates.formatToTS(props.end.toISOString());
+    const currentDate = dates.formatToTS(new Date().toISOString());
 
     if (currentDate >= begTs && currentDate <= endTs)
-        return ongoing;
+        return 'ongoing';
     if (currentDate < begTs)
-        return notDone;
-    return done;
-});
+        return 'not-done';
+    return 'done';
+}
 </script>
