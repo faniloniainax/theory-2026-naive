@@ -1,7 +1,7 @@
 <template>
     <NModal preset="dialog" title="Détails de la séance" :show="visible" @update:show="onVisibleUpdate" closable
         close-on-esc>
-        <NTabs v-model:value="tabValue">
+        <NTabs v-model:value="tabValue" justify-content="center">
             <NTabPane name="infos" tab="Informations">
                 <template v-if="course">
                     <NDescriptions :columns="2" bordered>
