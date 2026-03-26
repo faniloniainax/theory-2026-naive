@@ -137,8 +137,8 @@ function onShowMoreClick(c: Course) {
 }
 
 function onEditClick(c: Course) {
-    isEditMode.value = true;
     currentCourse.value = c;
+    isEditMode.value = true;
     modalVisible.value = true;
 }
 

@@ -4,12 +4,12 @@
         <NTabs v-model:value="tabValue" justify-content="center">
             <NTabPane name="infos" tab="Informations">
                 <template v-if="course">
-                    <NDescriptions :columns="2" bordered>
-                        <NDescriptionsItem label="Date">
-                            {{ formatDate(course['date'], "dd MMMM yyyy") }}
+                    <NDescriptions :columns="2" bordered label-align="center">
+                        <NDescriptionsItem label="Date et heure">
+                            {{ formatDate(course['date'], "dd MMMM") }}, {{ makeHourPartText(course['hour_part']) }}
                         </NDescriptionsItem>
-                        <NDescriptionsItem label="Tranche horaire">
-                            {{ makeHourPartText(course['hour_part']) }}
+                        <NDescriptionsItem label="Salle">
+                            {{ makeRoomText(course['room']) }}
                         </NDescriptionsItem>
                         <NDescriptionsItem label="Matière">
                             {{ makeConstElementText(course['const_element']) }}
@@ -53,7 +53,7 @@ const emits = defineEmits<Emits>();
 const currentTt = ref(0);
 const tabValue = ref("infos");
 const { formatDate } = useDates();
-const { makeHourPartText, makeConstElementText, makeTeacherText } = useTexts();
+const { makeHourPartText, makeConstElementText, makeTeacherText, makeRoomText } = useTexts();
 
 function lookupContextValue(ttId: string): string {
     // TODO: Load the contexts correctly from the backend.

@@ -124,7 +124,7 @@ async function onContextFormSubmit() {
 }
 
 watch(() => props.course, (newCourse) => {
-    if (!newCourse || !props.isEditMode) {
+    if (!newCourse) {
         currentCourse.value = getBaseCourse();
         return;
     }
