@@ -12,7 +12,7 @@
 
         <NDivider />
         <NSpace justify="end">
-            <NButton ghost type="error" @click="onResetClick">Annuler</NButton>
+            <NButton ghost type="error" @click="onResetClick">Réinitialiser</NButton>
             <NButton ghost type="success" @click="onSubmitClick">Se connecter</NButton>
         </NSpace>
     </NForm>
