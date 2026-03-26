@@ -14,3 +14,13 @@ export type Semester = {
     updated_at?: string;
     stage?: Stage;
 };
+
+export type CalendarDates = {
+    name: string;
+    courses_beg: number;
+    courses_end: number;
+    exams_beg: number;
+    exams_end: number;
+    retrials_beg: number;
+    retrials_end: number;
+};
