@@ -8,7 +8,7 @@ import type { Branch } from "@/types/branch";
 import type { Room } from "@/types/room";
 
 export default function useSelectOptions() {
-    const { makeFieldText, makeBranchText, makeClassText, makeTeacherText, makeHourPartText, makeConstElementText, makeRoomText, } = useTexts();
+    const { makeFieldText, makeBranchText, makeClassText, makeTeacherText, makeShortTeacherText, makeHourPartText, makeConstElementText, makeRoomText, } = useTexts();
 
     function makeClassOptions(classes: Class[]) {
         return classes.map(c => ({
@@ -21,6 +21,13 @@ export default function useSelectOptions() {
         return teachers.map(t => ({
             value: t['id'],
             label: makeTeacherText(t),
+        }));
+    }
+
+    function makeShortTeacherOptions(teachers: Teacher[]) {
+        return teachers.map(t => ({
+            value: t['id'],
+            label: makeShortTeacherText(t),
         }));
     }
 
@@ -61,6 +68,7 @@ export default function useSelectOptions() {
 
     return ({
         makeClassOptions,
+        makeShortTeacherOptions,
         makeTeacherOptions,
         makeHourPartOptions,
         makeConstElementOptions,

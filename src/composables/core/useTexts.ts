@@ -63,6 +63,17 @@ export default function useTexts() {
         return `${title} ${fullName}`.trim();
     }
 
+    function makeShortTeacherText(t?: Teacher) {
+        if (!t)
+            return '<AUCUN ENSEIGNANT>';
+
+        const title = makeTitleText(t['title']);
+        const lastName = t['last_name'] ?? '';
+        const trilogy = t['trilogy'];
+
+        return `${title} ${trilogy}`;
+    }
+
     function makeHourPartText(h?: HourPart) {
         if (!h)
             return '<AUCUNE TRANCHE HORAIRE>';
@@ -98,6 +109,7 @@ export default function useTexts() {
         makeClassText,
         makeTitleText,
         makeRankText,
+        makeShortTeacherText,
         makeTeacherText,
         makeHourPartText,
         makeConstElementText,

@@ -10,15 +10,15 @@
                 <NSelect filterable clearable v-model:value="courseInfo['hour_part_id']"
                     :options="makeHourPartOptions(hourParts)" />
             </NFormItemGi>
-            <!-- Enseignant -->
-            <NFormItemGi :span="4" label="Enseignant:" path="teacher_id">
-                <NSelect filterable clearable v-model:value="courseInfo['teacher_id']"
-                    :options="makeTeacherOptions(teachers)" />
-            </NFormItemGi>
             <!-- Elément constitutif -->
-            <NFormItemGi :span="2" label="Matière:" path="const_element_id">
+            <NFormItemGi :span="4" label="Matière:" path="const_element_id">
                 <NSelect filterable clearable v-model:value="courseInfo['const_element_id']"
                     :options="makeConstElementOptions(constElements)" />
+            </NFormItemGi>
+            <!-- Enseignant -->
+            <NFormItemGi :span="2" label="Enseignant:" path="teacher_id">
+                <NSelect filterable clearable v-model:value="courseInfo['teacher_id']"
+                    :options="makeShortTeacherOptions(teachers)" />
             </NFormItemGi>
             <!-- Salle -->
             <NFormItemGi :span="2" label="Salle:" path="room_id">
@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
     info: null,
 });
 const emits = defineEmits<Emits>();
-const { makeHourPartOptions, makeTeacherOptions, makeConstElementOptions, makeRoomOptions } = useSelectOptions();
+const { makeHourPartOptions, makeShortTeacherOptions, makeConstElementOptions, makeRoomOptions } = useSelectOptions();
 
 const formRules: FormRules = {
     date: {
