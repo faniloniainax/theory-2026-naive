@@ -20,10 +20,15 @@
         </NSpace>
 
         <!-- Context textarea -->
-        <NFormItem>
-            <NInput type="textarea" clearable show-count rows="6" placeholder="Description du contexe..." :value
-                @update:value="onValueUpdate" />
-        </NFormItem>
+        <template v-if="editable">
+            <NFormItem>
+                <NInput type="textarea" clearable show-count rows="6" placeholder="Description du contexe..." :value
+                    @update:value="onValueUpdate" />
+            </NFormItem>
+        </template>
+        <template v-else>
+            <NInput type="textarea" show-count rows="6" placeholder="Aucune description..." :value disabled />
+        </template>
     </NSpace>
 </template>
 
@@ -34,6 +39,7 @@ import ArrowForwardCircleOutline from 'vicons/ionicons-v5/ArrowForwardCircleOutl
 type Props = {
     title: string;
     value?: string;
+    editable?: boolean;
     disabledPrev?: boolean;
     disabledNext?: boolean;
 };
@@ -46,6 +52,7 @@ type Emits = {
 
 const props = withDefaults(defineProps<Props>(), {
     value: '',
+    editable: true,
     disabledPrev: false,
     disabledNext: false,
 });
