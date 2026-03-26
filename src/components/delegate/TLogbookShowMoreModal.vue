@@ -67,5 +67,6 @@ function lookupContextValue(ttId: string): string {
 
 function onVisibleUpdate(newVisible: boolean) {
     emits('update:visible', newVisible);
+    tabValue.value = "infos";
 }
 </script>
