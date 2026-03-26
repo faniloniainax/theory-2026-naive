@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import TLogbookActions from '@/components/delegate/TLogbookActions.vue';
+import useAuth from '@/composables/core/useAuth';
 import useDates from '@/composables/core/useDates';
 import useLoading from '@/composables/core/useLoading';
 import useSearch from '@/composables/core/useSearch';
@@ -103,8 +104,18 @@ const { getTeachingTypes } = useTeachingTypes();
 const debouncedSearch = useSearch().debounceAsync(getData);
 
 async function getData(page_: number, perPage_: number, q_: string) {
+    const class_ = useAuth().getClass();
+
+    if (!class_) {
+        page.value = 1;
+        perPage.value = 5;
+        totalPages.value = 1;
+        logbookCourses.value = [];
+        return;
+    }
+
     await runAsyncLoading(async () => {
-        const r = await courses.getCourses(page_, perPage_, q_);
+        const r = await courses.getCourses(class_['id'], page_, perPage_, q_);
 
         page.value = r.pagination['page'];
         perPage.value = r.pagination['per_page'];
