@@ -1,7 +1,7 @@
 <template>
     <NSpace vertical justify="center" align="stretch">
         <NSpace justify="space-between">
-            <NInput placeholder="Rechercher..." clearable>
+            <NInput placeholder="Rechercher..." clearable v-model:value="q" @update:value="onSearchUpdate">
                 <template #prefix>
                     <NIcon size="large">
                         <SearchOutline />
@@ -35,6 +35,7 @@
 import TLogbookActions from '@/components/delegate/TLogbookActions.vue';
 import useDates from '@/composables/core/useDates';
 import useLoading from '@/composables/core/useLoading';
+import useSearch from '@/composables/core/useSearch';
 import useTexts from '@/composables/core/useTexts';
 import useCourses from '@/composables/services/useCourses';
 import useTeachingTypes from '@/composables/services/useTeachingTypes';
@@ -97,12 +98,13 @@ const logbookColumns: DataTableColumns<Course> = [
 
 const logbookCourses = ref<Course[]>([]);
 const currentCourse = ref<Course | null>(null);
-const [page, perPage, totalPages, modalVisible, isEditMode, showMoreModalVisible, teachingTypes] = [ref(1), ref(5), ref(1), ref(false), ref(false), ref(false), ref<TeachingType[]>([])];
+const [q, page, perPage, totalPages, modalVisible, isEditMode, showMoreModalVisible, teachingTypes] = [ref(""), ref(1), ref(5), ref(1), ref(false), ref(false), ref(false), ref<TeachingType[]>([])];
 const { getTeachingTypes } = useTeachingTypes();
+const debouncedSearch = useSearch().debounceAsync(getData);
 
-async function getData(page_: number, perPage_: number) {
+async function getData(page_: number, perPage_: number, q_: string) {
     await runAsyncLoading(async () => {
-        const r = await courses.getCourses(page_, perPage_);
+        const r = await courses.getCourses(page_, perPage_, q_);
 
         page.value = r.pagination['page'];
         perPage.value = r.pagination['per_page'];
@@ -134,21 +136,26 @@ function onDeleteClick(c: Course) {
 }
 
 async function onPageUpdate(newPage: number) {
-    await getData(newPage, perPage.value);
+    await getData(newPage, perPage.value, q.value);
 }
 
 async function onPageSizeUpdate(newPageSize: number) {
     page.value = 1;
-    await getData(page.value, newPageSize);
+    await getData(page.value, newPageSize, q.value);
 }
 
 async function onModalSubmit() {
     modalVisible.value = false;
-    await getData(page.value, perPage.value);
+    await getData(page.value, perPage.value, q.value);
+}
+
+async function onSearchUpdate(q_: string) {
+    page.value = 1;
+    await debouncedSearch(page.value, perPage.value, q_);
 }
 
 onMounted(async () => {
-    await getData(page.value, perPage.value);
+    await getData(page.value, perPage.value, q.value);
     teachingTypes.value = await getTeachingTypes();
 });
 </script>
