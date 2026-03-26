@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import useCourses from '@/composables/services/useCourses';
 import type { Course, CourseContext } from '@/types/course';
 import type { TeachingType } from '@/types/teaching_type';
 
@@ -33,44 +34,16 @@ const emits = defineEmits<Emits>();
 
 const currentTt = ref(0);
 const courseContexts = ref<Record<string, string>>({});
+const { makeContextRecord, makeContextArray } = useCourses();
 
 function loadCourseContexts() {
-    courseContexts.value = makeCourseContextRecord(props.courseContexts);
+    courseContexts.value = makeContextRecord(props.courseContexts);
     props.teachingTypes.forEach(t => {
         const desc = courseContexts.value[t['id']];
 
         if (!desc)
             courseContexts.value[t['id']] = "";
     });
-}
-
-function makeCourseContextRecord(ctxArray: CourseContext[]): Record<string, string> {
-    const ctxRec: Record<string, string> = {};
-
-    ctxArray.forEach((c) => {
-        ctxRec[c['teaching_type_id']] = c['description'];
-    });
-
-    return ctxRec;
-}
-
-function makeCourseContextArray(ctxRecord: Record<string, string>): CourseContext[] {
-    const ctxArray = [] as CourseContext[];
-
-    for (const key in ctxRecord) {
-        const ttId = key;
-        let description = ctxRecord[ttId];
-
-        if (!description)
-            description = "";
-
-        ctxArray.push({
-            "teaching_type_id": ttId,
-            "description": description,
-        })
-    }
-
-    return ctxArray;
 }
 
 function onPrevClick() {
@@ -82,7 +55,7 @@ function onSubmitClick() {
 }
 
 watch(() => courseContexts.value, (newContext) => {
-    emits('update:course-contexts', makeCourseContextArray(newContext));
+    emits('update:course-contexts', makeContextArray(newContext));
 }, { deep: true });
 
 onMounted(() => {

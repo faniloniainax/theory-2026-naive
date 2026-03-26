@@ -26,7 +26,7 @@
         </NSpace>
     </NSpace>
 
-    <TLogbookModal v-model:visible="modalVisible" :is-edit-mode @click:submit="onModalSubmit" />
+    <TLogbookModal v-model:visible="modalVisible" :course="currentCourse" :is-edit-mode @click:submit="onModalSubmit" />
     <TLogbookShowMoreModal v-model:visible="showMoreModalVisible" :course="currentCourse"
         :teaching-types="teachingTypes" />
 </template>
@@ -45,7 +45,6 @@ import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
 import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
 
 const dialog = useDialog();
-const message = useMessage();
 const courses = useCourses();
 const { formatDate } = useDates();
 const { makeHourPartText } = useTexts();
@@ -115,6 +114,7 @@ async function getData(page_: number, perPage_: number) {
 
 function onAddClick() {
     isEditMode.value = false;
+    currentCourse.value = null;
     modalVisible.value = true;
 }
 
@@ -124,7 +124,9 @@ function onShowMoreClick(c: Course) {
 }
 
 function onEditClick(c: Course) {
-    dialog.info({ title: "Modifier", content: JSON.stringify(c) });
+    isEditMode.value = true;
+    currentCourse.value = c;
+    modalVisible.value = true;
 }
 
 function onDeleteClick(c: Course) {

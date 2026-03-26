@@ -2,11 +2,11 @@
     <NModal preset="dialog" :title="getFormTitle" :show="visible" @update:show="onShowUpdate" closable close-on-esc>
         <NTabs v-model:value="tabValue" justify-content="center" @before-leave="() => false">
             <NTabPane name="infos" tab="Informations">
-                <TLogbookInfoTab :rooms :teachers :hour-parts :const-elements v-model:info="course.info"
+                <TLogbookInfoTab :rooms :teachers :hour-parts :const-elements v-model:info="currentCourse.info"
                     @click:cancel="onInfoFormCancel" @click:submit="onInfoFormSubmit" />
             </NTabPane>
             <NTabPane name="context" tab="Contexte">
-                <TLogbookContextTab :teaching-types v-model:course-contexts="course.contexts"
+                <TLogbookContextTab :teaching-types v-model:course-contexts="currentCourse.contexts"
                     @click:prev="onContextFormPrev" @click:submit="onContextFormSubmit" />
             </NTabPane>
         </NTabs>
@@ -22,7 +22,7 @@ import useRooms from '@/composables/services/useRooms';
 import useTeachers from '@/composables/services/useTeachers';
 import useTeachingTypes from '@/composables/services/useTeachingTypes';
 import type { ConstElement } from '@/types/const_element';
-import type { CourseInfo } from '@/types/course';
+import type { Course, CourseContext, CourseInfo } from '@/types/course';
 import type { HourPart } from '@/types/hour_part';
 import type { Room } from '@/types/room';
 import type { Teacher } from '@/types/teacher';
@@ -31,6 +31,7 @@ import { useMessage } from 'naive-ui';
 
 type Props = {
     visible: boolean;
+    course?: Course | null;
     isEditMode: boolean;
 };
 
@@ -39,15 +40,17 @@ type Emits = {
     (event: 'click:submit'): void;
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    course: null,
+});
 const emits = defineEmits<Emits>();
 
 const message = useMessage();
 
 const tabValue = ref("infos");
-const course = ref(getBaseCourse());
+const currentCourse = ref(getBaseCourse());
 
-const [{ getRooms }, { registerCourse }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
+const [{ getRooms }, { registerCourse, makeContextArray }, { getTeachers }, { getHourParts }, { getConstElements }, { getTeachingTypes }] = [
     useRooms(),
     useCourses(),
     useTeachers(),
@@ -72,7 +75,7 @@ function getBaseCourse() {
             hour_part_id: null,
             const_element_id: null,
         } as CourseInfo,
-        contexts: [],
+        contexts: [] as CourseContext[],
     });
 }
 
@@ -105,7 +108,7 @@ async function onContextFormSubmit() {
     if (!class_)
         return;
 
-    const ok = await registerCourse(class_['id'], course.value.info, course.value.contexts);
+    const ok = await registerCourse(class_['id'], currentCourse.value.info, currentCourse.value.contexts);
     if (!ok) {
         message.error("Impossible d'enregistrer cette séance.");
         return;
@@ -114,10 +117,28 @@ async function onContextFormSubmit() {
     message.success("Séance enregistrée avec succès.");
 
     tabValue.value = "infos";
-    course.value = getBaseCourse();
+    currentCourse.value = getBaseCourse();
 
     emits('click:submit');
 }
+
+watch(() => props.course, (newCourse) => {
+    if (!newCourse || !props.isEditMode) {
+        currentCourse.value = getBaseCourse();
+        return;
+    }
+
+    currentCourse.value = {
+        info: {
+            date: newCourse['date'],
+            room_id: newCourse['room_id'],
+            teacher_id: newCourse['teacher_id'],
+            hour_part_id: newCourse['hour_part_id'],
+            const_element_id: newCourse['const_element_id'],
+        },
+        contexts: newCourse['contexts']!,
+    };
+})
 
 onMounted(async () => {
     const class_ = useAuth().getClass();
