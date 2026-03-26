@@ -27,6 +27,8 @@
     </NSpace>
 
     <TLogbookModal v-model:visible="modalVisible" :is-edit-mode @click:submit="onModalSubmit" />
+    <TLogbookShowMoreModal v-model:visible="showMoreModalVisible" :course="currentCourse"
+        :teaching-types="teachingTypes" />
 </template>
 
 <script setup lang="ts">
@@ -35,7 +37,9 @@ import useDates from '@/composables/core/useDates';
 import useLoading from '@/composables/core/useLoading';
 import useTexts from '@/composables/core/useTexts';
 import useCourses from '@/composables/services/useCourses';
+import useTeachingTypes from '@/composables/services/useTeachingTypes';
 import type { Course } from '@/types/course';
+import type { TeachingType } from '@/types/teaching_type';
 import { NButton, NIcon, NSpace, useDialog, useMessage, type DataTableColumns } from 'naive-ui';
 import AddOutline from 'vicons/ionicons-v5/AddOutline.vue';
 import SearchOutline from 'vicons/ionicons-v5/SearchOutline.vue';
@@ -93,7 +97,9 @@ const logbookColumns: DataTableColumns<Course> = [
 ];
 
 const logbookCourses = ref<Course[]>([]);
-const [page, perPage, totalPages, modalVisible, isEditMode] = [ref(1), ref(5), ref(1), ref(false), ref(false)];
+const currentCourse = ref<Course | null>(null);
+const [page, perPage, totalPages, modalVisible, isEditMode, showMoreModalVisible, teachingTypes] = [ref(1), ref(5), ref(1), ref(false), ref(false), ref(false), ref<TeachingType[]>([])];
+const { getTeachingTypes } = useTeachingTypes();
 
 async function getData(page_: number, perPage_: number) {
     await runAsyncLoading(async () => {
@@ -113,7 +119,8 @@ function onAddClick() {
 }
 
 function onShowMoreClick(c: Course) {
-    dialog.success({ title: "Voir plus", content: JSON.stringify(c) });
+    currentCourse.value = c;
+    showMoreModalVisible.value = true;
 }
 
 function onEditClick(c: Course) {
@@ -140,5 +147,6 @@ async function onModalSubmit() {
 
 onMounted(async () => {
     await getData(page.value, perPage.value);
+    teachingTypes.value = await getTeachingTypes();
 });
 </script>
