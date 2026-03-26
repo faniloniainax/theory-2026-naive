@@ -27,13 +27,19 @@
 
         <NTabs justify-content="center">
             <NTabPane name="theoric-progress" tab="Théoriques">
-                <NProgress type="line" processing :percentage="theoricCoursesPercentage" />
+                <NProgress type="line" :percentage="theoricCoursesPercentage">
+                    ? %
+                </NProgress>
             </NTabPane>
             <NTabPane name="directed-progress" tab="Dirigés">
-                <NProgress type="line" processing :percentage="directedWorkPercentage" />
+                <NProgress type="line" processing :percentage="directedWorkPercentage">
+                    ? %
+                </NProgress>
             </NTabPane>
             <NTabPane name="practical-progress" tab="Pratiques">
-                <NProgress type="line" processing :percentage="practicalWorkPercentage" />
+                <NProgress type="line" processing :percentage="practicalWorkPercentage">
+                    ? %
+                </NProgress>
             </NTabPane>
         </NTabs>
     </NCard>
