@@ -6,7 +6,7 @@
                 <TISODatePicker v-model:value="courseInfo['date']" />
             </NFormItemGi>
             <!-- Tranche horaire -->
-            <NFormItemGi :span="2" label="Tranche horaire:" path="hour_slice_id">
+            <NFormItemGi :span="2" label="Tranche horaire:" path="hour_part_id">
                 <NSelect filterable clearable v-model:value="courseInfo['hour_part_id']"
                     :options="makeHourPartOptions(hourParts)" />
             </NFormItemGi>
