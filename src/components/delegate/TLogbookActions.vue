@@ -17,13 +17,14 @@
             </template>
         </NButton>
         <!-- Delete button -->
-        <NButton size="small" type="error" ghost @click="onDeleteClick">
+        <!-- TODO: Ponder on whether to add a delete button or not -->
+        <!-- <NButton size="small" type="error" ghost @click="onDeleteClick">
             <template #icon>
                 <NIcon size="large">
                     <TrashBinOutline />
                 </NIcon>
             </template>
-        </NButton>
+        </NButton> -->
     </NSpace>
 </template>
 
