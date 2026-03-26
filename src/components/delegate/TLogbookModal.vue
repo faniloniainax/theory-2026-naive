@@ -69,7 +69,7 @@ const [rooms, teachers, hourParts, teachingTypes, constElements] = [
 function getBaseCourse() {
     return ({
         info: {
-            id: "",
+            id: null,
             date: (new Date()).toISOString(),
             room_id: null,
             teacher_id: null,
