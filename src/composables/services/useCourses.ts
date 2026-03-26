@@ -14,8 +14,9 @@ export default function useCourses() {
         return courses.data as Course[];
     }
 
-    async function getCourses(page: number, perPage: number): Promise<Paginated<Course>> {
+    async function getCourses(page: number, perPage: number, q: string = ""): Promise<Paginated<Course>> {
         const params = {
+            "q": q,
             "page": page,
             "per_page": perPage,
             "include": "HourPart, Teacher, Teacher.Title, ConstElement, Contexts",
